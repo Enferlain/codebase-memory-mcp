@@ -2134,6 +2134,72 @@ static char *resolve_objectscript_instance_call(CBMArena *a, TSNode node, const 
     return NULL;
 }
 
+static bool python_function_name_matches(CBMExtractCtx *ctx, TSNode function_node,
+                                         const char *name) {
+    TSNode name_node = ts_node_child_by_field_name(function_node, TS_FIELD("name"));
+    if (ts_node_is_null(name_node))
+        return false;
+    char *declared = cbm_node_text(ctx->arena, name_node, ctx->source);
+    return declared && strcmp(declared, name) == 0;
+}
+
+/* Search one Python function scope for a nested function binding. Descend
+ * through control-flow blocks because Python locals are function-scoped, but
+ * never enter a nested function/class/lambda body: declarations there belong
+ * to a different lexical scope. */
+static bool python_scope_has_nested_function(CBMExtractCtx *ctx, TSNode node,
+                                             const char *name, int depth) {
+    if (depth > MAX_SCOPES)
+        return false;
+    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
+        TSNode child = ts_node_named_child(node, i);
+        const char *kind = ts_node_type(child);
+        if (strcmp(kind, "function_definition") == 0) {
+            if (python_function_name_matches(ctx, child, name))
+                return true;
+            continue;
+        }
+        if (strcmp(kind, "class_definition") == 0 || strcmp(kind, "lambda") == 0)
+            continue;
+        if (python_scope_has_nested_function(ctx, child, name, depth + 1))
+            return true;
+    }
+    return false;
+}
+
+static const char *python_nested_local_target_qn(CBMExtractCtx *ctx, TSNode call_node,
+                                                  const char *callee_name,
+                                                  const WalkState *state) {
+    if (!ctx || !callee_name || !callee_name[0] || strchr(callee_name, '.') || !state ||
+        !state->enclosing_func_qn || state->enclosing_func_qn == ctx->module_qn) {
+        return NULL;
+    }
+
+    TSNode enclosing = ts_node_parent(call_node);
+    while (!ts_node_is_null(enclosing) &&
+           strcmp(ts_node_type(enclosing), "function_definition") != 0) {
+        enclosing = ts_node_parent(enclosing);
+    }
+    if (ts_node_is_null(enclosing))
+        return NULL;
+
+    TSNode body = ts_node_child_by_field_name(enclosing, TS_FIELD("body"));
+    if (!ts_node_is_null(body) && python_scope_has_nested_function(ctx, body, callee_name, 0)) {
+        return cbm_arena_sprintf(ctx->arena, "%s.%s", state->enclosing_func_qn, callee_name);
+    }
+
+    /* Recursive calls inside a nested function are lexical too. */
+    if (python_function_name_matches(ctx, enclosing, callee_name)) {
+        TSNode parent = ts_node_parent(enclosing);
+        while (!ts_node_is_null(parent)) {
+            if (strcmp(ts_node_type(parent), "function_definition") == 0)
+                return state->enclosing_func_qn;
+            parent = ts_node_parent(parent);
+        }
+    }
+    return NULL;
+}
+
 void handle_calls(CBMExtractCtx *ctx, TSNode node, const CBMLangSpec *spec, WalkState *state) {
     if (!spec->call_node_types || !spec->call_node_types[0]) {
         return;
@@ -2202,6 +2268,13 @@ void handle_calls(CBMExtractCtx *ctx, TSNode node, const CBMLangSpec *spec, Walk
             call.loop_depth = state->loop_depth;     // enclosing loop nesting at this call
             call.branch_depth = state->branch_depth; // enclosing branch nesting at this call
             call.start_line = (int)ts_node_start_point(node).row + TS_LINE_OFFSET;
+            if (ctx->language == CBM_LANG_PYTHON && strcmp(ts_node_type(node), "call") == 0) {
+                TSNode fn = ts_node_child_by_field_name(node, TS_FIELD("function"));
+                if (!ts_node_is_null(fn) && strcmp(ts_node_type(fn), "identifier") == 0) {
+                    call.lexical_target_qn =
+                        python_nested_local_target_qn(ctx, node, callee, state);
+                }
+            }
             // Perl-only: flag arrow/method calls ($obj->m / Class->m). The
             // generic short-name resolver cannot place a method without a known
             // receiver type, so the call-resolution pass suppresses those edges.

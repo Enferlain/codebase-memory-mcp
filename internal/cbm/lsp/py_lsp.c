@@ -201,7 +201,15 @@ void py_lsp_bind_imports(PyLSPContext *ctx) {
             continue;
 
         const CBMType *t;
-        if (import_is_from_style(local, qn)) {
+        const char *imported_member_qn = cbm_arena_sprintf(ctx->arena, "%s.%s", qn, local);
+        if (imported_member_qn &&
+            (cbm_registry_lookup_type(ctx->registry, imported_member_qn) ||
+             cbm_registry_lookup_func(ctx->registry, imported_member_qn))) {
+            /* Pipeline IMPORTS edges target the imported module and retain the
+             * imported symbol as local_name. Recover `from module import Name`
+             * only when module.Name exists exactly in the registry. */
+            t = cbm_type_named(ctx->arena, imported_member_qn);
+        } else if (import_is_from_style(local, qn)) {
             // `from X import Y` — bind Y to NAMED(X.Y). Phase 6 attribute
             // resolution checks the registry to upgrade to MODULE / class
             // / function as appropriate.
@@ -424,6 +432,24 @@ static void py_emit_resolved_call(PyLSPContext *ctx, const char *callee_qn, cons
 
 /* ── helpers: registry-driven attribute lookup with depth cap ──── */
 
+static void py_find_unique_type_short_name(const CBMTypeRegistry *reg, const char *short_name,
+                                           const char **found_qn, bool *ambiguous) {
+    if (!reg || !short_name || !found_qn || !ambiguous || *ambiguous)
+        return;
+    for (int i = 0; i < reg->type_count; i++) {
+        const CBMRegisteredType *rt = &reg->types[i];
+        if (!rt->qualified_name || !rt->short_name || strcmp(rt->short_name, short_name) != 0)
+            continue;
+        if (!*found_qn) {
+            *found_qn = rt->qualified_name;
+        } else if (strcmp(*found_qn, rt->qualified_name) != 0) {
+            *ambiguous = true;
+            return;
+        }
+    }
+    py_find_unique_type_short_name(reg->fallback, short_name, found_qn, ambiguous);
+}
+
 static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, const char *type_qn,
                                                           const char *member_name, int depth) {
     if (!ctx || !type_qn || !member_name)
@@ -436,6 +462,21 @@ static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, con
         return f;
 
     const CBMRegisteredType *rt = cbm_registry_lookup_type(ctx->registry, type_qn);
+    if (!rt) {
+        /* Cross-file field annotations retain their defining module when the
+         * annotated type was imported there (for example
+         * trainer.TrainingStrategy). Recover only when the registry has one
+         * unambiguous type with that short name; ambiguity remains unresolved
+         * instead of choosing an arbitrary concrete class. */
+        const char *short_name = strrchr(type_qn, '.');
+        short_name = short_name ? short_name + 1 : type_qn;
+        const char *unique_qn = NULL;
+        bool ambiguous = false;
+        py_find_unique_type_short_name(ctx->registry, short_name, &unique_qn, &ambiguous);
+        if (!ambiguous && unique_qn && strcmp(unique_qn, type_qn) != 0) {
+            return py_lookup_attribute_depth(ctx, unique_qn, member_name, depth + 1);
+        }
+    }
     if (rt) {
         if (rt->alias_of) {
             f = py_lookup_attribute_depth(ctx, rt->alias_of, member_name, depth + 1);

@@ -2335,7 +2335,11 @@ static void resolve_file_calls(resolve_ctx_t *rc, resolve_worker_state_t *ws, CB
         bool suppress_weak_member =
             lang == CBM_LANG_PYTHON ||
             lang == CBM_LANG_JAVASCRIPT || lang == CBM_LANG_TYPESCRIPT || lang == CBM_LANG_TSX;
+        bool wrong_lexical_target =
+            call->lexical_target_qn &&
+            (!res.qualified_name || strcmp(res.qualified_name, call->lexical_target_qn) != 0);
         bool drop_plain_call =
+            wrong_lexical_target ||
             cbm_suppress_weak_member_match(suppress_weak_member, call->is_method, res.strategy);
 
         /* Service-pattern HTTP/ASYNC client call (`requests.get(url)`): the

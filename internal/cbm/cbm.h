@@ -241,6 +241,9 @@ typedef struct {
     int loop_depth;                     // enclosing loop nesting at the call site
     int branch_depth;                   // enclosing branch nesting at the call site
     int start_line;                     // 1-based source line of the call (for def range-match)
+    const char *lexical_target_qn;      // Python nested local callable expected QN, or NULL.
+                                        // Prevents fallback to unrelated same-named methods
+                                        // while inner declarations are not yet indexed.
     bool is_method;                     // method/member call with a non-self receiver. Perl:
                                         // arrow/method call ($obj->m). Python/TS/JS/TSX:
                                         // x.foo() whose receiver is not self/cls/this/super.

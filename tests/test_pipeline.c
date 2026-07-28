@@ -997,6 +997,10 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
     write_temp_file(tmp, "worker.py",
                     "class Worker:\n"
                     "    def backward(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class WorkerProcessor:\n"
+                    "    def process_batch(self):\n"
                     "        return 1\n");
     write_temp_file(tmp, "caller.py",
                     "def external_call(accelerator):\n"
@@ -1006,7 +1010,12 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
                     "    return 1\n"
                     "\n"
                     "def bare_call():\n"
-                    "    return local_helper()\n");
+                    "    return local_helper()\n"
+                    "\n"
+                    "def nested_call():\n"
+                    "    def process_batch():\n"
+                    "        return 1\n"
+                    "    return process_batch()\n");
 
     char db_path[512];
     snprintf(db_path, sizeof(db_path), "%s/python_recv.db", tmp);
@@ -1019,6 +1028,7 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
     ASSERT_NOT_NULL(s);
 
     ASSERT_FALSE(cross_file_call_exists(s, project, "external_call", "backward"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "nested_call", "process_batch"));
     ASSERT_TRUE(cross_file_call_exists(s, project, "bare_call", "local_helper"));
     ASSERT_GTE(cbm_store_count_edges_by_type(s, project, "CALLS"), 1);
 
@@ -1212,15 +1222,27 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
                     "\n"
                     "class OtherScheduler:\n"
                     "    def step(self):\n"
-                    "        return 1\n");
+                    "        return 1\n"
+                    "\n"
+                    "class UnrelatedProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n"
+                    "\n"
+                    "class OtherProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n");
     write_temp_file(tmp, "caller.py",
                     "def local_helper():\n"
                     "    return 1\n"
                     "\n"
                     "def train(accelerator, trainer):\n"
+                    "    def process_batch(is_last):\n"
+                    "        return is_last\n"
+                    "\n"
                     "    accelerator.print('hello')\n"
                     "    accelerator.backward(1)\n"
                     "    trainer.lr_scheduler.step()\n"
+                    "    process_batch(True)\n"
                     "    return local_helper()\n");
     for (int i = 0; i < 52; i++) {
         char name[64];
@@ -1247,6 +1269,7 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "print"));
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "backward"));
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "step"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "process_batch"));
     ASSERT_TRUE(cross_file_call_exists(s, project, "train", "local_helper"));
 
     cbm_store_close(s);
@@ -1257,6 +1280,64 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     } else {
         cbm_unsetenv("CBM_WORKERS");
     }
+    th_rmtree(tmp);
+    PASS();
+}
+
+/* Full-pipeline coverage for #1277's real composite-contract shape. The field
+ * type is exported from Trainer.__init__, preserved through a local alias, and
+ * its method is declared on an inherited facet rather than directly on the
+ * composite TrainingStrategy contract. TYPE_CHECKING imports mirror normal
+ * annotation-only application code. */
+TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_inherited_field_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "contracts.py",
+                    "from abc import ABC, abstractmethod\n"
+                    "\n"
+                    "class DiffusionTrainingStrategy(ABC):\n"
+                    "    @abstractmethod\n"
+                    "    def process_batch(self):\n"
+                    "        raise NotImplementedError\n"
+                    "\n"
+                    "class TrainingStrategy(DiffusionTrainingStrategy):\n"
+                    "    pass\n");
+    write_temp_file(tmp, "trainer.py",
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from contracts import TrainingStrategy\n"
+                    "\n"
+                    "class Trainer:\n"
+                    "    def __init__(self, strategies: TrainingStrategy):\n"
+                    "        self.strategies = strategies\n");
+    write_temp_file(tmp, "loop.py",
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from trainer import Trainer\n"
+                    "\n"
+                    "def run(trainer: Trainer):\n"
+                    "    strategies = trainer.strategies\n"
+                    "    return strategies.process_batch()\n");
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/inherited_field.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+    ASSERT_TRUE(cross_file_call_exists(s, project, "run", "process_batch"));
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
     th_rmtree(tmp);
     PASS();
 }
@@ -7998,6 +8079,7 @@ SUITE(pipeline) {
     RUN_TEST(pipeline_python_receiver_suppresses_weak_method_edge);
     RUN_TEST(pipeline_tsjs_receiver_parallel_keeps_service_edges);
     RUN_TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges);
+    RUN_TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method);
     RUN_TEST(pipeline_native_fetch_classified_as_http_calls);
     RUN_TEST(pipeline_native_fetch_parallel_classified_as_http_calls);
     RUN_TEST(pipeline_local_fetch_shadow_not_classified_as_http);

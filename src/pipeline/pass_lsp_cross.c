@@ -30,6 +30,7 @@
 #include "foundation/log.h"
 #include "foundation/compat_fs.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -109,9 +110,24 @@ static const char *pxc_map_label(const char *label) {
     return NULL;
 }
 
+static bool pxc_is_bare_python_type_name(const char *name) {
+    if (!name || !name[0])
+        return false;
+    for (const unsigned char *p = (const unsigned char *)name; *p; p++) {
+        if (!(isalnum(*p) || *p == '_'))
+            return false;
+    }
+    return true;
+}
+
 /* Build the embedded_types "|"-separated string from base_classes[].
+ * Python extraction stores same-module bases as bare identifiers, while the
+ * cross-file type registry keys classes by qualified name. Qualify only simple
+ * Python identifiers relative to their defining module; already-qualified,
+ * generic, subscripted, and other language-specific forms remain untouched.
  * Returns NULL when there are no bases. Allocated in the supplied arena. */
-static const char *pxc_join_pipe(CBMArena *arena, const char *const *items) {
+static const char *pxc_join_pipe(CBMArena *arena, const char *const *items,
+                                 const char *module_qn, bool qualify_python_bases) {
     if (!items || !items[0])
         return NULL;
     int count = 0;
@@ -119,6 +135,10 @@ static const char *pxc_join_pipe(CBMArena *arena, const char *const *items) {
     for (int i = 0; items[i]; i++) {
         count++;
         total += strlen(items[i]);
+        if (qualify_python_bases && module_qn && module_qn[0] &&
+            pxc_is_bare_python_type_name(items[i])) {
+            total += strlen(module_qn) + 1;
+        }
     }
     if (count == 0)
         return NULL;
@@ -129,6 +149,13 @@ static const char *pxc_join_pipe(CBMArena *arena, const char *const *items) {
         return NULL;
     char *p = buf;
     for (int i = 0; i < count; i++) {
+        if (qualify_python_bases && module_qn && module_qn[0] &&
+            pxc_is_bare_python_type_name(items[i])) {
+            size_t module_len = strlen(module_qn);
+            memcpy(p, module_qn, module_len);
+            p += module_len;
+            *p++ = '.';
+        }
         size_t n = strlen(items[i]);
         memcpy(p, items[i], n);
         p += n;
@@ -259,7 +286,8 @@ static int pxc_build_lsp_def(CBMArena *arena, const CBMDefinition *src, const ch
      * for multi-return languages (Go); single-return languages just see one
      * piece, which is what's already stored. */
     dst->return_types = src->return_type;
-    dst->embedded_types = pxc_join_pipe(arena, src->base_classes);
+    dst->embedded_types =
+        pxc_join_pipe(arena, src->base_classes, module_qn, lang == CBM_LANG_PYTHON);
     dst->field_defs = src->field_defs;
     dst->lang = lang;
     return 0;
