@@ -2210,6 +2210,36 @@ void handle_calls(CBMExtractCtx *ctx, TSNode node, const CBMLangSpec *spec, Walk
                 strcmp(ts_node_type(node), "method_call_expression") == 0) {
                 call.is_method = true;
             }
+            // Python receiver-aware guard (#1276). Attribute calls on an
+            // unresolved non-self receiver must not fall through to generic
+            // short-name matching (`accelerator.print()` -> a project
+            // MockAccelerator.print). self/cls/super() calls stay unflagged:
+            // their enclosing-class relationship is meaningful, and the
+            // resolver's same-module/LSP paths remain valid. A nested receiver
+            // such as self.client.send() is a different object and is flagged.
+            if (ctx->language == CBM_LANG_PYTHON && strcmp(ts_node_type(node), "call") == 0) {
+                TSNode fn = ts_node_child_by_field_name(node, TS_FIELD("function"));
+                if (!ts_node_is_null(fn) && strcmp(ts_node_type(fn), "attribute") == 0) {
+                    TSNode obj = ts_node_child_by_field_name(fn, TS_FIELD("object"));
+                    bool is_self_receiver = false;
+                    if (!ts_node_is_null(obj) && strcmp(ts_node_type(obj), "identifier") == 0) {
+                        char *receiver = cbm_node_text(ctx->arena, obj, ctx->source);
+                        is_self_receiver =
+                            receiver &&
+                            (strcmp(receiver, "self") == 0 || strcmp(receiver, "cls") == 0);
+                    } else if (!ts_node_is_null(obj) && strcmp(ts_node_type(obj), "call") == 0) {
+                        TSNode receiver_fn =
+                            ts_node_child_by_field_name(obj, TS_FIELD("function"));
+                        if (!ts_node_is_null(receiver_fn) &&
+                            strcmp(ts_node_type(receiver_fn), "identifier") == 0) {
+                            char *receiver =
+                                cbm_node_text(ctx->arena, receiver_fn, ctx->source);
+                            is_self_receiver = receiver && strcmp(receiver, "super") == 0;
+                        }
+                    }
+                    call.is_method = !is_self_receiver;
+                }
+            }
             // TS/JS/TSX receiver-aware guard (#592/#606 direction; same intent
             // as the Perl flag above). Flag a member call x.foo() whose receiver
             // is NOT `this`/`super`. When the TS-LSP cannot resolve the receiver
