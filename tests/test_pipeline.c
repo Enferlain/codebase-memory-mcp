@@ -1758,6 +1758,76 @@ TEST(implements_no_match) {
     PASS();
 }
 
+TEST(explicit_override_walks_empty_intermediate) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t contract = cbm_gbuf_upsert_node(gb, "Class", "Contract", "pkg.Contract",
+                                             "pkg/repro.py", 1, 4, "{}");
+    int64_t contract_method =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Contract.process", "pkg/repro.py", 2, 3,
+                             "{\"decorators\":[\"abstractmethod\"]}");
+    int64_t intermediate = cbm_gbuf_upsert_node(gb, "Class", "Intermediate", "pkg.Intermediate",
+                                                 "pkg/repro.py", 6, 7, "{}");
+    int64_t leaf =
+        cbm_gbuf_upsert_node(gb, "Class", "Leaf", "pkg.Leaf", "pkg/repro.py", 9, 12, "{}");
+    int64_t leaf_method =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Leaf.process", "pkg/repro.py", 10, 11,
+                             "{}");
+    cbm_gbuf_insert_edge(gb, contract, contract_method, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, intermediate, contract, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, intermediate, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, leaf_method, "DEFINES_METHOD", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
+                              .repo_path = "/tmp/test",
+                              .gbuf = gb,
+                              .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, leaf_method, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, contract_method);
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
+TEST(explicit_override_models_python_sibling_mixin) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t facet =
+        cbm_gbuf_upsert_node(gb, "Class", "Facet", "pkg.Facet", "pkg/repro.py", 1, 4, "{}");
+    int64_t impl = cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Facet.process",
+                                        "pkg/repro.py", 2, 3, "{}");
+    int64_t capability = cbm_gbuf_upsert_node(gb, "Class", "Capability", "pkg.Capability",
+                                              "pkg/repro.py", 6, 9, "{}");
+    int64_t abstract = cbm_gbuf_upsert_node(
+        gb, "Method", "process", "pkg.Capability.process", "pkg/repro.py", 7, 8,
+        "{\"decorators\":[\"abc.abstractmethod\"]}");
+    int64_t assembly = cbm_gbuf_upsert_node(gb, "Class", "Final", "pkg.Final", "pkg/repro.py", 11,
+                                             12, "{}");
+    cbm_gbuf_insert_edge(gb, facet, impl, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, capability, abstract, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, facet, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, capability, "INHERITS", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
+                              .repo_path = "/tmp/test",
+                              .gbuf = gb,
+                              .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, impl, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, abstract);
+    ASSERT_NOT_NULL(strstr(edges[0]->properties_json, "python_mro_sibling"));
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
 /* ── Usages pass tests (full pipeline integration) ──────────────── */
 
 /* Helper to create a temp dir with a single source file */
@@ -7943,6 +8013,8 @@ SUITE(pipeline) {
     /* Implements pass (graph buffer based) */
     RUN_TEST(implements_creates_override);
     RUN_TEST(implements_no_match);
+    RUN_TEST(explicit_override_walks_empty_intermediate);
+    RUN_TEST(explicit_override_models_python_sibling_mixin);
     /* Usages pass (full pipeline integration) */
     RUN_TEST(usages_creates_edges);
     RUN_TEST(usages_no_duplicate_calls);

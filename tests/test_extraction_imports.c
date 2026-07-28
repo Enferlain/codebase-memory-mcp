@@ -323,6 +323,15 @@ static const import_case_t python_cases[] = {
     { CBM_LANG_PYTHON, "o.py",
       "from ..utils import helper\n",
       {"utils", NULL}, 1, "py_double_relative" },
+
+    /* type-only imports are still required by the static resolver */
+    { CBM_LANG_PYTHON, "p.py",
+      "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from contracts import Contract\n",
+      {"typing", "contracts", NULL}, 2, "py_type_checking_guard" },
+
+    { CBM_LANG_PYTHON, "q.py",
+      "import typing\nif typing.TYPE_CHECKING:\n    from contracts import Contract\n",
+      {"typing", "contracts", NULL}, 2, "py_qualified_type_checking_guard" },
 };
 
 TEST(python_import_table) {

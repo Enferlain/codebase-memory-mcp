@@ -3675,6 +3675,55 @@ static bool py_register_def(CBMArena *arena, CBMTypeRegistry *reg, CBMDefinition
     return false;
 }
 
+static const char *py_exportable_field_type(const CBMType *type) {
+    if (!type)
+        return NULL;
+    switch (type->kind) {
+    case CBM_TYPE_NAMED:
+        return type->data.named.qualified_name;
+    case CBM_TYPE_BUILTIN:
+        return type->data.builtin.name;
+    case CBM_TYPE_TYPE_PARAM:
+        return type->data.type_param.name;
+    case CBM_TYPE_MODULE:
+        return type->data.module.module_qn;
+    default:
+        return NULL;
+    }
+}
+
+/* Persist instance-field types learned while walking one Python file so the
+ * cross-file resolver can type `trainer.strategies` in another file. */
+static void py_export_instance_fields(CBMArena *arena, CBMFileResult *result,
+                                      const CBMTypeRegistry *reg) {
+    enum { PY_FIELD_EXPORT_BUF = 4096 };
+    for (int d = 0; d < result->defs.count; d++) {
+        CBMDefinition *def = &result->defs.items[d];
+        if (!def->qualified_name || !def->label ||
+            (strcmp(def->label, "Class") != 0 && strcmp(def->label, "Type") != 0)) {
+            continue;
+        }
+        const CBMRegisteredType *rt = cbm_registry_lookup_type(reg, def->qualified_name);
+        if (!rt || !rt->field_names || !rt->field_types)
+            continue;
+
+        char buf[PY_FIELD_EXPORT_BUF];
+        size_t used = 0;
+        for (int i = 0; rt->field_names[i] && rt->field_types[i]; i++) {
+            const char *type_text = py_exportable_field_type(rt->field_types[i]);
+            if (!type_text || !type_text[0])
+                continue;
+            int n = snprintf(buf + used, sizeof(buf) - used, "%s%s:%s", used ? "|" : "",
+                             rt->field_names[i], type_text);
+            if (n < 0 || (size_t)n >= sizeof(buf) - used)
+                break;
+            used += (size_t)n;
+        }
+        if (used)
+            def->field_defs = cbm_arena_strdup(arena, buf);
+    }
+}
+
 /* ── cbm_run_py_lsp: single-file entry point ──────────────────── */
 
 void cbm_run_py_lsp(CBMArena *arena, CBMFileResult *result, const char *source, int source_len,
@@ -3718,6 +3767,7 @@ void cbm_run_py_lsp(CBMArena *arena, CBMFileResult *result, const char *source, 
     }
 
     py_lsp_process_file(&ctx, root);
+    py_export_instance_fields(arena, result, &reg);
 }
 
 /* ── Cross-file + batch ───────────────────────────────────────── */
@@ -3756,6 +3806,45 @@ static const char **py_split_pipe(CBMArena *arena, const char *text) {
     return out;
 }
 
+static void py_parse_field_defs(CBMArena *arena, CBMRegisteredType *rt,
+                                const CBMLSPDef *def) {
+    if (!def->field_defs || !def->field_defs[0])
+        return;
+    int count = 1;
+    for (const char *p = def->field_defs; *p; p++)
+        if (*p == '|')
+            count++;
+    const char **names =
+        (const char **)cbm_arena_alloc(arena, (size_t)(count + 1) * sizeof(*names));
+    const CBMType **types =
+        (const CBMType **)cbm_arena_alloc(arena, (size_t)(count + 1) * sizeof(*types));
+    char *buf = cbm_arena_strdup(arena, def->field_defs);
+    if (!names || !types || !buf)
+        return;
+
+    int used = 0;
+    char *part = buf;
+    while (part && *part && used < count) {
+        char *next = strchr(part, '|');
+        if (next)
+            *next++ = '\0';
+        char *colon = strchr(part, ':');
+        if (colon && colon != part && colon[1]) {
+            *colon = '\0';
+            names[used] = part;
+            types[used] = py_parse_type_text_qn(arena, colon + 1, def->def_module_qn);
+            used++;
+        }
+        part = next;
+    }
+    names[used] = NULL;
+    types[used] = NULL;
+    if (used) {
+        rt->field_names = names;
+        rt->field_types = types;
+    }
+}
+
 /* Build a registry from CBMLSPDef[] supplied by the caller — covers both
  * the source file's own defs and cross-file referenced defs. */
 static void py_register_lsp_defs(CBMArena *arena, CBMArena *idx_arena, CBMTypeRegistry *reg,
@@ -3781,6 +3870,7 @@ static void py_register_lsp_defs(CBMArena *arena, CBMArena *idx_arena, CBMTypeRe
             if (d->method_names_str && d->method_names_str[0]) {
                 rt.method_names = py_split_pipe(arena, d->method_names_str);
             }
+            py_parse_field_defs(arena, &rt, d);
             cbm_registry_add_type(reg, rt);
         }
     }

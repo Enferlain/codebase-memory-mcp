@@ -260,6 +260,7 @@ static int pxc_build_lsp_def(CBMArena *arena, const CBMDefinition *src, const ch
      * piece, which is what's already stored. */
     dst->return_types = src->return_type;
     dst->embedded_types = pxc_join_pipe(arena, src->base_classes);
+    dst->field_defs = src->field_defs;
     dst->lang = lang;
     return 0;
 }

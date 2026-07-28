@@ -523,6 +523,53 @@ TEST(store_bfs_inbound) {
     PASS();
 }
 
+TEST(store_bfs_composes_calls_with_reverse_override) {
+    cbm_store_t *s = cbm_store_open_memory();
+    cbm_store_upsert_project(s, "test", "/tmp/test");
+    cbm_node_t caller = {
+        .project = "test", .label = "Function", .name = "run", .qualified_name = "test.run"};
+    cbm_node_t contract = {.project = "test",
+                           .label = "Method",
+                           .name = "process",
+                           .qualified_name = "test.Contract.process"};
+    cbm_node_t impl = {.project = "test",
+                       .label = "Method",
+                       .name = "process",
+                       .qualified_name = "test.Impl.process"};
+    int64_t caller_id = cbm_store_upsert_node(s, &caller);
+    int64_t contract_id = cbm_store_upsert_node(s, &contract);
+    int64_t impl_id = cbm_store_upsert_node(s, &impl);
+    cbm_edge_t calls = {
+        .project = "test", .source_id = caller_id, .target_id = contract_id, .type = "CALLS"};
+    cbm_edge_t override = {
+        .project = "test", .source_id = impl_id, .target_id = contract_id, .type = "OVERRIDE"};
+    cbm_store_insert_edge(s, &calls);
+    cbm_store_insert_edge(s, &override);
+
+    const char *types[] = {"CALLS", "OVERRIDE"};
+    cbm_traverse_result_t out = {0};
+    ASSERT_EQ(cbm_store_bfs(s, caller_id, "outbound_override_bidir", types, 2, 2, 100, &out),
+              CBM_STORE_OK);
+    bool found_impl = false;
+    for (int i = 0; i < out.visited_count; i++)
+        if (out.visited[i].node.id == impl_id && out.visited[i].hop == 2)
+            found_impl = true;
+    ASSERT_TRUE(found_impl);
+    cbm_store_traverse_free(&out);
+
+    cbm_traverse_result_t in = {0};
+    ASSERT_EQ(cbm_store_bfs(s, impl_id, "inbound_override_bidir", types, 2, 2, 100, &in),
+              CBM_STORE_OK);
+    bool found_caller = false;
+    for (int i = 0; i < in.visited_count; i++)
+        if (in.visited[i].node.id == caller_id && in.visited[i].hop == 2)
+            found_caller = true;
+    ASSERT_TRUE(found_caller);
+    cbm_store_traverse_free(&in);
+    cbm_store_close(s);
+    PASS();
+}
+
 /* ── Transaction ────────────────────────────────────────────────── */
 
 TEST(store_transaction_commit) {
@@ -1497,6 +1544,7 @@ SUITE(store_search) {
     RUN_TEST(store_search_case_insensitive);
     RUN_TEST(store_bfs_outbound);
     RUN_TEST(store_bfs_inbound);
+    RUN_TEST(store_bfs_composes_calls_with_reverse_override);
     RUN_TEST(store_bfs_cross_service);
     RUN_TEST(store_bfs_depth_chain);
     RUN_TEST(store_transaction_commit);

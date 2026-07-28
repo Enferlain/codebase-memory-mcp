@@ -501,6 +501,10 @@ static const tool_def_t TOOLS[] = {
      "\"},\"include_tests\":{\"type\":\"boolean\",\"default\":false,"
      "\"description\":\"Include test files in results. When false (default), test files are "
      "filtered out. When true, test nodes are included with a test column/marker.\"},"
+     "\"topology\":{\"type\":\"boolean\",\"default\":false,\"description\":\"Include every "
+     "traversed edge between returned nodes (source/target qualified names, relationship type, "
+     "confidence, and edge properties). This preserves alternate routes hidden by the compact "
+     "unique-node view.\"},"
      "\"format\":{\"type\":\"string\",\"enum\":[\"tree\",\"json\"],\"default\":\"tree\","
      "\"description\":\"Response encoding. tree (default): prefix-grouped text rows. "
      "json: the SAME tree model as structured JSON (groups + column-ordered row arrays).\"}},"
@@ -5630,6 +5634,80 @@ static void bfs_to_toon_table(cbm_sb_t *sb, const char *key, cbm_traverse_result
     }
 }
 
+static const cbm_node_t *trace_node_by_id(const cbm_traverse_result_t *tr, int64_t id) {
+    if (tr->root.id == id)
+        return &tr->root;
+    for (int i = 0; i < tr->visited_count; i++)
+        if (tr->visited[i].node.id == id)
+            return &tr->visited[i].node;
+    return NULL;
+}
+
+static bool trace_edge_visible(const cbm_traverse_result_t *tr, const cbm_edge_info_t *edge,
+                               bool include_tests) {
+    if (include_tests)
+        return true;
+    const cbm_node_t *source = trace_node_by_id(tr, edge->source_id);
+    const cbm_node_t *target = trace_node_by_id(tr, edge->target_id);
+    return (!source || !is_test_file(source->file_path)) &&
+           (!target || !is_test_file(target->file_path));
+}
+
+static yyjson_mut_val *bfs_topology_json(yyjson_mut_doc *doc, cbm_traverse_result_t *tr,
+                                         bool include_tests) {
+    yyjson_mut_val *edges = yyjson_mut_arr(doc);
+    for (int i = 0; i < tr->edge_count; i++) {
+        cbm_edge_info_t *edge = &tr->edges[i];
+        if (!trace_edge_visible(tr, edge, include_tests))
+            continue;
+        const cbm_node_t *source = trace_node_by_id(tr, edge->source_id);
+        const cbm_node_t *target = trace_node_by_id(tr, edge->target_id);
+        yyjson_mut_val *item = yyjson_mut_obj(doc);
+        yyjson_mut_obj_add_strcpy(doc, item, "source",
+                                 source && source->qualified_name ? source->qualified_name
+                                                                  : edge->from_name);
+        yyjson_mut_obj_add_strcpy(doc, item, "target",
+                                 target && target->qualified_name ? target->qualified_name
+                                                                  : edge->to_name);
+        yyjson_mut_obj_add_strcpy(doc, item, "type", edge->type ? edge->type : "");
+        yyjson_mut_obj_add_real(doc, item, "confidence", edge->confidence);
+        if (edge->properties_json && strcmp(edge->properties_json, "{}") != 0) {
+            yyjson_mut_val *props = yyjson_mut_rawcpy(doc, edge->properties_json);
+            if (props)
+                yyjson_mut_obj_add_val(doc, item, "properties", props);
+        }
+        yyjson_mut_arr_add_val(edges, item);
+    }
+    return edges;
+}
+
+static void bfs_topology_table(cbm_sb_t *sb, const char *key, cbm_traverse_result_t *tr,
+                               bool include_tests) {
+    int visible = 0;
+    for (int i = 0; i < tr->edge_count; i++)
+        if (trace_edge_visible(tr, &tr->edges[i], include_tests))
+            visible++;
+    const char *cols[] = {"source", "target", "type", "properties"};
+    cbm_tree_table_header(sb, key, visible, cols, 4);
+    for (int i = 0; i < tr->edge_count; i++) {
+        cbm_edge_info_t *edge = &tr->edges[i];
+        if (!trace_edge_visible(tr, edge, include_tests))
+            continue;
+        const cbm_node_t *source = trace_node_by_id(tr, edge->source_id);
+        const cbm_node_t *target = trace_node_by_id(tr, edge->target_id);
+        cbm_tree_row_begin(sb);
+        cbm_tree_cell_str(sb, source && source->qualified_name ? source->qualified_name
+                                                               : edge->from_name,
+                          true);
+        cbm_tree_cell_str(sb, target && target->qualified_name ? target->qualified_name
+                                                               : edge->to_name,
+                          false);
+        cbm_tree_cell_str(sb, edge->type ? edge->type : "", false);
+        cbm_tree_cell_str(sb, edge->properties_json ? edge->properties_json : "{}", false);
+        cbm_tree_row_end(sb);
+    }
+}
+
 static char *snippet_suggestions(const char *input, cbm_node_t *nodes, int count);
 
 /* Rank a candidate for name resolution. The label tier (callable > class-like >
@@ -5749,6 +5827,10 @@ static void bfs_union_same_name(cbm_store_t *store, const cbm_node_t *nodes, int
         cbm_traverse_result_t tr = {0};
         cbm_store_bfs(store, nodes[k].id, direction, edge_types, edge_type_count, depth, limit,
                       &tr);
+        if (k == 0) {
+            out->root = tr.root;
+            memset(&tr.root, 0, sizeof(tr.root));
+        }
         for (int i = 0; i < tr.visited_count; i++) {
             bool dup = false;
             for (int j = 0; j < out->visited_count; j++) {
@@ -6041,6 +6123,14 @@ static int clamp_mcp_depth(int depth, const char *tool) {
     return depth;
 }
 
+static bool trace_has_edge_type(const char **edge_types, int edge_type_count,
+                                const char *wanted) {
+    for (int i = 0; i < edge_type_count; i++)
+        if (edge_types[i] && strcmp(edge_types[i], wanted) == 0)
+            return true;
+    return false;
+}
+
 static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
     char *func_name = cbm_mcp_get_string_arg(args, "function_name");
     char *project = get_project_arg(args);
@@ -6064,6 +6154,7 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
     }
     bool risk_labels = cbm_mcp_get_bool_arg(args, "risk_labels");
     bool include_tests = cbm_mcp_get_bool_arg(args, "include_tests");
+    bool topology = cbm_mcp_get_bool_arg(args, "topology");
 
     if (!func_name) {
         free(project);
@@ -6225,6 +6316,7 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
     const char *edge_types[MCP_COL_16];
     int edge_type_count = 0;
     yyjson_doc *et_doc_keep = resolve_trace_edge_types(args, mode, edge_types, &edge_type_count);
+    bool dispatch_composition = trace_has_edge_type(edge_types, edge_type_count, "OVERRIDE");
 
     /* Run BFS for each requested direction.
      * IMPORTANT: emitters borrow node-string pointers — traversal results
@@ -6245,12 +6337,14 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
      * and gives exact totals plus the rows every later page needs. The page
      * size (trace_limit) only bounds what THIS response emits. */
     if (do_outbound) {
-        bfs_union_same_name(store, nodes, node_count, "outbound", edge_types, edge_type_count,
-                            depth, MCP_BFS_LIMIT_MAX, &tr_out);
+        bfs_union_same_name(store, nodes, node_count,
+                            dispatch_composition ? "outbound_override_bidir" : "outbound",
+                            edge_types, edge_type_count, depth, MCP_BFS_LIMIT_MAX, &tr_out);
     }
     if (do_inbound) {
-        bfs_union_same_name(store, nodes, node_count, "inbound", edge_types, edge_type_count, depth,
-                            MCP_BFS_LIMIT_MAX, &tr_in);
+        bfs_union_same_name(store, nodes, node_count,
+                            dispatch_composition ? "inbound_override_bidir" : "inbound",
+                            edge_types, edge_type_count, depth, MCP_BFS_LIMIT_MAX, &tr_in);
     }
 
     /* Page windows in canonical (hop,id) order. Legs drain in a fixed order
@@ -6353,6 +6447,8 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
             } else {
                 bfs_to_tree_table(&sb, "callees", &view_out, include_tests);
             }
+            if (topology)
+                bfs_topology_table(&sb, "callee_edges", &tr_out, include_tests);
         }
         if (do_inbound) {
             cbm_tree_scalar_int(&sb, "callers_total", in_total);
@@ -6361,6 +6457,8 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
             } else {
                 bfs_to_tree_table(&sb, "callers", &view_in, include_tests);
             }
+            if (topology)
+                bfs_topology_table(&sb, "caller_edges", &tr_in, include_tests);
         }
         if (more_rows) {
             cbm_tree_scalar_bool(&sb, "truncated", true);
@@ -6392,12 +6490,18 @@ static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
             yyjson_mut_obj_add_val(
                 doc, root, "callees",
                 bfs_to_tree_json(doc, &view_out, risk_labels, include_tests, data_flow));
+            if (topology)
+                yyjson_mut_obj_add_val(doc, root, "callee_edges",
+                                       bfs_topology_json(doc, &tr_out, include_tests));
         }
         if (do_inbound) {
             yyjson_mut_obj_add_int(doc, root, "callers_total", in_total);
             yyjson_mut_obj_add_val(
                 doc, root, "callers",
                 bfs_to_tree_json(doc, &view_in, risk_labels, include_tests, data_flow));
+            if (topology)
+                yyjson_mut_obj_add_val(doc, root, "caller_edges",
+                                       bfs_topology_json(doc, &tr_in, include_tests));
         }
         if (more_rows) {
             yyjson_mut_obj_add_bool(doc, root, "truncated", true);
