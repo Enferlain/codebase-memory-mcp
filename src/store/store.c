@@ -5323,14 +5323,25 @@ static int store_bfs(cbm_store_t *s, int64_t start_id, const char *direction,
     char sql[CBM_SZ_4K];
     const char *join_cond;
     const char *next_id;
-    bool is_inbound = (direction != NULL) && (strcmp(direction, "inbound") == 0);
+    bool is_inbound = direction && strncmp(direction, "inbound", 7) == 0;
+    bool override_bidir = direction && strstr(direction, "_override_bidir") != NULL;
 
     if (is_inbound) {
-        join_cond = "e.target_id = bfs.node_id";
-        next_id = "e.source_id";
+        join_cond = override_bidir
+                        ? "(e.target_id = bfs.node_id OR "
+                          "(e.type = 'OVERRIDE' AND e.source_id = bfs.node_id))"
+                        : "e.target_id = bfs.node_id";
+        next_id = override_bidir
+                      ? "CASE WHEN e.target_id = bfs.node_id THEN e.source_id ELSE e.target_id END"
+                      : "e.source_id";
     } else {
-        join_cond = "e.source_id = bfs.node_id";
-        next_id = "e.target_id";
+        join_cond = override_bidir
+                        ? "(e.source_id = bfs.node_id OR "
+                          "(e.type = 'OVERRIDE' AND e.target_id = bfs.node_id))"
+                        : "e.source_id = bfs.node_id";
+        next_id = override_bidir
+                      ? "CASE WHEN e.source_id = bfs.node_id THEN e.target_id ELSE e.source_id END"
+                      : "e.target_id";
     }
 
     int cte_row_limit = 0;

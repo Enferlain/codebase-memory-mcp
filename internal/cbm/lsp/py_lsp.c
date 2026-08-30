@@ -502,6 +502,16 @@ static PyDirectImportKind py_import_match_result(PyImportSyntaxMatch *match,
     return match->kind;
 }
 
+static bool py_is_type_checking_if(PyLSPContext *ctx, TSNode stmt) {
+    if (!ctx || ts_node_is_null(stmt) || strcmp(ts_node_type(stmt), "if_statement") != 0)
+        return false;
+    TSNode condition = ts_node_child_by_field_name(stmt, "condition", 9);
+    char *text =
+        ts_node_is_null(condition) ? NULL : cbm_node_text(ctx->arena, condition, ctx->source);
+    return text && (strcmp(text, "TYPE_CHECKING") == 0 ||
+                    strcmp(text, "typing.TYPE_CHECKING") == 0);
+}
+
 static PyDirectImportKind py_import_kind_from_statement(PyLSPContext *ctx, TSNode stmt,
                                                         const char *local,
                                                         const char **qn_io) {
@@ -522,7 +532,14 @@ static PyDirectImportKind py_import_kind_from_ast(PyLSPContext *ctx, TSNode root
     PyImportSyntaxMatch match = {0};
     uint32_t root_count = ts_node_named_child_count(root);
     for (uint32_t i = 0; i < root_count; i++) {
-        py_import_match_statement(ctx, ts_node_named_child(root, i), local, qn, &match);
+        TSNode stmt = ts_node_named_child(root, i);
+        py_import_match_statement(ctx, stmt, local, qn, &match);
+        if (!py_is_type_checking_if(ctx, stmt))
+            continue;
+        TSNode body = ts_node_child_by_field_name(stmt, "consequence", 11);
+        uint32_t body_count = ts_node_named_child_count(body);
+        for (uint32_t j = 0; j < body_count; j++)
+            py_import_match_statement(ctx, ts_node_named_child(body, j), local, qn, &match);
     }
     return py_import_match_result(&match, qn_io);
 }
@@ -1038,6 +1055,24 @@ static void py_resolve_value_references_at(PyLSPContext *ctx, TSNode call) {
 
 /* ── helpers: registry-driven attribute lookup with depth cap ──── */
 
+static void py_find_unique_type_short_name(const CBMTypeRegistry *reg, const char *short_name,
+                                           const char **found_qn, bool *ambiguous) {
+    if (!reg || !short_name || !found_qn || !ambiguous || *ambiguous)
+        return;
+    for (int i = 0; i < reg->type_count; i++) {
+        const CBMRegisteredType *rt = &reg->types[i];
+        if (!rt->qualified_name || !rt->short_name || strcmp(rt->short_name, short_name) != 0)
+            continue;
+        if (!*found_qn) {
+            *found_qn = rt->qualified_name;
+        } else if (strcmp(*found_qn, rt->qualified_name) != 0) {
+            *ambiguous = true;
+            return;
+        }
+    }
+    py_find_unique_type_short_name(reg->fallback, short_name, found_qn, ambiguous);
+}
+
 static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, const char *type_qn,
                                                           const char *member_name, int depth) {
     if (!ctx || !type_qn || !member_name)
@@ -1050,6 +1085,18 @@ static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, con
         return f;
 
     const CBMRegisteredType *rt = cbm_registry_lookup_type(ctx->registry, type_qn);
+    if (!rt) {
+        /* A cross-file field annotation can retain its defining module even
+         * when the type was imported there. Recover only when the registry has
+         * one exact type with that short name; ambiguity must stay unresolved. */
+        const char *short_name = strrchr(type_qn, '.');
+        short_name = short_name ? short_name + 1 : type_qn;
+        const char *unique_qn = NULL;
+        bool ambiguous = false;
+        py_find_unique_type_short_name(ctx->registry, short_name, &unique_qn, &ambiguous);
+        if (!ambiguous && unique_qn && strcmp(unique_qn, type_qn) != 0)
+            return py_lookup_attribute_depth(ctx, unique_qn, member_name, depth + 1);
+    }
     if (rt) {
         if (rt->alias_of) {
             f = py_lookup_attribute_depth(ctx, rt->alias_of, member_name, depth + 1);
@@ -4716,6 +4763,21 @@ void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
                 else if (strcmp(dk, "class_definition") == 0)
                     py_bind_module_class(ctx, def);
             }
+        } else if (py_is_type_checking_if(ctx, c)) {
+            /* Annotation-only imports participate in static name resolution
+             * even though this guard is false at runtime. Replay only direct
+             * imports in the recognized guard; other conditional bindings
+             * still flow through the conservative invalidation below. */
+            TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
+            uint32_t body_count = ts_node_named_child_count(body);
+            for (uint32_t j = 0; j < body_count; j++) {
+                TSNode stmt = ts_node_named_child(body, j);
+                const char *kind = ts_node_type(stmt);
+                if (strcmp(kind, "import_statement") == 0 ||
+                    strcmp(kind, "import_from_statement") == 0) {
+                    py_replay_import_statement(ctx, stmt, consumed_imports);
+                }
+            }
         } else if (strcmp(ck, "expression_statement") == 0) {
             /* An expression statement is resolved for calls, not scanned as a
              * binder -- but an assignment expression anywhere inside it does
@@ -4911,6 +4973,55 @@ static bool py_register_def(CBMArena *arena, CBMTypeRegistry *reg, CBMDefinition
     return false;
 }
 
+static const char *py_exportable_field_type(const CBMType *type) {
+    if (!type)
+        return NULL;
+    switch (type->kind) {
+    case CBM_TYPE_NAMED:
+        return type->data.named.qualified_name;
+    case CBM_TYPE_BUILTIN:
+        return type->data.builtin.name;
+    case CBM_TYPE_TYPE_PARAM:
+        return type->data.type_param.name;
+    case CBM_TYPE_MODULE:
+        return type->data.module.module_qn;
+    default:
+        return NULL;
+    }
+}
+
+/* Persist instance-field types learned while walking one Python file so the
+ * cross-file resolver can type `trainer.strategies` in another file. */
+static void py_export_instance_fields(CBMArena *arena, CBMFileResult *result,
+                                      const CBMTypeRegistry *reg) {
+    enum { PY_FIELD_EXPORT_BUF = 4096 };
+    for (int d = 0; d < result->defs.count; d++) {
+        CBMDefinition *def = &result->defs.items[d];
+        if (!def->qualified_name || !def->label ||
+            (strcmp(def->label, "Class") != 0 && strcmp(def->label, "Type") != 0)) {
+            continue;
+        }
+        const CBMRegisteredType *rt = cbm_registry_lookup_type(reg, def->qualified_name);
+        if (!rt || !rt->field_names || !rt->field_types)
+            continue;
+
+        char buf[PY_FIELD_EXPORT_BUF];
+        size_t used = 0;
+        for (int i = 0; rt->field_names[i] && rt->field_types[i]; i++) {
+            const char *type_text = py_exportable_field_type(rt->field_types[i]);
+            if (!type_text || !type_text[0])
+                continue;
+            int n = snprintf(buf + used, sizeof(buf) - used, "%s%s:%s", used ? "|" : "",
+                             rt->field_names[i], type_text);
+            if (n < 0 || (size_t)n >= sizeof(buf) - used)
+                break;
+            used += (size_t)n;
+        }
+        if (used)
+            def->field_defs = cbm_arena_strdup(arena, buf);
+    }
+}
+
 /* ── cbm_run_py_lsp: single-file entry point ──────────────────── */
 
 void cbm_run_py_lsp(CBMArena *arena, CBMFileResult *result, const char *source, int source_len,
@@ -4955,6 +5066,7 @@ void cbm_run_py_lsp(CBMArena *arena, CBMFileResult *result, const char *source, 
     }
 
     py_lsp_process_file(&ctx, root);
+    py_export_instance_fields(arena, result, &reg);
 }
 
 /* ── Cross-file + batch ───────────────────────────────────────── */
@@ -4993,6 +5105,45 @@ static const char **py_split_pipe(CBMArena *arena, const char *text) {
     return out;
 }
 
+static void py_parse_field_defs(CBMArena *arena, CBMRegisteredType *rt,
+                                const CBMLSPDef *def) {
+    if (!def->field_defs || !def->field_defs[0])
+        return;
+    int count = 1;
+    for (const char *p = def->field_defs; *p; p++)
+        if (*p == '|')
+            count++;
+    const char **names =
+        (const char **)cbm_arena_alloc(arena, (size_t)(count + 1) * sizeof(*names));
+    const CBMType **types =
+        (const CBMType **)cbm_arena_alloc(arena, (size_t)(count + 1) * sizeof(*types));
+    char *buf = cbm_arena_strdup(arena, def->field_defs);
+    if (!names || !types || !buf)
+        return;
+
+    int used = 0;
+    char *part = buf;
+    while (part && *part && used < count) {
+        char *next = strchr(part, '|');
+        if (next)
+            *next++ = '\0';
+        char *colon = strchr(part, ':');
+        if (colon && colon != part && colon[1]) {
+            *colon = '\0';
+            names[used] = part;
+            types[used] = py_parse_type_text_qn(arena, colon + 1, def->def_module_qn);
+            used++;
+        }
+        part = next;
+    }
+    names[used] = NULL;
+    types[used] = NULL;
+    if (used) {
+        rt->field_names = names;
+        rt->field_types = types;
+    }
+}
+
 /* Build a registry from CBMLSPDef[] supplied by the caller — covers both
  * the source file's own defs and cross-file referenced defs. */
 static void py_register_lsp_defs(CBMArena *arena, CBMArena *idx_arena, CBMTypeRegistry *reg,
@@ -5018,6 +5169,7 @@ static void py_register_lsp_defs(CBMArena *arena, CBMArena *idx_arena, CBMTypeRe
             if (d->method_names_str && d->method_names_str[0]) {
                 rt.method_names = py_split_pipe(arena, d->method_names_str);
             }
+            py_parse_field_defs(arena, &rt, d);
             cbm_registry_add_type(reg, rt);
         }
     }

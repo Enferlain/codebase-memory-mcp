@@ -203,6 +203,7 @@ typedef struct {
     const char **return_types;          // NULL-terminated array (NULL if none)
     const char *route_path;   // HTTP route path from decorator (e.g., "/api/users") or NULL
     const char *route_method; // HTTP method from decorator (e.g., "POST") or NULL
+    const char *field_defs;   // "|"-separated "name:type" pairs discovered by language LSP
     int complexity;           // cyclomatic complexity
     int cognitive;            // cognitive complexity (nesting-weighted)
     int loop_count;           // number of loop constructs in the body

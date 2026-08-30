@@ -402,6 +402,7 @@ static int pxc_build_lsp_def(CBMArena *arena, const CBMDefinition *src, const ch
                               : pxc_join_pipe(arena, src->base_classes);
     dst->signature_param_types = src->signature_param_types;
     dst->signature_param_count = src->signature_param_count;
+    dst->field_defs = src->field_defs;
     dst->lang = lang;
     dst->decorators = src->decorators;
     if (lang == CBM_LANG_RUST) {

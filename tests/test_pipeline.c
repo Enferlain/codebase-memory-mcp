@@ -4933,6 +4933,62 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     PASS();
 }
 
+/* Full-pipeline coverage for the composite-contract shape used by strategy
+ * assemblers. The field type crosses two files, survives a local alias, and
+ * declares its method on an inherited facet. */
+TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_inherited_field_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "contracts.py",
+                    "from abc import ABC, abstractmethod\n"
+                    "\n"
+                    "class DiffusionTrainingStrategy(ABC):\n"
+                    "    @abstractmethod\n"
+                    "    def process_batch(self):\n"
+                    "        raise NotImplementedError\n"
+                    "\n"
+                    "class TrainingStrategy(DiffusionTrainingStrategy):\n"
+                    "    pass\n");
+    write_temp_file(tmp, "trainer.py",
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from contracts import TrainingStrategy\n"
+                    "\n"
+                    "class Trainer:\n"
+                    "    def __init__(self, strategies: TrainingStrategy):\n"
+                    "        self.strategies = strategies\n");
+    write_temp_file(tmp, "loop.py",
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from trainer import Trainer\n"
+                    "\n"
+                    "def run(trainer: Trainer):\n"
+                    "    strategies = trainer.strategies\n"
+                    "    return strategies.process_batch()\n");
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/inherited_field.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+    ASSERT_TRUE(cross_file_call_exists(s, project, "run", "process_batch"));
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    th_rmtree(tmp);
+    PASS();
+}
+
 /* Reproduce-first: pass_parallel's fused cross-LSP eligibility currently counts
  * only parser-backed calls/call references. A Python binary operator has no
  * parser CBMCall; its __add__ semantic record and carrier are created together
@@ -5599,6 +5655,76 @@ TEST(implements_no_match) {
     (void)read_id;
     (void)write_id;
 
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
+TEST(explicit_override_walks_empty_intermediate) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t contract = cbm_gbuf_upsert_node(gb, "Class", "Contract", "pkg.Contract",
+                                             "pkg/repro.py", 1, 4, "{}");
+    int64_t contract_method =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Contract.process", "pkg/repro.py", 2, 3,
+                             "{\"decorators\":[\"abstractmethod\"]}");
+    int64_t intermediate = cbm_gbuf_upsert_node(gb, "Class", "Intermediate", "pkg.Intermediate",
+                                                 "pkg/repro.py", 6, 7, "{}");
+    int64_t leaf =
+        cbm_gbuf_upsert_node(gb, "Class", "Leaf", "pkg.Leaf", "pkg/repro.py", 9, 12, "{}");
+    int64_t leaf_method =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Leaf.process", "pkg/repro.py", 10, 11,
+                             "{}");
+    cbm_gbuf_insert_edge(gb, contract, contract_method, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, intermediate, contract, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, intermediate, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, leaf_method, "DEFINES_METHOD", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
+                              .repo_path = "/tmp/test",
+                              .gbuf = gb,
+                              .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, leaf_method, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, contract_method);
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
+TEST(explicit_override_models_python_sibling_mixin) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t facet =
+        cbm_gbuf_upsert_node(gb, "Class", "Facet", "pkg.Facet", "pkg/repro.py", 1, 4, "{}");
+    int64_t impl = cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Facet.process",
+                                        "pkg/repro.py", 2, 3, "{}");
+    int64_t capability = cbm_gbuf_upsert_node(gb, "Class", "Capability", "pkg.Capability",
+                                              "pkg/repro.py", 6, 9, "{}");
+    int64_t abstract = cbm_gbuf_upsert_node(
+        gb, "Method", "process", "pkg.Capability.process", "pkg/repro.py", 7, 8,
+        "{\"decorators\":[\"abc.abstractmethod\"]}");
+    int64_t assembly = cbm_gbuf_upsert_node(gb, "Class", "Final", "pkg.Final", "pkg/repro.py", 11,
+                                             12, "{}");
+    cbm_gbuf_insert_edge(gb, facet, impl, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, capability, abstract, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, facet, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, capability, "INHERITS", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
+                              .repo_path = "/tmp/test",
+                              .gbuf = gb,
+                              .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, impl, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, abstract);
+    ASSERT_NOT_NULL(strstr(edges[0]->properties_json, "python_mro_sibling"));
     cbm_gbuf_free(gb);
     PASS();
 }
@@ -12807,6 +12933,7 @@ SUITE(pipeline) {
     RUN_TEST(pipeline_python_receiver_suppresses_weak_method_edge);
     RUN_TEST(pipeline_tsjs_receiver_parallel_keeps_service_edges);
     RUN_TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges);
+    RUN_TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method);
     RUN_TEST(pipeline_parallel_python_cross_only_dunder_gets_synthetic_carrier);
     RUN_TEST(pipeline_parallel_rust_cross_only_macro_hidden_gets_synthetic_carrier);
     RUN_TEST(pipeline_native_fetch_classified_as_http_calls);
@@ -12824,6 +12951,8 @@ SUITE(pipeline) {
     /* Implements pass (graph buffer based) */
     RUN_TEST(implements_creates_override);
     RUN_TEST(implements_no_match);
+    RUN_TEST(explicit_override_walks_empty_intermediate);
+    RUN_TEST(explicit_override_models_python_sibling_mixin);
     /* Usages pass (full pipeline integration) */
     RUN_TEST(usages_creates_edges);
     RUN_TEST(usages_no_duplicate_calls);

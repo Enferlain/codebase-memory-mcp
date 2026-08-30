@@ -601,8 +601,58 @@ const char *cbm_semantic_base_edge_type(const cbm_gbuf_node_t *base_node) {
                : "INHERITS";
 }
 
+static bool semantic_id_seen(const int64_t *ids, int count, int64_t id) {
+    for (int i = 0; i < count; i++)
+        if (ids[i] == id)
+            return true;
+    return false;
+}
+
+/* Find the nearest same-named method in each ancestor branch. Empty
+ * intermediate classes must not break explicit Python override discovery. */
+static int override_match_ancestor(cbm_pipeline_ctx_t *ctx, const cbm_gbuf_node_t *method,
+                                   const cbm_gbuf_node_t *base, int64_t *seen, int seen_count) {
+    if (!base || !method || !method->name || seen_count >= 128 ||
+        semantic_id_seen(seen, seen_count, base->id)) {
+        return 0;
+    }
+    seen[seen_count++] = base->id;
+
+    const cbm_gbuf_edge_t **base_dm = NULL;
+    int base_dm_count = 0;
+    cbm_gbuf_find_edges_by_source_type(ctx->gbuf, base->id, "DEFINES_METHOD", &base_dm,
+                                       &base_dm_count);
+    int created = 0;
+    bool matched_here = false;
+    for (int b = 0; b < base_dm_count; b++) {
+        const cbm_gbuf_node_t *bm = cbm_gbuf_find_by_id(ctx->gbuf, base_dm[b]->target_id);
+        if (bm && bm->name && method->id != bm->id && strcmp(method->name, bm->name) == 0) {
+            cbm_gbuf_insert_edge(ctx->gbuf, method->id, bm->id, "OVERRIDE",
+                                 "{\"dispatch\":\"explicit_ancestor\"}");
+            created++;
+            matched_here = true;
+        }
+    }
+    if (matched_here)
+        return created;
+
+    static const char *ancestor_edges[] = {"IMPLEMENTS", "INHERITS"};
+    for (size_t t = 0; t < sizeof(ancestor_edges) / sizeof(ancestor_edges[0]); t++) {
+        const cbm_gbuf_edge_t **parents = NULL;
+        int parent_count = 0;
+        cbm_gbuf_find_edges_by_source_type(ctx->gbuf, base->id, ancestor_edges[t], &parents,
+                                           &parent_count);
+        for (int p = 0; p < parent_count; p++) {
+            const cbm_gbuf_node_t *parent =
+                cbm_gbuf_find_by_id(ctx->gbuf, parents[p]->target_id);
+            created += override_match_ancestor(ctx, method, parent, seen, seen_count);
+        }
+    }
+    return created;
+}
+
 /* Create OVERRIDE edges from one class's methods to same-named methods of one
- * explicit base (interface or superclass). */
+ * explicit base (interface or superclass), walking through empty intermediates. */
 static int override_match_methods(cbm_pipeline_ctx_t *ctx, const cbm_gbuf_node_t *cls,
                                   const cbm_gbuf_node_t *base) {
     const cbm_gbuf_edge_t **cls_dm = NULL;
@@ -612,22 +662,110 @@ static int override_match_methods(cbm_pipeline_ctx_t *ctx, const cbm_gbuf_node_t
     if (cls_dm_count == 0) {
         return 0;
     }
-    const cbm_gbuf_edge_t **base_dm = NULL;
-    int base_dm_count = 0;
-    cbm_gbuf_find_edges_by_source_type(ctx->gbuf, base->id, "DEFINES_METHOD", &base_dm,
-                                       &base_dm_count);
     int created = 0;
     for (int c = 0; c < cls_dm_count; c++) {
         const cbm_gbuf_node_t *cm = cbm_gbuf_find_by_id(ctx->gbuf, cls_dm[c]->target_id);
         if (!cm || !cm->name) {
             continue;
         }
-        for (int b = 0; b < base_dm_count; b++) {
-            const cbm_gbuf_node_t *bm = cbm_gbuf_find_by_id(ctx->gbuf, base_dm[b]->target_id);
-            if (bm && bm->name && cm->id != bm->id && strcmp(cm->name, bm->name) == 0) {
-                cbm_gbuf_insert_edge(ctx->gbuf, cm->id, bm->id, "OVERRIDE", "{}");
-                created++;
-                break;
+        int64_t seen[128] = {0};
+        created += override_match_ancestor(ctx, cm, base, seen, 0);
+    }
+    return created;
+}
+
+static bool semantic_method_is_abstract(const cbm_gbuf_node_t *method) {
+    const char *props = method ? method->properties_json : NULL;
+    return props && (strstr(props, "\"is_abstract\":true") || strstr(props, "abstractmethod"));
+}
+
+typedef struct {
+    const cbm_gbuf_node_t *items[128];
+    int count;
+} semantic_method_set_t;
+
+static void collect_branch_methods(cbm_pipeline_ctx_t *ctx, const cbm_gbuf_node_t *cls,
+                                   semantic_method_set_t *out, int64_t *seen, int seen_count) {
+    if (!cls || out->count >= 128 || seen_count >= 128 ||
+        semantic_id_seen(seen, seen_count, cls->id)) {
+        return;
+    }
+    seen[seen_count++] = cls->id;
+    const cbm_gbuf_edge_t **methods = NULL;
+    int method_count = 0;
+    cbm_gbuf_find_edges_by_source_type(ctx->gbuf, cls->id, "DEFINES_METHOD", &methods,
+                                       &method_count);
+    for (int i = 0; i < method_count && out->count < 128; i++) {
+        const cbm_gbuf_node_t *method = cbm_gbuf_find_by_id(ctx->gbuf, methods[i]->target_id);
+        if (!method || !method->name)
+            continue;
+        bool shadowed = false;
+        for (int j = 0; j < out->count; j++)
+            if (strcmp(out->items[j]->name, method->name) == 0)
+                shadowed = true;
+        if (!shadowed)
+            out->items[out->count++] = method;
+    }
+    static const char *ancestor_edges[] = {"IMPLEMENTS", "INHERITS"};
+    for (size_t t = 0; t < sizeof(ancestor_edges) / sizeof(ancestor_edges[0]); t++) {
+        const cbm_gbuf_edge_t **parents = NULL;
+        int parent_count = 0;
+        cbm_gbuf_find_edges_by_source_type(ctx->gbuf, cls->id, ancestor_edges[t], &parents,
+                                           &parent_count);
+        for (int p = 0; p < parent_count; p++)
+            collect_branch_methods(ctx, cbm_gbuf_find_by_id(ctx->gbuf, parents[p]->target_id), out,
+                                   seen, seen_count);
+    }
+}
+
+/* Python can satisfy an abstract contract with a method supplied by an earlier
+ * sibling base in the final class's MRO. Model that dispatch at the assembly
+ * boundary so tracing can reach the implementation. */
+static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
+                                          const cbm_gbuf_node_t *assembly) {
+    if (!assembly->file_path || !fp_ends_with(assembly->file_path, ".py"))
+        return 0;
+    const cbm_gbuf_edge_t **bases = NULL;
+    int base_count = 0;
+    cbm_gbuf_find_edges_by_source_type(ctx->gbuf, assembly->id, "INHERITS", &bases, &base_count);
+    if (base_count < 2)
+        return 0;
+
+    int created = 0;
+    for (int left = 0; left < base_count; left++) {
+        semantic_method_set_t lhs = {0};
+        int64_t lhs_seen[128] = {0};
+        collect_branch_methods(ctx, cbm_gbuf_find_by_id(ctx->gbuf, bases[left]->target_id), &lhs,
+                               lhs_seen, 0);
+        for (int right = left + 1; right < base_count; right++) {
+            semantic_method_set_t rhs = {0};
+            int64_t rhs_seen[128] = {0};
+            collect_branch_methods(ctx, cbm_gbuf_find_by_id(ctx->gbuf, bases[right]->target_id),
+                                   &rhs, rhs_seen, 0);
+            for (int l = 0; l < lhs.count; l++) {
+                for (int r = 0; r < rhs.count; r++) {
+                    if (strcmp(lhs.items[l]->name, rhs.items[r]->name) != 0)
+                        continue;
+                    const cbm_gbuf_node_t *impl = NULL;
+                    const cbm_gbuf_node_t *contract = NULL;
+                    if (!semantic_method_is_abstract(lhs.items[l]) &&
+                        semantic_method_is_abstract(rhs.items[r])) {
+                        impl = lhs.items[l];
+                        contract = rhs.items[r];
+                    } else if (!semantic_method_is_abstract(rhs.items[r]) &&
+                               semantic_method_is_abstract(lhs.items[l])) {
+                        impl = rhs.items[r];
+                        contract = lhs.items[l];
+                    }
+                    if (impl && contract) {
+                        char props[CBM_SZ_512];
+                        snprintf(props, sizeof(props),
+                                 "{\"dispatch\":\"python_mro_sibling\",\"assembly\":\"%s\"}",
+                                 assembly->qualified_name ? assembly->qualified_name : "");
+                        cbm_gbuf_insert_edge(ctx->gbuf, impl->id, contract->id, "OVERRIDE", props);
+                        created++;
+                    }
+                }
             }
         }
     }
@@ -657,6 +795,21 @@ int cbm_pipeline_override_explicit(cbm_pipeline_ctx_t *ctx) {
             }
             created += override_match_methods(ctx, cls, base);
         }
+    }
+    const cbm_gbuf_edge_t **inherits = NULL;
+    int inherits_count = 0;
+    cbm_gbuf_find_edges_by_type(ctx->gbuf, "INHERITS", &inherits, &inherits_count);
+    int64_t seen_assemblies[1024] = {0};
+    int seen_count = 0;
+    for (int e = 0; e < inherits_count; e++) {
+        int64_t cls_id = inherits[e]->source_id;
+        if (semantic_id_seen(seen_assemblies, seen_count, cls_id))
+            continue;
+        if (seen_count < (int)(sizeof(seen_assemblies) / sizeof(seen_assemblies[0])))
+            seen_assemblies[seen_count++] = cls_id;
+        const cbm_gbuf_node_t *assembly = cbm_gbuf_find_by_id(ctx->gbuf, cls_id);
+        if (assembly)
+            created += override_python_sibling_mixins(ctx, assembly);
     }
     return created;
 }
