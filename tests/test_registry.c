@@ -301,8 +301,7 @@ TEST(resolve_qualified_disambiguates_same_name) {
     ASSERT_TRUE(!nomatch.strategy || strcmp(nomatch.strategy, "qualified_suffix") != 0);
 
     /* A bare call stays ambiguous (no qualifier → no disambiguation signal). */
-    cbm_resolution_t bare =
-        cbm_registry_resolve(r, "save", "proj.lib.App.Caller", NULL, NULL, 0);
+    cbm_resolution_t bare = cbm_registry_resolve(r, "save", "proj.lib.App.Caller", NULL, NULL, 0);
     ASSERT_TRUE(!bare.strategy || strcmp(bare.strategy, "qualified_suffix") != 0);
 
     cbm_registry_free(r);
@@ -788,26 +787,26 @@ TEST(cross_language_suffix_match_drops_py_vs_js) {
      * strategy that collapses them; unique_name is #1572 and must stay. */
     ASSERT_TRUE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "web/src/pages/Editor.js",
                                                          "suffix_match"));
-    ASSERT_TRUE(cbm_suppress_cross_language_suffix_match(CBM_LANG_JAVASCRIPT, "store.py",
-                                                         "suffix_match"));
-    ASSERT_TRUE(cbm_suppress_cross_language_suffix_match(CBM_LANG_BASH, "cli/main.py",
-                                                         "suffix_match"));
-    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "store.py",
-                                                          "suffix_match"));
-    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "web/src/pages/Editor.js",
-                                                          "unique_name"));
-    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "web/src/pages/Editor.js",
-                                                          "same_module"));
-    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "web/src/pages/Editor.js",
-                                                          "import_map"));
+    ASSERT_TRUE(
+        cbm_suppress_cross_language_suffix_match(CBM_LANG_JAVASCRIPT, "store.py", "suffix_match"));
+    ASSERT_TRUE(
+        cbm_suppress_cross_language_suffix_match(CBM_LANG_BASH, "cli/main.py", "suffix_match"));
+    ASSERT_FALSE(
+        cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, "store.py", "suffix_match"));
+    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(
+        CBM_LANG_PYTHON, "web/src/pages/Editor.js", "unique_name"));
+    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(
+        CBM_LANG_PYTHON, "web/src/pages/Editor.js", "same_module"));
+    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON,
+                                                          "web/src/pages/Editor.js", "import_map"));
     /* JS/TS/TSX are one family. */
     ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_JAVASCRIPT, "lib/util.ts",
                                                           "suffix_match"));
     ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_TYPESCRIPT, "ui/Panel.tsx",
                                                           "suffix_match"));
     ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_PYTHON, NULL, "suffix_match"));
-    ASSERT_FALSE(cbm_suppress_cross_language_suffix_match(CBM_LANG_COUNT, "store.py",
-                                                          "suffix_match"));
+    ASSERT_FALSE(
+        cbm_suppress_cross_language_suffix_match(CBM_LANG_COUNT, "store.py", "suffix_match"));
     PASS();
 }
 
@@ -915,12 +914,31 @@ TEST(weak_call_guards_share_one_drop_list) {
     for (int i = 0; strategies[i] != NULL; i++) {
         bool member = cbm_suppress_weak_member_match(true, true, strategies[i]);
         bool binding = cbm_suppress_weak_local_binding_call(true, true, strategies[i]);
-        if (member != binding) {
-            printf("  drop-list divergence on strategy \"%s\": member=%d binding=%d\n",
-                   strategies[i], member, binding);
+        bool test_target = cbm_suppress_weak_test_target(
+            true, "project.library.run", "project.tests.test_run.Target", strategies[i]);
+        if (member != binding || member != test_target) {
+            printf("  drop-list divergence on strategy \"%s\": member=%d binding=%d "
+                   "test_target=%d\n",
+                   strategies[i], member, binding, test_target);
         }
         ASSERT_EQ(member, binding);
+        ASSERT_EQ(member, test_target);
     }
+    PASS();
+}
+
+TEST(weak_test_target_suppress_is_namespace_and_confidence_bounded) {
+    const char *source = "project.library.profile.run";
+    const char *test_target = "project.tests.integration.test_profile.MockAccelerator";
+
+    ASSERT_TRUE(cbm_suppress_weak_test_target(true, source, test_target, "suffix_match"));
+    ASSERT_TRUE(cbm_suppress_weak_test_target(true, source, test_target, "unique_name"));
+    ASSERT_FALSE(cbm_suppress_weak_test_target(true, source, test_target, "import_map"));
+    ASSERT_FALSE(cbm_suppress_weak_test_target(true, "project.tests.unit.test_profile.run",
+                                               test_target, "suffix_match"));
+    ASSERT_FALSE(cbm_suppress_weak_test_target(
+        true, source, "project.library.mocking.MockAccelerator", "suffix_match"));
+    ASSERT_FALSE(cbm_suppress_weak_test_target(false, source, test_target, "suffix_match"));
     PASS();
 }
 
@@ -1021,4 +1039,5 @@ SUITE(registry) {
     RUN_TEST(local_binding_suppress_drops_weak_shadowed_bare_calls);
     RUN_TEST(local_binding_suppress_keeps_unshadowed_and_strong_strategies);
     RUN_TEST(weak_call_guards_share_one_drop_list);
+    RUN_TEST(weak_test_target_suppress_is_namespace_and_confidence_bounded);
 }

@@ -2485,10 +2485,15 @@ static void resolve_file_calls(resolve_ctx_t *rc, resolve_worker_state_t *ws, CB
         /* Bare-call local-binding suppression — see the note in pass_calls.c.
          * This gate MUST stay identical to the one there. */
         bool suppress_weak_local_binding = lang == CBM_LANG_PYTHON;
+        bool python_dotted_member =
+            lang == CBM_LANG_PYTHON && call->callee_name && strchr(call->callee_name, '.') != NULL;
         bool drop_plain_call =
-            cbm_suppress_weak_member_match(suppress_weak_member, call->is_method, res.strategy) ||
+            cbm_suppress_weak_member_match(suppress_weak_member,
+                                           call->is_method || python_dotted_member, res.strategy) ||
             cbm_suppress_weak_local_binding_call(suppress_weak_local_binding,
-                                                 call->callee_is_locally_bound, res.strategy);
+                                                 call->callee_is_locally_bound, res.strategy) ||
+            cbm_suppress_weak_test_target(lang == CBM_LANG_PYTHON, source_node->qualified_name,
+                                          res.qualified_name, res.strategy);
 
         /* Service-pattern HTTP/ASYNC client call (`requests.get(url)`): the
          * service signal lives in the callee_name. The registry can mis-resolve

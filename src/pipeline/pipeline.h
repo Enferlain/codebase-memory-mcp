@@ -292,6 +292,14 @@ bool cbm_suppress_weak_member_match(bool enabled, bool is_method, const char *st
 bool cbm_suppress_weak_local_binding_call(bool enabled, bool callee_is_locally_bound,
                                           const char *strategy);
 
+/* Drop a weak Python call from production code when its guessed target lives
+ * in an explicit tests namespace. Unlike the cross-language #1572 guard, this
+ * deliberately includes unique_name: an unimported tests-only definition is
+ * not evidence of a production dependency. Strong import/LSP matches and test
+ * callers remain valid. Pure; unit-tested in test_registry.c. */
+bool cbm_suppress_weak_test_target(bool enabled, const char *source_qn, const char *target_qn,
+                                   const char *strategy);
+
 /* #725: drop a suffix_match CALLS edge when the caller language and the
  * target file's language disagree. unique_name (candidates == 1) is #1572
  * and is left alone; same_module / import_map / lsp_* are kept. JS/TS/TSX

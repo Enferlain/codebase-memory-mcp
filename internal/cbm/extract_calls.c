@@ -2922,9 +2922,50 @@ static const char *python_parameter_name(CBMExtractCtx *ctx, TSNode param) {
     return NULL;
 }
 
-/* True when the callee of a BARE Python call `foo()` is bound as a parameter of
- * an enclosing function or lambda — the bare-call counterpart of
- * python_receiver_is_exempt above.
+static bool python_function_name_matches(CBMExtractCtx *ctx, TSNode function_node,
+                                         const char *name) {
+    TSNode name_node = ts_node_child_by_field_name(function_node, TS_FIELD("name"));
+    if (ts_node_is_null(name_node)) {
+        return false;
+    }
+    char *declared = cbm_node_text(ctx->arena, name_node, ctx->source);
+    return declared && strcmp(declared, name) == 0;
+}
+
+/* Search one function body for a nested def binding without entering another
+ * callable or class body. Explicit depth/node budgets keep this precision
+ * guard bounded; exhaustion fails open and preserves the candidate edge. */
+static bool python_scope_has_nested_function(CBMExtractCtx *ctx, TSNode node, const char *name,
+                                             int depth, int *remaining_nodes) {
+    enum { PY_MAX_LOCAL_SCAN_DEPTH = 64 };
+    if (depth > PY_MAX_LOCAL_SCAN_DEPTH || !remaining_nodes || *remaining_nodes <= 0) {
+        return false;
+    }
+    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
+        if (--(*remaining_nodes) < 0) {
+            return false;
+        }
+        TSNode child = ts_node_named_child(node, i);
+        const char *kind = ts_node_type(child);
+        if (strcmp(kind, "function_definition") == 0) {
+            if (python_function_name_matches(ctx, child, name)) {
+                return true;
+            }
+            continue;
+        }
+        if (strcmp(kind, "class_definition") == 0 || strcmp(kind, "lambda") == 0) {
+            continue;
+        }
+        if (python_scope_has_nested_function(ctx, child, name, depth + 1, remaining_nodes)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/* True when the callee of a BARE Python call `foo()` is bound as a parameter or
+ * nested function of an enclosing function/lambda — the bare-call counterpart
+ * of python_receiver_is_exempt above.
  *
  * A parameter binding shadows any module-level `foo` for the whole body, so
  * resolving such a call to a project Function/Method by short name alone
@@ -2938,20 +2979,21 @@ static const char *python_parameter_name(CBMExtractCtx *ctx, TSNode param) {
  * Enclosing scopes are walked to the file root so a closure over an outer
  * parameter counts (`def outer(run): def inner(): return run()`).
  *
- * LOCAL ASSIGNMENTS are deliberately NOT covered. They are flow- and
+ * Nested `def` declarations are also whole-function bindings and are checked
+ * with a bounded body scan. Other LOCAL ASSIGNMENTS are deliberately NOT
+ * covered. They are flow- and
  * binding-form-sensitive (`for`, `with ... as`, `except ... as`, `:=`,
  * unpacking, plus `global`/`nonlocal` overrides), so a partial body scan would
  * suppress the wrong edges invisibly — the same failure mode that rules out a
- * hardcoded name list. Parameters alone already cover the Callable-parameter
- * shape that motivated this guard. Cost is O(enclosing depth x params) per bare
- * call, never the corpus.
+ * hardcoded name list. Cost is bounded by the enclosing-depth and body-scan
+ * limits per bare call, never by the corpus.
  *
  * Known and accepted: `def inner(): global run; return run()` nested in a
- * function whose parameter is `run` is still flagged. Detecting it needs exactly
- * the body scan this helper avoids, and it costs one edge in a shape that
- * essentially does not occur. */
-static bool python_callee_is_bound_parameter(CBMExtractCtx *ctx, WalkState *state, TSNode call_node,
-                                             TSNode callee_ident) {
+ * function whose parameter or nested def is `run` is still flagged. Fully
+ * modeling global/nonlocal directives belongs to lexical binding analysis and
+ * is outside this conservative weak-edge guard. */
+static bool python_callee_is_locally_bound(CBMExtractCtx *ctx, WalkState *state, TSNode call_node,
+                                           TSNode callee_ident) {
     /* Ancestors are walked with the UNIFIED WALK'S OWN CURSOR, not ts_node_parent().
      *
      * ts_node_parent() is not O(1): it restarts at the tree root and descends to
@@ -3003,16 +3045,21 @@ static bool python_callee_is_bound_parameter(CBMExtractCtx *ctx, WalkState *stat
             continue;
         }
         TSNode params = ts_node_child_by_field_name(scope, TS_FIELD("parameters"));
-        if (ts_node_is_null(params)) {
-            continue;
-        }
-        uint32_t count = ts_node_named_child_count(params);
-        for (uint32_t i = 0; i < count; i++) {
-            const char *pname = python_parameter_name(ctx, ts_node_named_child(params, i));
-            if (pname && strcmp(pname, callee_name) == 0) {
-                bound = true;
-                break;
+        if (!ts_node_is_null(params)) {
+            uint32_t count = ts_node_named_child_count(params);
+            for (uint32_t i = 0; i < count; i++) {
+                const char *pname = python_parameter_name(ctx, ts_node_named_child(params, i));
+                if (pname && strcmp(pname, callee_name) == 0) {
+                    bound = true;
+                    break;
+                }
             }
+        }
+        if (!bound && strcmp(kind, "function_definition") == 0) {
+            TSNode body = ts_node_child_by_field_name(scope, TS_FIELD("body"));
+            int remaining_nodes = 4096;
+            bound = !ts_node_is_null(body) &&
+                    python_scope_has_nested_function(ctx, body, callee_name, 0, &remaining_nodes);
         }
     }
     ts_tree_cursor_delete(&up);
@@ -3655,7 +3702,7 @@ CBMInvocationDescriptor handle_calls(CBMExtractCtx *ctx, TSNode node, const CBML
                     call.is_method = !python_receiver_is_exempt(ctx, obj);
                 } else if (!ts_node_is_null(fn) && strcmp(ts_node_type(fn), "identifier") == 0) {
                     call.callee_is_locally_bound =
-                        python_callee_is_bound_parameter(ctx, state, node, fn);
+                        python_callee_is_locally_bound(ctx, state, node, fn);
                 }
             }
             // TS/JS/TSX receiver-aware guard (#592/#606 direction; same intent

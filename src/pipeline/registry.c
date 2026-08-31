@@ -501,6 +501,24 @@ bool cbm_suppress_weak_local_binding_call(bool enabled, bool callee_is_locally_b
     return weak_short_name_strategy(strategy);
 }
 
+/* Structural test namespace check. Broad spelling checks such as "Mock" or
+ * "test" also match legitimate production APIs and are unsafe for dropping
+ * graph edges. */
+static bool explicit_test_namespace(const char *qn) {
+    if (!qn || !qn[0]) {
+        return false;
+    }
+    return strncmp(qn, "tests.", 6) == 0 || strstr(qn, ".tests.") != NULL;
+}
+
+bool cbm_suppress_weak_test_target(bool enabled, const char *source_qn, const char *target_qn,
+                                   const char *strategy) {
+    if (!enabled || !weak_short_name_strategy(strategy)) {
+        return false;
+    }
+    return !explicit_test_namespace(source_qn) && explicit_test_namespace(target_qn);
+}
+
 static bool js_ts_family(CBMLanguage lang) {
     return lang == CBM_LANG_JAVASCRIPT || lang == CBM_LANG_TYPESCRIPT || lang == CBM_LANG_TSX ||
            lang == CBM_LANG_ARKTS;

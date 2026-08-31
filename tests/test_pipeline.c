@@ -1052,14 +1052,13 @@ static NamedEdgePropertyObservation observe_named_edge_callee_property(
     }
     observation.database_opened = true;
 
-    static const char sql[] =
-        "SELECT e.properties, json_valid(e.properties), "
-        "CASE WHEN json_valid(e.properties) "
-        "THEN json_extract(e.properties, '$.callee') END "
-        "FROM edges e "
-        "JOIN nodes src ON src.id=e.source_id AND src.project=e.project "
-        "JOIN nodes tgt ON tgt.id=e.target_id AND tgt.project=e.project "
-        "WHERE e.project=?1 AND e.type=?2 AND src.name=?3 AND tgt.name=?4;";
+    static const char sql[] = "SELECT e.properties, json_valid(e.properties), "
+                              "CASE WHEN json_valid(e.properties) "
+                              "THEN json_extract(e.properties, '$.callee') END "
+                              "FROM edges e "
+                              "JOIN nodes src ON src.id=e.source_id AND src.project=e.project "
+                              "JOIN nodes tgt ON tgt.id=e.target_id AND tgt.project=e.project "
+                              "WHERE e.project=?1 AND e.type=?2 AND src.name=?3 AND tgt.name=?4;";
     sqlite3_stmt *stmt = NULL;
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK ||
         sqlite3_bind_text(stmt, 1, project, -1, SQLITE_TRANSIENT) != SQLITE_OK ||
@@ -1747,13 +1746,13 @@ TEST(pipeline_call_reference_sequential_parallel_edge_set_parity) {
     long_reference_name[0] = 'l';
     long_reference_name[LONG_REFERENCE_NAME_LEN] = '\0';
     char long_reference_source[1024];
-    int long_reference_source_len = snprintf(
-        long_reference_source, sizeof(long_reference_source),
-        "package parity\n"
-        "func %s() {}\n"
-        "func longPropertiesReferenceAccept(callback func()) {}\n"
-        "func longPropertiesReferenceSite() { longPropertiesReferenceAccept(%s) }\n",
-        long_reference_name, long_reference_name);
+    int long_reference_source_len =
+        snprintf(long_reference_source, sizeof(long_reference_source),
+                 "package parity\n"
+                 "func %s() {}\n"
+                 "func longPropertiesReferenceAccept(callback func()) {}\n"
+                 "func longPropertiesReferenceSite() { longPropertiesReferenceAccept(%s) }\n",
+                 long_reference_name, long_reference_name);
     if (long_reference_source_len <= 0 ||
         (size_t)long_reference_source_len >= sizeof(long_reference_source)) {
         th_rmtree(tmp);
@@ -1941,18 +1940,18 @@ TEST(pipeline_call_reference_sequential_parallel_edge_set_parity) {
                 named_edge_count(sequential_store, sequential_project, "CALLS",
                                  shadow_controls[i].source_name, shadow_controls[i].target_name);
         }
-        sequential_long_reference = named_edge_count(
-            sequential_store, sequential_project, "CALL_REFERENCE", "longPropertiesReferenceSite",
-            long_reference_name);
-        sequential_long_usage = named_edge_count(sequential_store, sequential_project, "USAGE",
-                                                 "longPropertiesReferenceSite",
-                                                 long_reference_name);
-        sequential_long_calls = named_edge_count(sequential_store, sequential_project, "CALLS",
-                                                 "longPropertiesReferenceSite",
-                                                 long_reference_name);
+        sequential_long_reference =
+            named_edge_count(sequential_store, sequential_project, "CALL_REFERENCE",
+                             "longPropertiesReferenceSite", long_reference_name);
+        sequential_long_usage =
+            named_edge_count(sequential_store, sequential_project, "USAGE",
+                             "longPropertiesReferenceSite", long_reference_name);
+        sequential_long_calls =
+            named_edge_count(sequential_store, sequential_project, "CALLS",
+                             "longPropertiesReferenceSite", long_reference_name);
         sequential_long_property = observe_named_edge_callee_property(
-            sequential_db_path, sequential_project, "CALL_REFERENCE",
-            "longPropertiesReferenceSite", long_reference_name, long_reference_name);
+            sequential_db_path, sequential_project, "CALL_REFERENCE", "longPropertiesReferenceSite",
+            long_reference_name, long_reference_name);
         cbm_store_close(sequential_store);
     }
     cbm_pipeline_free(sequential);
@@ -1990,9 +1989,9 @@ TEST(pipeline_call_reference_sequential_parallel_edge_set_parity) {
                 named_edge_count(parallel_store, parallel_project, "CALLS",
                                  shadow_controls[i].source_name, shadow_controls[i].target_name);
         }
-        parallel_long_reference = named_edge_count(
-            parallel_store, parallel_project, "CALL_REFERENCE", "longPropertiesReferenceSite",
-            long_reference_name);
+        parallel_long_reference =
+            named_edge_count(parallel_store, parallel_project, "CALL_REFERENCE",
+                             "longPropertiesReferenceSite", long_reference_name);
         parallel_long_usage = named_edge_count(parallel_store, parallel_project, "USAGE",
                                                "longPropertiesReferenceSite", long_reference_name);
         parallel_long_calls = named_edge_count(parallel_store, parallel_project, "CALLS",
@@ -2472,8 +2471,8 @@ static void closure_probe_repo(const char *tmp) {
 }
 
 /* Fresh full reference build of the same tree into its own DB. */
-static void closure_fresh_full(const char *tmp, const char *db_path, int *out_nodes,
-                               int *out_edges, int *out_ref_edges, const char *project_hint) {
+static void closure_fresh_full(const char *tmp, const char *db_path, int *out_nodes, int *out_edges,
+                               int *out_ref_edges, const char *project_hint) {
     *out_nodes = -1;
     *out_edges = -2;
     *out_ref_edges = -3;
@@ -2490,9 +2489,9 @@ static void closure_fresh_full(const char *tmp, const char *db_path, int *out_no
         if (store) {
             *out_nodes = cbm_store_count_nodes(store, project);
             *out_edges = cbm_store_count_edges(store, project);
-            *out_ref_edges = named_edge_to_file_count(store, project, "CALL_REFERENCE",
-                                                      "closureProbeCaller", "closureProbeHelper",
-                                                      "lib.ts");
+            *out_ref_edges =
+                named_edge_to_file_count(store, project, "CALL_REFERENCE", "closureProbeCaller",
+                                         "closureProbeHelper", "lib.ts");
             cbm_store_close(store);
         }
     }
@@ -2577,8 +2576,8 @@ TEST(pipeline_closure_repair_body_edit_converges_with_fresh_full) {
     ASSERT_NOT_NULL(store);
     repaired_nodes = cbm_store_count_nodes(store, project);
     repaired_edges = cbm_store_count_edges(store, project);
-    repaired_refs = named_edge_to_file_count(store, project, "CALL_REFERENCE",
-                                             "closureProbeCaller", "closureProbeHelper", "lib.ts");
+    repaired_refs = named_edge_to_file_count(store, project, "CALL_REFERENCE", "closureProbeCaller",
+                                             "closureProbeHelper", "lib.ts");
     cbm_store_close(store);
 
     char full_db[512];
@@ -2634,8 +2633,8 @@ TEST(pipeline_closure_repair_removed_def_drops_dependent_edge) {
     int repaired_refs = -1;
     cbm_store_t *store = cbm_store_open_path(db);
     ASSERT_NOT_NULL(store);
-    repaired_refs = named_edge_to_file_count(store, project, "CALL_REFERENCE",
-                                             "closureProbeCaller", "closureProbeHelper", "lib.ts");
+    repaired_refs = named_edge_to_file_count(store, project, "CALL_REFERENCE", "closureProbeCaller",
+                                             "closureProbeHelper", "lib.ts");
     int repaired_nodes = cbm_store_count_nodes(store, project);
     int repaired_edges = cbm_store_count_edges(store, project);
     cbm_store_close(store);
@@ -2878,8 +2877,7 @@ TEST(pipeline_incremental_tsconfig_alias_change_matches_fresh_full) {
      * target_a.ts to target_b.ts. Since alias-config governance landed this
      * runs as a closure repair, and the convergence assertions below now
      * prove that route rather than being satisfied by a full rebuild. */
-    ASSERT_EQ(cbm_pipeline_incremental_test_last_route(),
-              CBM_INCREMENTAL_ROUTE_CLOSURE_REPAIR);
+    ASSERT_EQ(cbm_pipeline_incremental_test_last_route(), CBM_INCREMENTAL_ROUTE_CLOSURE_REPAIR);
     const char *incremental_project = cbm_pipeline_project_name(incremental);
     cbm_store_t *incremental_store = cbm_store_open_path(incremental_db);
     ASSERT_NOT_NULL(incremental_store);
@@ -3067,8 +3065,8 @@ TEST(pipeline_publication_never_uses_a_predictable_staging_path) {
     static const char canary[] = "canary-must-survive\n";
     char canary_path[PREDICTABLE_CANARIES][640];
     for (int i = 0; i < PREDICTABLE_CANARIES; i++) {
-        snprintf(canary_path[i], sizeof(canary_path[i]), "%s.stage.%ld.%d", db_path,
-                 (long)getpid(), i + 1);
+        snprintf(canary_path[i], sizeof(canary_path[i]), "%s.stage.%ld.%d", db_path, (long)getpid(),
+                 i + 1);
         ASSERT_EQ(th_write_file(canary_path[i], canary), 0);
     }
 
@@ -4643,16 +4641,41 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
     write_temp_file(tmp, "worker.py",
                     "class Worker:\n"
                     "    def backward(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class BitWriter:\n"
+                    "    def write(self, fd, payload):\n"
+                    "        return len(payload)\n"
+                    "\n"
+                    "class WorkerProcessor:\n"
+                    "    def process_batch(self):\n"
                     "        return 1\n");
     write_temp_file(tmp, "pkg/__init__.py", "from .helper import compute\n");
     write_temp_file(tmp, "pkg/helper.py",
                     "def compute(value):\n"
                     "    return value * 2\n");
+    write_temp_file(tmp, "tests/__init__.py", "");
+    write_temp_file(tmp, "tests/test_targets.py",
+                    "class MockAccelerator:\n"
+                    "    pass\n");
     write_temp_file(tmp, "caller.py",
+                    "import os\n"
                     "from pkg import helper\n"
+                    "from tests.test_targets import MockAccelerator as ImportedMockAccelerator\n"
                     "\n"
                     "def external_call(accelerator):\n"
                     "    return accelerator.backward()\n"
+                    "\n"
+                    "def standard_library_call(payload):\n"
+                    "    return os.write(2, payload)\n"
+                    "\n"
+                    "def local_constructor():\n"
+                    "    class MockAccelerator:\n"
+                    "        pass\n"
+                    "    return MockAccelerator()\n"
+                    "\n"
+                    "def imported_test_constructor():\n"
+                    "    return ImportedMockAccelerator()\n"
                     "\n"
                     "def imported_call():\n"
                     "    return helper.compute(42)\n"
@@ -4661,7 +4684,12 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
                     "    return 1\n"
                     "\n"
                     "def bare_call():\n"
-                    "    return local_helper()\n");
+                    "    return local_helper()\n"
+                    "\n"
+                    "def nested_call():\n"
+                    "    def process_batch():\n"
+                    "        return 1\n"
+                    "    return process_batch()\n");
 
     char db_path[512];
     snprintf(db_path, sizeof(db_path), "%s/python_recv.db", tmp);
@@ -4675,6 +4703,16 @@ TEST(pipeline_python_receiver_suppresses_weak_method_edge) {
 
     /* NEGATIVE: `accelerator` is a parameter — Worker.backward must not bind. */
     ASSERT_FALSE(cross_file_call_exists(s, project, "external_call", "backward"));
+    /* Some Python module attributes are extracted as dotted non-method calls.
+     * The spelling still supplies a receiver: os.write must not bind a project
+     * method named write through unique_name. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "standard_library_call", "write"));
+    /* A local class not represented as a graph node must not fall through to
+     * an unrelated same-named class in tests. Explicit imports from tests stay
+     * valid because import_map is a strong strategy. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "local_constructor", "MockAccelerator"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "nested_call", "process_batch"));
+    ASSERT_TRUE(cross_file_call_exists(s, project, "imported_test_constructor", "MockAccelerator"));
     /* POSITIVE: import-bound receiver and bare local call both survive. */
     ASSERT_TRUE(cross_file_call_exists(s, project, "imported_call", "compute"));
     ASSERT_TRUE(cross_file_call_exists(s, project, "bare_call", "local_helper"));
@@ -4928,22 +4966,51 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
                     "\n"
                     "class OtherScheduler:\n"
                     "    def step(self):\n"
-                    "        return 1\n");
+                    "        return 1\n"
+                    "\n"
+                    "class UnrelatedProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n"
+                    "\n"
+                    "class OtherProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n");
     write_temp_file(tmp, "pkg/__init__.py", "from .helper import compute\n");
     write_temp_file(tmp, "pkg/helper.py",
                     "def compute(value):\n"
                     "    return value * 2\n");
+    write_temp_file(tmp, "tests/__init__.py", "");
+    write_temp_file(tmp, "tests/test_targets.py",
+                    "class BitWriter:\n"
+                    "    def write(self, fd, payload):\n"
+                    "        return len(payload)\n"
+                    "\n"
+                    "class TestOnlyAccelerator:\n"
+                    "    pass\n");
     write_temp_file(tmp, "caller.py",
+                    "import os\n"
                     "from pkg import helper\n"
                     "\n"
                     "def local_helper():\n"
                     "    return 1\n"
                     "\n"
+                    "def standard_library_call(payload):\n"
+                    "    return os.write(2, payload)\n"
+                    "\n"
+                    "def local_constructor():\n"
+                    "    class TestOnlyAccelerator:\n"
+                    "        pass\n"
+                    "    return TestOnlyAccelerator()\n"
+                    "\n"
                     "def train(accelerator, trainer):\n"
+                    "    def process_batch(is_last):\n"
+                    "        return is_last\n"
+                    "\n"
                     "    accelerator.print('hello')\n"
                     "    accelerator.backward(1)\n"
                     "    trainer.lr_scheduler.step()\n"
                     "    helper.compute(42)\n"
+                    "    process_batch(True)\n"
                     "    return local_helper()\n");
     for (int i = 0; i < 52; i++) {
         char name[64];
@@ -4971,6 +5038,9 @@ TEST(pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "print"));
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "backward"));
     ASSERT_FALSE(cross_file_call_exists(s, project, "train", "step"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "process_batch"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "standard_library_call", "write"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "local_constructor", "TestOnlyAccelerator"));
     /* POSITIVE: import-bound and bare local calls survive the parallel path too. */
     ASSERT_TRUE(cross_file_call_exists(s, project, "train", "compute"));
     ASSERT_TRUE(cross_file_call_exists(s, project, "train", "local_helper"));
@@ -5000,14 +5070,30 @@ TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method) {
     write_temp_file(tmp, "contracts.py",
                     "from abc import ABC, abstractmethod\n"
                     "\n"
+                    "class ModelLoadingStrategy: pass\n"
+                    "class TokenizationStrategy: pass\n"
+                    "class TextEncodingStrategy: pass\n"
+                    "class ConditioningStrategy: pass\n"
+                    "class CachingStrategy: pass\n"
+                    "class SampleGenerationStrategy: pass\n"
+                    "class CheckpointingStrategy: pass\n"
+                    "class ValidationStrategy: pass\n"
                     "class DiffusionTrainingStrategy(ABC):\n"
                     "    @abstractmethod\n"
                     "    def process_batch(self):\n"
                     "        raise NotImplementedError\n"
                     "\n"
-                    "class TrainingStrategy(DiffusionTrainingStrategy):\n"
+                    "class DenoiserCallingStrategy: pass\n"
+                    "class ModelPreparationStrategy: pass\n"
+                    "\n"
+                    "class TrainingStrategy(ModelLoadingStrategy, TokenizationStrategy, "
+                    "TextEncodingStrategy, ConditioningStrategy, CachingStrategy, "
+                    "SampleGenerationStrategy, CheckpointingStrategy, ValidationStrategy, "
+                    "DiffusionTrainingStrategy, DenoiserCallingStrategy, "
+                    "ModelPreparationStrategy):\n"
                     "    pass\n");
     write_temp_file(tmp, "trainer.py",
+                    "from __future__ import annotations\n"
                     "from typing import TYPE_CHECKING\n"
                     "\n"
                     "if TYPE_CHECKING:\n"
@@ -5017,6 +5103,7 @@ TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method) {
                     "    def __init__(self, strategies: TrainingStrategy):\n"
                     "        self.strategies = strategies\n");
     write_temp_file(tmp, "loop.py",
+                    "from __future__ import annotations\n"
                     "from typing import TYPE_CHECKING\n"
                     "\n"
                     "if TYPE_CHECKING:\n"
@@ -5024,7 +5111,18 @@ TEST(pipeline_python_crossfile_field_resolves_inherited_contract_method) {
                     "\n"
                     "def run(trainer: Trainer):\n"
                     "    strategies = trainer.strategies\n"
-                    "    return strategies.process_batch()\n");
+                    "    for _ in [0]:\n"
+                    "        return strategies.process_batch()\n");
+    write_temp_file(tmp, "duplicate.py", "class TrainingStrategy:\n    pass\n");
+
+    /* Force the fused parallel pipeline. The small three-file form exercises
+     * only the sequential cross-file pass and can hide surface-transfer
+     * regressions that occur in production-sized repositories. */
+    for (int i = 0; i < 55; i++) {
+        char rel[64];
+        snprintf(rel, sizeof(rel), "filler_%02d.py", i);
+        write_temp_file(tmp, rel, "VALUE = 1\n");
+    }
 
     char db_path[512];
     snprintf(db_path, sizeof(db_path), "%s/inherited_field.db", tmp);
@@ -5788,28 +5886,25 @@ TEST(implements_no_match) {
 TEST(explicit_override_walks_empty_intermediate) {
     cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
     ASSERT_NOT_NULL(gb);
-    int64_t contract = cbm_gbuf_upsert_node(gb, "Class", "Contract", "pkg.Contract",
-                                             "pkg/repro.py", 1, 4, "{}");
+    int64_t contract =
+        cbm_gbuf_upsert_node(gb, "Class", "Contract", "pkg.Contract", "pkg/repro.py", 1, 4, "{}");
     int64_t contract_method =
         cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Contract.process", "pkg/repro.py", 2, 3,
                              "{\"decorators\":[\"abstractmethod\"]}");
     int64_t intermediate = cbm_gbuf_upsert_node(gb, "Class", "Intermediate", "pkg.Intermediate",
-                                                 "pkg/repro.py", 6, 7, "{}");
+                                                "pkg/repro.py", 6, 7, "{}");
     int64_t leaf =
         cbm_gbuf_upsert_node(gb, "Class", "Leaf", "pkg.Leaf", "pkg/repro.py", 9, 12, "{}");
-    int64_t leaf_method =
-        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Leaf.process", "pkg/repro.py", 10, 11,
-                             "{}");
+    int64_t leaf_method = cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Leaf.process",
+                                               "pkg/repro.py", 10, 11, "{}");
     cbm_gbuf_insert_edge(gb, contract, contract_method, "DEFINES_METHOD", "{}");
     cbm_gbuf_insert_edge(gb, intermediate, contract, "INHERITS", "{}");
     cbm_gbuf_insert_edge(gb, leaf, intermediate, "INHERITS", "{}");
     cbm_gbuf_insert_edge(gb, leaf, leaf_method, "DEFINES_METHOD", "{}");
 
     atomic_int cancelled = 0;
-    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
-                              .repo_path = "/tmp/test",
-                              .gbuf = gb,
-                              .cancelled = &cancelled};
+    cbm_pipeline_ctx_t ctx = {
+        .project_name = "test-proj", .repo_path = "/tmp/test", .gbuf = gb, .cancelled = &cancelled};
     ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
     const cbm_gbuf_edge_t **edges = NULL;
     int edge_count = 0;
@@ -5829,21 +5924,19 @@ TEST(explicit_override_models_python_sibling_mixin) {
                                         "pkg/repro.py", 2, 3, "{}");
     int64_t capability = cbm_gbuf_upsert_node(gb, "Class", "Capability", "pkg.Capability",
                                               "pkg/repro.py", 6, 9, "{}");
-    int64_t abstract = cbm_gbuf_upsert_node(
-        gb, "Method", "process", "pkg.Capability.process", "pkg/repro.py", 7, 8,
-        "{\"decorators\":[\"abc.abstractmethod\"]}");
-    int64_t assembly = cbm_gbuf_upsert_node(gb, "Class", "Final", "pkg.Final", "pkg/repro.py", 11,
-                                             12, "{}");
+    int64_t abstract =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Capability.process", "pkg/repro.py", 7,
+                             8, "{\"decorators\":[\"abc.abstractmethod\"]}");
+    int64_t assembly =
+        cbm_gbuf_upsert_node(gb, "Class", "Final", "pkg.Final", "pkg/repro.py", 11, 12, "{}");
     cbm_gbuf_insert_edge(gb, facet, impl, "DEFINES_METHOD", "{}");
     cbm_gbuf_insert_edge(gb, capability, abstract, "DEFINES_METHOD", "{}");
     cbm_gbuf_insert_edge(gb, assembly, facet, "INHERITS", "{}");
     cbm_gbuf_insert_edge(gb, assembly, capability, "INHERITS", "{}");
 
     atomic_int cancelled = 0;
-    cbm_pipeline_ctx_t ctx = {.project_name = "test-proj",
-                              .repo_path = "/tmp/test",
-                              .gbuf = gb,
-                              .cancelled = &cancelled};
+    cbm_pipeline_ctx_t ctx = {
+        .project_name = "test-proj", .repo_path = "/tmp/test", .gbuf = gb, .cancelled = &cancelled};
     ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
     const cbm_gbuf_edge_t **edges = NULL;
     int edge_count = 0;
@@ -6501,7 +6594,7 @@ TEST(pipeline_swift_cross_package_import) {
     cbm_edge_t *edges = NULL;
     int ec = 0;
     ASSERT_EQ(cbm_store_find_edges_by_source_type(s, importer.id, "IMPORTS", &edges, &ec),
-             CBM_STORE_OK);
+              CBM_STORE_OK);
 
     bool found_exact_edge = false;
     for (int i = 0; i < ec; i++) {
@@ -6579,19 +6672,18 @@ TEST(pipeline_python_cross_module_call) {
  * unique_name (candidates==1) is #1572 and is not this claim. */
 TEST(pipeline_cross_language_same_name_does_not_share_calls_issue725) {
     const char *files[] = {"store.py", "app.py", "web/src/pages/Editor.js"};
-    const char *contents[] = {
-        "class Store:\n"
-        "    def commit(self):\n"
-        "        return True\n",
+    const char *contents[] = {"class Store:\n"
+                              "    def commit(self):\n"
+                              "        return True\n",
 
-        "from store import Store\n"
-        "\n"
-        "def save():\n"
-        "    return Store().commit()\n",
+                              "from store import Store\n"
+                              "\n"
+                              "def save():\n"
+                              "    return Store().commit()\n",
 
-        "export function commit() {\n"
-        "  return 1;\n"
-        "}\n"};
+                              "export function commit() {\n"
+                              "  return 1;\n"
+                              "}\n"};
 
     if (setup_lang_repo(files, contents, 3) != 0)
         FAIL("tmpdir");
@@ -9938,17 +10030,16 @@ static const char *pkg_entries_entry_for(const cbm_pkg_entries_t *e, const char 
  * above for the full end-to-end proof. */
 
 TEST(pkgmap_swift_targets_registers_module) {
-    static const char src[] =
-        "// swift-tools-version:5.9\n"
-        "import PackageDescription\n"
-        "let package = Package(\n"
-        "    name: \"Core\",\n"
-        "    targets: [.target(name: \"Core\", dependencies: [])]\n"
-        ")\n";
+    static const char src[] = "// swift-tools-version:5.9\n"
+                              "import PackageDescription\n"
+                              "let package = Package(\n"
+                              "    name: \"Core\",\n"
+                              "    targets: [.target(name: \"Core\", dependencies: [])]\n"
+                              ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src, (int)strlen(src),
+                                   &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "Core"));
     ASSERT_STR_EQ(pkg_entries_entry_for(&entries, "Core"), "Core/Sources/Core");
@@ -9969,8 +10060,8 @@ TEST(pkgmap_swift_products_do_not_register_alias) {
         ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src, (int)strlen(src),
+                                   &entries);
     ASSERT_TRUE(ok);
     ASSERT_FALSE(pkg_entries_has_name(&entries, "CoreKit"));
     ASSERT_TRUE(pkg_entries_has_name(&entries, "CoreImpl"));
@@ -9989,15 +10080,14 @@ TEST(pkgmap_swift_products_do_not_register_alias) {
  * fixture in this file happens to follow `name:` with `dependencies:` or a
  * comma, so this specific shape was previously untested and unnoticed. */
 TEST(pkgmap_swift_target_name_immediately_before_close_paren) {
-    static const char src[] =
-        "let package = Package(\n"
-        "    name: \"Core\",\n"
-        "    targets: [.target(name: \"Core\")]\n"
-        ")\n";
+    static const char src[] = "let package = Package(\n"
+                              "    name: \"Core\",\n"
+                              "    targets: [.target(name: \"Core\")]\n"
+                              ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src, (int)strlen(src),
+                                   &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "Core"));
     ASSERT_STR_EQ(pkg_entries_entry_for(&entries, "Core"), "Core/Sources/Core");
@@ -10015,8 +10105,8 @@ TEST(pkgmap_swift_target_honors_literal_path) {
         ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src, (int)strlen(src),
+                                   &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "Core"));
     ASSERT_STR_EQ(pkg_entries_entry_for(&entries, "Core"), "Core/Vendor/CoreLegacy");
@@ -10030,16 +10120,15 @@ TEST(pkgmap_swift_target_honors_literal_path) {
  * target entirely (fail closed), even though its `name:` is a valid
  * literal. */
 TEST(pkgmap_swift_target_computed_path_fails_closed) {
-    static const char src[] =
-        "let customPath = computePath()\n"
-        "let package = Package(\n"
-        "    name: \"Core\",\n"
-        "    targets: [.target(name: \"Core\", path: customPath)]\n"
-        ")\n";
+    static const char src[] = "let customPath = computePath()\n"
+                              "let package = Package(\n"
+                              "    name: \"Core\",\n"
+                              "    targets: [.target(name: \"Core\", path: customPath)]\n"
+                              ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok = cbm_pkgmap_try_parse("Package.swift", "Core/Package.swift", src, (int)strlen(src),
+                                   &entries);
     ASSERT_TRUE(ok);
     ASSERT_EQ(entries.count, 0);
     cbm_pkg_entries_free(&entries);
@@ -10061,8 +10150,8 @@ TEST(pkgmap_swift_target_in_comment_or_string_not_registered) {
         ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok =
+        cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src, (int)strlen(src), &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "App"));
     ASSERT_FALSE(pkg_entries_has_name(&entries, "Decoy"));
@@ -10091,8 +10180,8 @@ TEST(pkgmap_swift_dependencies_do_not_leak_entries) {
         ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok =
+        cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src, (int)strlen(src), &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "App"));
     ASSERT_FALSE(pkg_entries_has_name(&entries, "Core"));
@@ -10107,18 +10196,17 @@ TEST(pkgmap_swift_dependencies_do_not_leak_entries) {
  * (Utils/UtilsPkg) name OTHER modules, not this manifest's own
  * products/targets, so neither mints an entry. */
 TEST(pkgmap_swift_target_name_dependency_does_not_leak_entry) {
-    static const char src[] =
-        "let package = Package(\n"
-        "    name: \"App\",\n"
-        "    targets: [.target(name: \"App\", dependencies: [\n"
-        "        \"Core\",\n"
-        "        .product(name: \"Utils\", package: \"UtilsPkg\")\n"
-        "    ])]\n"
-        ")\n";
+    static const char src[] = "let package = Package(\n"
+                              "    name: \"App\",\n"
+                              "    targets: [.target(name: \"App\", dependencies: [\n"
+                              "        \"Core\",\n"
+                              "        .product(name: \"Utils\", package: \"UtilsPkg\")\n"
+                              "    ])]\n"
+                              ")\n";
     cbm_pkg_entries_t entries;
     cbm_pkg_entries_init(&entries);
-    bool ok = cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src,
-                                   (int)strlen(src), &entries);
+    bool ok =
+        cbm_pkgmap_try_parse("Package.swift", "App/Package.swift", src, (int)strlen(src), &entries);
     ASSERT_TRUE(ok);
     ASSERT_TRUE(pkg_entries_has_name(&entries, "App"));
     ASSERT_FALSE(pkg_entries_has_name(&entries, "Core"));
@@ -12937,7 +13025,6 @@ TEST(pipeline_delta_patch_indexes_docstring_into_fts_body) {
     th_rmtree(td);
     PASS();
 }
-
 
 /* End-to-end for #518/#519: source → docstring → properties JSON → nodes_fts
  * `body` → findable. Each layer has its own test; this one proves they connect.

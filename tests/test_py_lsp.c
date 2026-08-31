@@ -621,11 +621,54 @@ TEST(pylsp_exports_and_consumes_crossfile_instance_fields) {
     CBMArena arena;
     cbm_arena_init(&arena);
     CBMResolvedCallArray out = {0};
-    cbm_run_py_lsp_cross(&arena, source, (int)strlen(source), "loop", defs, 3, imp_names, imp_qns, 1,
-                         NULL, &out, NULL);
+    cbm_run_py_lsp_cross(&arena, source, (int)strlen(source), "loop", defs, 3, imp_names, imp_qns,
+                         1, NULL, &out, NULL);
     ASSERT_GTE(find_resolved_arr(&out, "run", "process_batch"), 0);
     cbm_arena_destroy(&arena);
     cbm_free_result(trainer);
+    PASS();
+}
+
+TEST(pylsp_crossfile_field_accepts_project_prefixed_registry_qns) {
+    CBMLSPDef defs[5] = {0};
+    defs[0] = (CBMLSPDef){.qualified_name = "project.contracts.Facet",
+                          .short_name = "Facet",
+                          .label = "Class",
+                          .def_module_qn = "project.contracts"};
+    defs[1] = (CBMLSPDef){.qualified_name = "project.contracts.Facet.process_batch",
+                          .short_name = "process_batch",
+                          .label = "Method",
+                          .receiver_type = "project.contracts.Facet",
+                          .def_module_qn = "project.contracts"};
+    defs[2] = (CBMLSPDef){.qualified_name = "project.contracts.TrainingStrategy",
+                          .short_name = "TrainingStrategy",
+                          .label = "Class",
+                          .def_module_qn = "project.contracts",
+                          .embedded_types = "contracts.Facet"};
+    /* An unrelated same-short-name type proves resolution uses the exact QN
+     * suffix rather than falling back to an arbitrary short-name match. */
+    defs[3] = (CBMLSPDef){.qualified_name = "project.other.TrainingStrategy",
+                          .short_name = "TrainingStrategy",
+                          .label = "Class",
+                          .def_module_qn = "project.other"};
+    defs[4] = (CBMLSPDef){.qualified_name = "project.trainer.Trainer",
+                          .short_name = "Trainer",
+                          .label = "Class",
+                          .def_module_qn = "project.trainer",
+                          .field_defs = "strategies:contracts.TrainingStrategy"};
+    const char *source = "from trainer import Trainer\n"
+                         "def run(trainer: Trainer):\n"
+                         "    strategies = trainer.strategies\n"
+                         "    return strategies.process_batch()\n";
+    const char *imp_names[] = {"Trainer"};
+    const char *imp_qns[] = {"project.trainer.Trainer"};
+    CBMArena arena;
+    cbm_arena_init(&arena);
+    CBMResolvedCallArray out = {0};
+    cbm_run_py_lsp_cross(&arena, source, (int)strlen(source), "project.loop", defs, 5, imp_names,
+                         imp_qns, 1, NULL, &out, NULL);
+    ASSERT_GTE(find_resolved_arr(&out, "run", "process_batch"), 0);
+    cbm_arena_destroy(&arena);
     PASS();
 }
 
@@ -2243,6 +2286,7 @@ SUITE(py_lsp) {
     /* Phase 9 — cross-file + batch */
     RUN_TEST(pylsp_crossfile_method_dispatch);
     RUN_TEST(pylsp_exports_and_consumes_crossfile_instance_fields);
+    RUN_TEST(pylsp_crossfile_field_accepts_project_prefixed_registry_qns);
     RUN_TEST(pylsp_fused_self_attr_chain_via_overlay);
     RUN_TEST(pylsp_crossfile_classmethod_on_class_issue228);
     RUN_TEST(pylsp_crossfile_inheritance);

@@ -41,11 +41,13 @@ Primary binding tests:
 
 The old nested-local-call implementation in `4df2afe2` repeatedly calls
 `ts_node_parent()`. Upstream later demonstrated that this pattern can become
-cubic on deeply nested Python. Do not restore that implementation unchanged.
-This refresh instead includes the three maintainer-authored commits from
-`upstream/feat/python-bare-local-binding`. They suppress weak matches for bare
-calls shadowed by parameters using the unified walk cursor and a fail-open depth
-bound; they are not yet part of `upstream/main` at this snapshot.
+cubic on deeply nested Python, so that implementation was not restored.
+This refresh includes the three maintainer-authored commits from
+`upstream/feat/python-bare-local-binding` and extends their unified walk-cursor
+guard to nested `def` bindings. Both the ancestor walk and nested-body scan have
+explicit fail-open bounds; weak matches are suppressed only when the local
+binding is proven. These changes are not yet part of `upstream/main` at this
+snapshot.
 
 Bare Python base-class qualification from `4df2afe2` is superseded by upstream
 PR [#1908](https://github.com/DeusData/codebase-memory-mcp/pull/1908), which landed

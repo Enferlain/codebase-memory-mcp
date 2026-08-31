@@ -1073,6 +1073,33 @@ static void py_find_unique_type_short_name(const CBMTypeRegistry *reg, const cha
     py_find_unique_type_short_name(reg->fallback, short_name, found_qn, ambiguous);
 }
 
+/* Cross-file surfaces may retain a repository-relative type QN while the
+ * project registry stores the same definition with the project prefix. Prefer
+ * that exact qualified suffix before falling back to a short type name: it
+ * remains deterministic even when an unrelated class has the same short name. */
+static void py_find_unique_type_qn_suffix(const CBMTypeRegistry *reg, const char *type_qn,
+                                          const char **found_qn, bool *ambiguous) {
+    if (!reg || !type_qn || !type_qn[0] || !found_qn || !ambiguous || *ambiguous)
+        return;
+    size_t wanted_len = strlen(type_qn);
+    for (int i = 0; i < reg->type_count; i++) {
+        const char *candidate = reg->types[i].qualified_name;
+        if (!candidate)
+            continue;
+        size_t candidate_len = strlen(candidate);
+        if (candidate_len <= wanted_len || candidate[candidate_len - wanted_len - 1] != '.' ||
+            strcmp(candidate + candidate_len - wanted_len, type_qn) != 0)
+            continue;
+        if (!*found_qn) {
+            *found_qn = candidate;
+        } else if (strcmp(*found_qn, candidate) != 0) {
+            *ambiguous = true;
+            return;
+        }
+    }
+    py_find_unique_type_qn_suffix(reg->fallback, type_qn, found_qn, ambiguous);
+}
+
 static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, const char *type_qn,
                                                           const char *member_name, int depth) {
     if (!ctx || !type_qn || !member_name)
@@ -1086,6 +1113,12 @@ static const CBMRegisteredFunc *py_lookup_attribute_depth(PyLSPContext *ctx, con
 
     const CBMRegisteredType *rt = cbm_registry_lookup_type(ctx->registry, type_qn);
     if (!rt) {
+        const char *suffix_qn = NULL;
+        bool suffix_ambiguous = false;
+        py_find_unique_type_qn_suffix(ctx->registry, type_qn, &suffix_qn, &suffix_ambiguous);
+        if (!suffix_ambiguous && suffix_qn)
+            return py_lookup_attribute_depth(ctx, suffix_qn, member_name, depth + 1);
+
         /* A cross-file field annotation can retain its defining module even
          * when the type was imported there. Recover only when the registry has
          * one exact type with that short name; ambiguity must stay unresolved. */
