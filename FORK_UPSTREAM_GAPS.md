@@ -4,14 +4,14 @@ This is the living reliability ledger for the locally installed fork. Update it
 when the fork is rebased, an upstream issue changes state, a local patch is
 removed, or a new reproducer is confirmed.
 
-Last verified: **2026-08-31**
+Last verified: **2026-09-07**
 
 - Working branch: `fork/usable-graph-refresh`
-- Validated code commit: `3814d323`
+- Source baseline: `e862b000` plus the local daemon device-renumbering recovery patch
 - Upstream base: `upstream/main` at `3de05cd6`
 - Preserved comparison branch: `fork/usable-graph` at `4df2afe2`
 - Installed binary: `/home/imi/.local/bin/codebase-memory-mcp`
-- Installed SHA-256: `0c261f40a546a64148a40938b588a05394b64d94b45ad2367f9b2e81b8fdc419`
+- Installed SHA-256: `41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5`
 
 The working branch starts from current upstream and carries only behavior still
 needed locally. Do not merge or replay the old comparison branch wholesale.
@@ -47,6 +47,36 @@ The upstream issues are grouped under the maintainer's umbrella issues
 [#391](https://github.com/DeusData/codebase-memory-mcp/issues/391),
 [#592](https://github.com/DeusData/codebase-memory-mcp/issues/592), and
 [#594](https://github.com/DeusData/codebase-memory-mcp/issues/594).
+
+## Local daemon recovery fix — filesystem device renumbering
+
+Confirmed on 2026-09-07: stale socket metadata recorded device `8:48`, but
+its retained socket inode now lived on device `8:80`. The installed build
+recovered from a normal daemon crash, but changing only the persisted device
+number reproduced the 30-second startup failure. This is consistent with a
+WSL filesystem remount; the available logs do not establish why the original
+daemon exited.
+
+Recovery now rebases a persisted device number onto the record's current
+filesystem only when the retained anchor has the recorded inode. Startup and
+lifetime locks, ownership/mode checks, hard-link shape, committed socket ctime,
+and current-device unlink checks remain enforced. Unknown or mismatched socket
+identities still block recovery.
+
+Regression: `daemon_ipc_posix_crash_cleanup_after_device_renumbering` covers a
+committed socket, interrupted cleanup, pending publication before/after linking,
+and rejection of mismatched inode/ctime or conflicting record devices. The
+publication-window regression also covers remounts at all four temporary-record
+crash boundaries. Malformed identities remain rejected.
+
+Validation: the regression fails against the pre-fix source; all 44 IPC tests
+pass under AddressSanitizer/UndefinedBehaviorSanitizer with warnings treated as
+errors. The final production binary survived two simulated device renumberings
+and three MCP handshakes in an isolated runtime. Required code review approved
+the core fix; its temporary-publication finding is covered by the follow-up
+above. Installed using `install --force --skip-config -y`, preserving indexes
+and client configuration.
+
 
 ## Fork-fixed open issues
 

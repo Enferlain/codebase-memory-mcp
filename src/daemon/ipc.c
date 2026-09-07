@@ -2020,9 +2020,22 @@ static int posix_record_artifact_status(const cbm_daemon_ipc_endpoint_t *endpoin
     return 1;
 }
 
+/* st_dev can change across a remount (for example, a WSL restart). Rebase
+ * only a decoded persisted identity onto its record's current filesystem and
+ * a retained anchor with the same inode. Callers must still corroborate the
+ * socket phase, link shape and ctime before granting deletion authority. */
+static void posix_socket_record_rebase_device(posix_socket_identity_t *identity,
+                                              dev_t record_device,
+                                              const posix_socket_identity_t *anchor) {
+    if (identity->device != record_device && anchor->device == record_device &&
+        identity->inode == anchor->inode) {
+        identity->device = anchor->device;
+    }
+}
+
 static int posix_socket_record_identity_corroborated(
     const cbm_daemon_ipc_endpoint_t *endpoint, const uint8_t magic[POSIX_SOCKET_RECORD_MAGIC_SIZE],
-    const posix_socket_record_t *record) {
+    const posix_socket_record_t *record, dev_t record_device) {
     if (!endpoint || !magic || !record) {
         return -1;
     }
@@ -2038,17 +2051,22 @@ static int posix_socket_record_identity_corroborated(
         return -1;
     }
 
+    posix_socket_identity_t identity = record->identity;
+    if (anchor_state == 1) {
+        posix_socket_record_rebase_device(&identity, record_device, &anchor);
+    }
+
     if (memcmp(magic, POSIX_SOCKET_PENDING_MAGIC, POSIX_SOCKET_RECORD_MAGIC_SIZE) == 0) {
         return stable_state == 0 && anchor_state == 1 && anchor_status.st_nlink == 1 &&
-                       posix_socket_identity_equal(&record->identity, &anchor)
+                       posix_socket_identity_equal(&identity, &anchor)
                    ? 1
                    : 0;
     }
     if (memcmp(magic, POSIX_SOCKET_MARKER_MAGIC, POSIX_SOCKET_RECORD_MAGIC_SIZE) == 0) {
         return stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
                        anchor_status.st_nlink == 2 &&
-                       posix_socket_identity_equal(&record->identity, &stable) &&
-                       posix_socket_identity_equal(&record->identity, &anchor)
+                       posix_socket_identity_equal(&identity, &stable) &&
+                       posix_socket_identity_equal(&identity, &anchor)
                    ? 1
                    : 0;
     }
@@ -2105,7 +2123,8 @@ static int posix_socket_record_publication_recover(
         }
     }
 
-    int corroborated = posix_socket_record_identity_corroborated(endpoint, magic, &recovered);
+    int corroborated = posix_socket_record_identity_corroborated(endpoint, magic, &recovered,
+                                                                 recovered_status.st_dev);
     if (corroborated != 1) {
         return corroborated;
     }
@@ -2329,6 +2348,17 @@ static int posix_stale_generation_cleanup_locked(const cbm_daemon_ipc_endpoint_t
          !posix_socket_inode_equal(&marker.identity, &pending.identity))) {
         result = 0;
         goto cleanup_done;
+    }
+
+    if (anchor_state == 1) {
+        if (marker_state == POSIX_RECORD_VALID) {
+            posix_socket_record_rebase_device(&marker.identity, marker_status.st_dev,
+                                              &anchor_identity);
+        }
+        if (pending_state == POSIX_RECORD_VALID) {
+            posix_socket_record_rebase_device(&pending.identity, pending_status.st_dev,
+                                              &anchor_identity);
+        }
     }
 
     /* A durable pending record may complete the commit only when both names
