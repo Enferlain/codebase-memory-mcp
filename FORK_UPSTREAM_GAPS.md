@@ -4,28 +4,25 @@ This is the living reliability ledger for the locally installed fork. Update it
 when the fork is rebased, an upstream issue changes state, a local patch is
 removed, or a new reproducer is confirmed.
 
-Installed-fork baseline: **2026-09-07**. Upstream replacement audit: **2026-10-18**.
+Installed upstream-plus-fixes build: **2026-10-19**. Historical fork baseline:
+**2026-09-07**; upstream replacement audit: **2026-10-18**.
 
-**Migration trial (2026-10-19):** this branch is the upstream v0.12.1 candidate
-`fork/v0.12.1-patches`. P1-P5 are implemented and pass the focused behavioral
-checks. The installed fork remains unchanged. See the
-[trial results and remaining qualification limits](docs/UPSTREAM_MIGRATION_2026-10-19.md).
-The source map and audit below retain their historical installed-fork context.
+The tested v0.12.1 plus P1-P5 build is now installed. The canonical checkout is
+`/home/imi/Projects/codebase-memory-mcp` on `fork/v0.12.1-patches`; the separate
+`codebase-memory-mcp-v0121` worktree has been removed. The old fork branch remains
+in Git history and on origin. No binary or index backup was created, as requested.
 
-- Working branch: `fork/usable-graph-refresh`
-- Installed source: `33efd7c2` (includes the local daemon device-renumbering recovery patch)
-- Installed fork's upstream base: `3de05cd6`
-- Audited refresh target: release **v0.12.1** (`a7158ac2`) and upstream main
-  `9dba7fe1` (2026-10-17); the 11 compared implementation files match between them
-- Preserved comparison branch: `fork/usable-graph` at `4df2afe2`
+- Installed version: `0.12.1-fork.1`
+- Tested source/acceptance commit: `f0379962`
 - Installed binary: `/home/imi/.local/bin/codebase-memory-mcp`
-- Installed SHA-256: `41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5`
+- Installed SHA-256: `4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026`
+- Refresh base: release **v0.12.1** (`a7158ac2`), with metadata-only corrections
+  from `9dba7fe1`; not a claim of synchronization with later upstream main.
 
-The installed fork has **not** been replaced by the migration trial. Some of its
-local code is now superseded upstream. Use the action labels below when porting;
-do not replay this branch's commits or the old comparison branch wholesale.
-See [LOCAL_MCP_CLIENT_SETUP.md](LOCAL_MCP_CLIENT_SETUP.md) for installing this
-exact binary into other agent environments.
+See [acceptance and deployment results](docs/UPSTREAM_MIGRATION_2026-10-19.md)
+and [client setup](LOCAL_MCP_CLIENT_SETUP.md). The audit and source map below
+retain their historical comparison against old fork `33efd7c2`; their old commit
+labels describe that audit, not the currently installed build.
 
 ## Refresh action labels
 

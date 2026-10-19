@@ -4,12 +4,14 @@ This is the living setup guide for exposing the locally built
 `codebase-memory-mcp` fork to Codex, Claude Code, Antigravity/`agy`, Hermes, and
 other MCP clients on the same WSL/Linux account.
 
-Last verified: **2026-09-07**
+Last installed and verified: **2026-10-19**
 
 - Binary: `/home/imi/.local/bin/codebase-memory-mcp`
-- Expected SHA-256: `41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5`
-- Source branch: `fork/usable-graph-refresh`
-- Source baseline: `e862b000` plus the local daemon device-renumbering recovery patch
+- Expected SHA-256: `4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026`
+- Version: `0.12.1-fork.1`
+- Source checkout: `/home/imi/Projects/codebase-memory-mcp`
+- Source branch: `fork/v0.12.1-patches`
+- Source baseline: upstream v0.12.1 plus the tested P1-P5 ports; acceptance commit `f0379962`
 
 See [FORK_UPSTREAM_GAPS.md](FORK_UPSTREAM_GAPS.md) for the fixes and known
 limitations carried by this build.
@@ -40,9 +42,10 @@ sha256sum /home/imi/.local/bin/codebase-memory-mcp
 ```
 
 The checksum should match the value at the top of this file. At this snapshot,
-the daemon reports build `dev (41bf9d698340...)`.
+the installed executable reports `0.12.1-fork.1`; the daemon build fingerprint
+starts with `4962cf320c23`.
 
-Current machine state:
+Existing client registrations (preserved during the 2026-10-19 binary swap):
 
 | Client | Local fork registered? | Configuration checked |
 | --- | --- | --- |

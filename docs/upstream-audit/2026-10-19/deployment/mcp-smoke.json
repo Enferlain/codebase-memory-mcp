@@ -1,0 +1,97 @@
+{
+  "binary": "/home/imi/.local/bin/codebase-memory-mcp",
+  "sha256": "4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026",
+  "checks": [
+    {
+      "name": "installed initialize",
+      "passed": true,
+      "detail": {
+        "name": "codebase-memory-mcp",
+        "version": "0.12.1-fork.1"
+      }
+    },
+    {
+      "name": "tool discovery",
+      "passed": true,
+      "detail": 17
+    },
+    {
+      "name": "training contract",
+      "passed": true,
+      "detail": [
+        [
+          "home-imi-Projects-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+          "home-imi-Projects-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+          "lsp_method"
+        ]
+      ]
+    },
+    {
+      "name": "cache contract",
+      "passed": true,
+      "detail": [
+        [
+          "home-imi-Projects-sd-scripts.library.training.phases.training_loop._maybe_cache_epoch_tokens",
+          "home-imi-Projects-sd-scripts.library.strategies.base.contracts.CachingStrategy.get_token_cache_encoder_names",
+          "lsp_method"
+        ]
+      ]
+    },
+    {
+      "name": "dispatch topology",
+      "passed": true,
+      "detail": [
+        "SD",
+        "SDXL",
+        "SD3"
+      ]
+    },
+    {
+      "name": "snippet and coverage",
+      "passed": true,
+      "detail": {
+        "path": "library/training/phases/training_loop.py",
+        "coverage": {
+          "project": "home-imi-Projects-sd-scripts",
+          "signal": "best_effort",
+          "indexed_at": "2026-10-19T19:29:03Z",
+          "metadata": {
+            "generation": "2026-10-19T19:29:03Z",
+            "index_mode": "full",
+            "recorded_at": "2026-10-19T19:29:04Z",
+            "recording_status": "complete",
+            "ignored_files_stored": 9,
+            "ignored_files_total": 9,
+            "hash_records_complete": true,
+            "coverage_version": 1000009,
+            "generation_matches": true
+          },
+          "paths": [
+            {
+              "requested_path": "library/training/phases/training_loop.py",
+              "path": "library/training/phases/training_loop.py",
+              "status": "no_recorded_issue",
+              "freshness": "metadata_match",
+              "recommended_action": "use_graph_with_best_effort_caveat",
+              "coverage": []
+            }
+          ],
+          "path_total": 1,
+          "path_returned": 1,
+          "path_has_more": false,
+          "scopes": [],
+          "scope_total": 0,
+          "scope_returned": 0,
+          "scope_truncated": false,
+          "has_more": false,
+          "caveat": "Best-effort signal only. No recorded issue does not prove graph or source completeness; read flagged source and qualify claims when metadata is changed or unavailable."
+        }
+      }
+    },
+    {
+      "name": "saved index ready",
+      "passed": true,
+      "detail": "ready"
+    }
+  ]
+}

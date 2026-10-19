@@ -1,0 +1,37 @@
+codebase-memory-mcp install 0.12.1-fork.1
+
+Found 21 existing index(es):
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-finance-sync-mcp.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-hcom.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-data-processing.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-obsidian-vault-2026.db
+  /home/imi/.cache/codebase-memory-mcp/mnt-d-Projects-image-downloaders-imgbrd-grabber.db
+  /home/imi/.cache/codebase-memory-mcp/tmp-hcom-p33-live.ObSqOC.db
+  /home/imi/.cache/codebase-memory-mcp/mnt-d-ComfyUI-current.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-pytortch-backend-experiments.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-codebase-memory-mcp.db
+  /home/imi/.cache/codebase-memory-mcp/mnt-d-Projects-image-downloaders-gallery-dl.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-hermes-gate.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-.config-hcom-model-router-real-task-test-workspace.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-.codex-memories.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-hermes-agora.db
+  /home/imi/.cache/codebase-memory-mcp/mnt-d-Projects-tag-workspace.db
+  /home/imi/.cache/codebase-memory-mcp/tmp-hcom-p33-live-fixed.1uwl7J.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-.config-hcom-model-router-scratch.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-sd-scripts.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-hermes-llm-usage.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-codex-setup.db
+  /home/imi/.cache/codebase-memory-mcp/home-imi-Projects-review-mcp.db
+
+Delete these indexes and continue with install? (y/n): y (auto)
+Stopping active CBM sessions and operations for install...
+Installed binary -> /home/imi/.local/bin/codebase-memory-mcp
+
+
+Added /home/imi/.local/bin to PATH in /home/imi/.bashrc
+Removed 21 index(es).
+
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /home/imi/.bashrc

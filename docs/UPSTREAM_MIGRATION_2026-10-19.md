@@ -1,10 +1,18 @@
 # v0.12.1 selective migration trial
 
-Candidate: `fork/v0.12.1-patches` in
-`/home/imi/Projects/codebase-memory-mcp-v0121`, based on release `v0.12.1`
-(`a7158ac2`). Binary: `build/release/codebase-memory-mcp`, version
-`0.12.1-fork.1`. This is an isolated trial: the installed binary, client
-configuration, and live indexes have not been replaced.
+**Installed on 2026-10-19.** The tested `fork/v0.12.1-patches` checkout now
+occupies `/home/imi/Projects/codebase-memory-mcp`. The separate
+`codebase-memory-mcp-v0121` worktree was removed. The installed executable at
+`/home/imi/.local/bin/codebase-memory-mcp` is `0.12.1-fork.1`, SHA-256
+`4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026`.
+The guarded installer stopped old clients, replaced the binary, and discarded
+21 old project indexes. No backup was created, as explicitly requested; existing
+client integrations and CBM settings were preserved. Live reindexing and
+post-install checks are recorded in [the deployment receipt](upstream-audit/2026-10-19/deployment/README.md).
+
+The trial and in-action sections below describe the earlier isolated validation
+before installation, including their original temporary paths and installation
+state. Those historical statements do not describe the current installed state.
 
 ## What was carried forward
 
@@ -168,16 +176,14 @@ binary hash remained unchanged. Both private daemons stopped cleanly. A plain
 folder copy needs `watch_non_git=true` for automatic updates; the successful
 run used the normal Git watcher. See [live results and raw sessions](upstream-audit/2026-10-19/in-action/README.md).
 
-## Moving the trial into service
+## Deployment
 
-The candidate is qualified for the tested Linux/glibc environment. macOS runtime
-CI was not run here; the primary-source portability review is recorded in the
-review dispositions. For the eventual default switch, quiesce the MCP clients,
-back up both the installed binary and its consistent cache state, use the
-repository's guarded installer, and restart all MCP clients so the daemon and
-clients run identical bytes. Retain the old fork
-branch for rollback. The new semantic version requires a fresh index; an old
-graph must not be reused as evidence of the port's behavior.
+The candidate is installed for this tested Linux/glibc environment. Existing
+client applications must reconnect or restart their MCP sessions to use the new
+binary. The guarded install retired the previous frontend/daemon processes.
+The client configuration files were left intact (`--skip-config`). Project
+graphs are rebuilt from source under semantic index version `1000009`, rather
+than reusing the old generated graphs. macOS runtime CI was not run here.
 
 Keep this branch as a small upstream-plus-patches line. On each later release,
 rerun the compatibility probes against clean upstream first and drop each port
