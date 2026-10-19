@@ -6973,10 +6973,11 @@ TEST(extract_python_member_call_flags_is_method) {
 /* Python bare-call local-binding flag (the bare-call counterpart of the
  * receiver flag above). Pins BOTH directions: a callee shadowed by a parameter
  * of an enclosing scope IS flagged so the resolver can suppress a weak
- * short-name match, while an unshadowed callee — a genuine module-level
- * function, an imported name, or a nested `def` — is NOT, so its true edge
- * survives. Every parameter binding form the grammar produces is covered, since
- * a form the extractor silently missed would leave that shape unguarded. */
+ * short-name match. Nested declarations are lexical bindings too: flag them
+ * so a weak lookup cannot pick an unrelated function. Unshadowed module-level
+ * functions and imported names remain unflagged; strong resolution survives. Every parameter
+ * binding form the grammar produces is covered, since a form the extractor silently missed would
+ * leave that shape unguarded. */
 TEST(extract_python_bare_call_flags_locally_bound_callee) {
     CBMFileResult *r = extract("from pkg import helper\n"
                                "\n"
@@ -7014,7 +7015,7 @@ TEST(extract_python_bare_call_flags_locally_bound_callee) {
         {"fn", true, 0},            /* lambda parameter                               */
         {"module_level", false, 0}, /* unbound: the true cross-file edge         */
         {"helper", false, 0},       /* imported name, not a parameter            */
-        {"inner", false, 0},        /* nested def: a real target, keep the edge  */
+        {"inner", true, 0},         /* nested def: suppress unrelated weak guesses */
     };
     const int case_count = (int)(sizeof(cases) / sizeof(cases[0]));
 

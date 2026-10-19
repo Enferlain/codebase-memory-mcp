@@ -1083,7 +1083,7 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
         ranks[j] = rank;
         bases[j] = base;
     }
-    py_assembly_mro_t *parents[PY_ASSEMBLY_LIMIT];
+    py_assembly_mro_t *parents[PY_ASSEMBLY_LIMIT] = {0};
     for (int i = 0; i < n; i++) {
         parents[i] = py_assembly_mro(gb, bases[i], cache);
         if (!parents[i])
