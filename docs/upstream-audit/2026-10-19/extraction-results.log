@@ -1,0 +1,493 @@
+
+  codebase-memory-mcp  C test suite
+
+=== extraction ===
+  extract_compact_keeps_every_field_and_shrinks_the_arenaPASS
+  extract_compact_is_idempotent_and_survives_empty_resultsPASS
+  extract_spill_round_trip_keeps_every_field             level=info msg=mem.spill.open dir=/tmp/cbm_spill_FcWAql/spill writers=yes
+PASS
+  extract_spill_refuses_below_the_free_disk_floor        level=warn msg=mem.spill.refused reason=low_disk free_mb=10239 detail=not_spilling_onto_a_nearly_full_disk;_memory_relief_continues_through_back-pressure_instead
+level=info msg=mem.spill.open dir=/tmp/cbm_spill_ztAMkf/spill writers=yes
+PASS
+  extract_lsp_skipped_file_gets_no_walk                  level=warn msg=extract.lsp.skipped reason=test_seam path=budget_share.py
+PASS
+  extract_walk_truncated_when_a_node_budget_is_set       level=warn msg=extract.walk.truncated reason=node_budget path=walk_budget.py
+PASS
+  python_namespace_facts_preserve_order_and_import_provenancePASS
+  python_namespace_facts_distinguish_all_operations_and_unknownsPASS
+  python_namespace_facts_unknown_effects_and_body_stabilityPASS
+  python_namespace_facts_parse_errors_are_complete_unknownPASS
+  python_namespace_facts_capture_and_copy_fail_atomicallyPASS
+  python_namespace_facts_validation_rejects_partial_and_unknown_schemaPASS
+  python_namespace_facts_compact_spill_and_copy_keep_owned_payloadlevel=info msg=mem.spill.open dir=/tmp/cbm_py_facts_7VxtoK/spill writers=yes
+PASS
+  python_namespace_facts_unavailable_and_empty_survive_spilllevel=info msg=mem.spill.open dir=/tmp/cbm_py_fact_states_Acn27d/spill writers=yes
+PASS
+  python_namespace_facts_multiple_bindings_and_unsupported_effectsPASS
+  extract_wide_flat_file_is_linear                         [wide-flat] t(20000)=280ms t(400000)=5350ms
+PASS
+  extract_wide_flat_reference_fields_are_linear            [wide-reference-fields] work(128)=1672 work(1024)=13320 input_growth=8x
+PASS
+  extract_csharp_argument_values_use_the_walk_cursor       [csharp-argument-values] work(128)=1822 work(1024)=14366 input_growth=8x
+PASS
+  extract_rescript_let_bindings_use_the_walk_cursor        [rescript-let-bindings] fallbacks(128)=0 fallbacks(1024)=0
+PASS
+  extract_perl_config_string_not_a_callee                PASS
+  extract_perl_builtin_call_is_function_not_method       PASS
+  extract_perl_method_call_flags_is_method               PASS
+  extract_flag_exempt_method_call_not_flagged_is_method  PASS
+  extract_python_member_call_flags_is_method             PASS
+  extract_python_bare_call_flags_locally_bound_callee    PASS
+  extract_python_bare_call_flag_is_depth_independent     PASS
+  extract_ts_member_call_flags_is_method                 PASS
+  extract_ts_this_super_receiver_not_flagged             PASS
+  extract_js_member_call_flags_is_method                 PASS
+  objectscript_udl_class                                 internal/cbm/vendored/grammars/objectscript_udl/scanner.c:122:3: runtime error: null pointer passed as argument 2, which is declared to never be null
+PASS
+  objectscript_udl_methods_after_goto_label              PASS
+  objectscript_udl_methods                               PASS
+  objectscript_udl_base_classes                          PASS
+  objectscript_udl_multiple_bases                        PASS
+  objectscript_udl_properties                            PASS
+  objectscript_routine_tags                              internal/cbm/vendored/grammars/objectscript_routine/scanner.c:118:3: runtime error: null pointer passed as argument 2, which is declared to never be null
+PASS
+  objectscript_udl_query_member                          PASS
+  objectscript_udl_index_member                          PASS
+  objectscript_udl_xdata_member                          PASS
+  objectscript_udl_trigger_member                        PASS
+  objectscript_udl_trigger_body_quit                     PASS
+  objectscript_udl_trigger_body_tokens                   PASS
+  objectscript_udl_ensemble_production_def_parses_items  PASS
+  objectscript_udl_ensemble_production_def_hs_settings   PASS
+  objectscript_udl_ensemble_production_def_absent_no_errorPASS
+  objectscript_udl_self_call_relative_dot_method         PASS
+  objectscript_udl_calls_typed_new                       PASS
+  objectscript_udl_calls_typed_param                     PASS
+  objectscript_udl_calls_typed_property                  PASS
+  objectscript_macro_expand_system                       PASS
+  objectscript_macro_expand_local                        PASS
+  objectscript_macro_constant_no_extra_call              PASS
+  objectscript_udl_method_return_type                    PASS
+  objectscript_udl_scalar_return_type_not_resolved       PASS
+  call_args_skip_comments_between_arguments              PASS
+  objectscript_data_flows_class_method_args              PASS
+  objectscript_data_flows_instance_method_args           PASS
+  iris_export_xml_simple_class                           PASS
+  iris_export_xml_classmethod                            PASS
+  iris_export_xml_property_parameter_index               PASS
+  iris_export_xml_calls_extracted                        PASS
+  iris_export_xml_multi_class                            PASS
+  extract_r_box_use_imports_issue218                     PASS
+  extract_r_dollar_call_issue219                         PASS
+  extract_ts_factory_object_methods_issue341             PASS
+  traversal_stack_not_in_result_arena_issue2010          PASS
+  extract_c_macro_hidden_call_survives_preprocessed_pass_issue2010PASS
+  extract_c_macros_issue375                              PASS
+  extract_cpp_macros_issue375                            PASS
+  extract_cpp_functionlike_macro_type_arg_no_false_parse_partial_issue1071PASS
+  extract_cpp_real_in_body_error_still_flagged_issue1071 PASS
+  macro_check_reads_no_source_for_regions_outside_functions_issue1735PASS
+  macro_check_locates_lines_with_one_table_issue1735     PASS
+  extract_gdscript_issue186                              PASS
+  extract_powershell_issue35                             PASS
+  extract_luau_issue39                                   PASS
+  extract_qml_issue42                                    PASS
+  extract_cfscript_issue38                               PASS
+  extract_cfml_tag_issue38                               PASS
+  extract_cfml_embedded_cfscript_defs                    PASS
+  extract_helm_templates_issue338                        PASS
+  extract_helm_values_toplevel_issue338                  PASS
+  java_class                                             PASS
+  java_method                                            PASS
+  class_field_is_one_field_not_also_a_variable           PASS
+  field_named_like_method_is_fenced                      PASS
+  java_interface                                         PASS
+  java_interface_no_duplicate_function_issue1234         PASS
+  java_enum_dedup_preserves_calls_issue1234              PASS
+  java_class_extends_and_implements                      PASS
+  python_class_base_extracted_bare                       PASS
+  php_class                                              PASS
+  php_function                                           PASS
+  ruby_class                                             PASS
+  ruby_module                                            PASS
+  csharp_class                                           PASS
+  csharp_interface                                       PASS
+  swift_class                                            PASS
+  swift_protocol                                         PASS
+  kotlin_function                                        PASS
+  kotlin_class                                           PASS
+  scala_function                                         PASS
+  scala_class                                            PASS
+  dart_class                                             PASS
+  dart_extension_members                                 PASS
+  groovy_class                                           PASS
+  rust_function                                          PASS
+  rust_struct                                            PASS
+  go_function                                            PASS
+  go_struct                                              PASS
+  go_interface                                           PASS
+  zig_function                                           PASS
+  c_function                                             PASS
+  c_function_return_type_preserves_pointer_and_qualifier PASS
+  c_function_return_type_plain_unchanged                 PASS
+  c_struct                                               PASS
+  extract_c_anonymous_typedef_aggregate_is_named_by_its_typedefPASS
+  extract_c_anonymous_typedef_aggregate_is_one_def       PASS
+  extract_c_function_pointer_member_is_a_field           PASS
+  extract_c_member_declarators_name_and_type             PASS
+  cpp_class                                              PASS
+  cpp_method_return_type_preserves_pointer_and_qualifier PASS
+  python_function                                        PASS
+  python_class                                           PASS
+  python_annotated_instance_fields_exported_issue1277    PASS
+  js_function                                            PASS
+  js_class                                               PASS
+  ts_function                                            PASS
+  ts_class                                               PASS
+  body_tokens_type_identifier                            PASS
+  lua_function                                           PASS
+  bash_function                                          PASS
+  perl_function                                          internal/cbm/doclink_perl.c:1541:5: runtime error: null pointer passed as argument 1, which is declared to never be null
+internal/cbm/doclink_perl.c:1548:5: runtime error: null pointer passed as argument 1, which is declared to never be null
+PASS
+  r_function                                             PASS
+  elixir_function                                        PASS
+  elixir_call_string_argument                            PASS
+  haskell_function                                       PASS
+  ocaml_function                                         PASS
+  erlang_function                                        PASS
+  yaml_variables                                         PASS
+  hcl_blocks                                             PASS
+  sql_create_table                                       PASS
+  dockerfile_stages                                      PASS
+  matlab_function                                        PASS
+  lean_function                                          PASS
+  form_procedure                                         PASS
+  plsql_package_and_call                                 PASS
+  plsql_standalone_function                              PASS
+  plsql_create_type_as_object_limitation                 PASS
+  chialisp_puzzle_defs_and_labels                        PASS
+  chialisp_comment_line_endings                          PASS
+  chialisp_library_defs_and_quoted_data                  PASS
+  chialisp_export_names_do_not_duplicate_defs            PASS
+  chialisp_comment_before_def_head_keeps_the_name        PASS
+  chialisp_dialect_sigil_is_not_a_file_import            PASS
+  wolfram_function                                       PASS
+  magma_function                                         PASS
+  fsharp_function                                        PASS
+  julia_function                                         PASS
+  elm_function                                           PASS
+  nix_function                                           PASS
+  nix_defs_in_let_rooted_file                            PASS
+  nix_defs_in_attrset_rooted_file                        PASS
+  nix_defs_in_nested_let                                 PASS
+  nix_defs_survive_function_header_let                   PASS
+  nix_defs_survive_function_header_attrset               PASS
+  nix_defs_survive_curried_header                        PASS
+  nix_attrset_scope_disambiguates_leaf_names             PASS
+  nix_dotted_attrpath_qualifies_like_nested              PASS
+  nix_quoted_attr_name_strips_quotes                     PASS
+  nix_interpolated_attr_mints_no_def                     PASS
+  nix_module_level_bindings_mint_variables               PASS
+  nix_nested_bindings_are_not_module_level               PASS
+  nix_lambda_binding_is_function_not_variable            PASS
+  nix_curried_lambda_mints_one_def                       PASS
+  fortran_function                                       PASS
+  swift_struct                                           PASS
+  swift_simple_call                                      PASS
+  swift_method_call                                      PASS
+  swift_constructor_call                                 PASS
+  swift_chained_call                                     PASS
+  swift_force_unwrap_scanner_shift                       PASS
+  swift_call_string_arg_issue1892                        PASS
+  swift_nested_url_constructor_issue1892                 PASS
+  swift_nested_url_no_bang_issue1892                     PASS
+  swift_non_url_constructor_untouched_issue1892          PASS
+  swift_labeled_call_string_arg_issue1892                PASS
+  objc_interface                                         PASS
+  objc_implementation                                    PASS
+  dart_top_level_function                                PASS
+  rust_enum                                              PASS
+  zig_struct                                             PASS
+  cpp_function                                           PASS
+  cpp_gtest_same_name_collision_issue1266                PASS
+  cpp_gtest_f_unique_name_issue1266                      PASS
+  cpp_out_of_line_method_issue428                        PASS
+  cobol_paragraph                                        PASS
+  verilog_module                                         PASS
+  cuda_kernel                                            PASS
+  python_decorator                                       PASS
+  ts_interface                                           PASS
+  tsx_component                                          PASS
+  lua_table_method                                       PASS
+  emacs_lisp_defun                                       PASS
+  emacs_lisp_defvar                                      PASS
+  haskell_data_type                                      PASS
+  clojure_function                                       PASS
+  html_elements                                          PASS
+  sql_function                                           PASS
+  sql_ddl_node_labels                                    PASS
+  sql_view_lineage_usages                                PASS
+  sql_schema_qualified_name                              PASS
+  dbt_model_and_ref_lineage                              PASS
+  dbt_source_and_two_arg_ref                             PASS
+  dbt_ignores_non_dbt_jinja                              PASS
+  dbt_plain_sql_untouched                                PASS
+  meson_project                                          PASS
+  css_rules                                              PASS
+  scss_rules                                             PASS
+  toml_basic                                             PASS
+  cmake_function                                         PASS
+  json_object                                            PASS
+  protobuf_message                                       PASS
+  graphql_type                                           PASS
+  svelte_component                                       PASS
+  vue_component                                          PASS
+  glsl_shader                                            PASS
+  vimscript_function                                     PASS
+  matlab_parse                                           PASS
+  matlab_call                                            PASS
+  lean_parse                                             PASS
+  lean_call                                              PASS
+  lean_type_annotation_not_call                          PASS
+  form_parse                                             PASS
+  form_call                                              PASS
+  magma_procedure                                        PASS
+  magma_parse                                            PASS
+  magma_import                                           PASS
+  magma_call                                             PASS
+  magma_disambiguation                                   PASS
+  wolfram_function_extended                              PASS
+  wolfram_call                                           PASS
+  wolfram_caller_attribution                             PASS
+  c_caller_attribution                                   PASS
+  cpp_out_of_line_method_caller_attribution              PASS
+  cpp_out_of_line_ctor_dtor_caller_attribution           PASS
+  wolfram_parse                                          PASS
+  wolfram_import                                         PASS
+  wolfram_nested_def                                     PASS
+  python_docstring                                       PASS
+  go_function_extraction                                 PASS
+  js_arrow_function                                      PASS
+  commonlisp_defun                                       PASS
+  commonlisp_multiple_functions                          PASS
+  commonlisp_defmacro                                    PASS
+  defs_push_cuts_multiline_names_and_rejects_js_literal_namesPASS
+  makefile_rule_as_function                              PASS
+  makefile_multiple_targets                              PASS
+  makefile_variable_extraction                           PASS
+  vimscript_function_extraction                          PASS
+  vimscript_function_without_bang                        PASS
+  julia_function_extraction                              PASS
+  julia_function_with_args                               PASS
+  python_calls                                           PASS
+  python_iris_classMethodValue                           PASS
+  python_iris_cls_receiver_is_class_aware                PASS
+  python_iris_invokeClassMethod                          PASS
+  go_calls                                               PASS
+  python_imports                                         PASS
+  js_imports                                             PASS
+  go_imports                                             PASS
+  go_cgo_pseudo_import_dropped                           PASS
+  bash_imports_are_sourced_files_only                    PASS
+  extract_go_struct_fields_have_nodes                    PASS
+  java_imports                                           PASS
+  rust_imports                                           PASS
+  c_imports                                              PASS
+  c_imports_inside_preprocessor_blocks                   PASS
+  ruby_imports                                           PASS
+  lua_imports                                            PASS
+  import_stress_go                                       PASS
+  svelte_imports_basic                                   PASS
+  svelte_imports_no_script                               PASS
+  vue_imports_basic                                      PASS
+  vue_embedded_structure_issue1410                       PASS
+  vue_embedded_structure_negative_controls_issue1410     PASS
+  embedded_structure_sibling_hosts_issue1807             PASS
+  embedded_structure_inert_blocks_issue1807              PASS
+  svelte_embedded_structure_both_blocks_issue1807        PASS
+  html_embedded_structure_issue1807                      PASS
+  astro_embedded_structure_issue1807                     PASS
+  html_imports_basic                                     PASS
+  toml_basic_table_and_pair                              PASS
+  toml_nested_table                                      PASS
+  toml_table_array_element                               PASS
+  toml_dotted_key                                        PASS
+  toml_quoted_key                                        PASS
+  toml_empty_table                                       PASS
+  toml_comments_only                                     PASS
+  toml_boolean_and_integer_values                        PASS
+  ini_basic_section_and_setting                          PASS
+  ini_multiple_sections                                  PASS
+  ini_global_keys                                        PASS
+  ini_comments                                           PASS
+  json_basic_pair                                        PASS
+  json_nested_object                                     PASS
+  json_empty_object                                      PASS
+  json_boolean_null_values                               PASS
+  json_package_json_deps                                 PASS
+  xml_basic_element                                      PASS
+  xml_self_closing_tag                                   PASS
+  xml_empty_document                                     PASS
+  xml_multiple_children                                  PASS
+  markdown_atx_headings                                  PASS
+  markdown_setext_headings                               PASS
+  markdown_heading_content                               PASS
+  markdown_no_headings                                   PASS
+  python_init_module_qn_not_collide_with_folder          PASS
+  python_init_nested_module_qn                           PASS
+  js_index_module_qn_not_collide_with_folder             PASS
+  python_regular_module_qn_unchanged                     PASS
+  extract_java_method_annotations_issue382               PASS
+  extract_python_mock_patch_is_not_route                 PASS
+  extract_python_bare_decorator_route_rules              PASS
+  arkts_component_struct                                 PASS
+  arkts_exported_struct_decorators                       PASS
+  arkts_member_decorators                                PASS
+  arkts_no_phantom_builtin_defs                          PASS
+  arkts_builder_extend_styles                            PASS
+  arkts_lazy_import                                      PASS
+  arkts_ts_compat                                        PASS
+  extract_java_jaxrs_path_composition_issue1005          PASS
+  extract_java_jaxrs_relative_path_templates             PASS
+  extract_java_jaxrs_empty_path_means_class_path         PASS
+  extract_java_spring_relative_string_not_route_path     PASS
+  extract_ts_nestjs_controller_routes_issue1428          PASS
+  extract_blazor_page_directive_routes_component         PASS
+  extract_blazor_component_without_page_has_no_route     PASS
+  extract_razor_page_directive_routes_cshtml_view        PASS
+  extract_razor_layout_without_page_has_no_route         PASS
+  extract_ts_template_string_url_issue1006               PASS
+  extract_ts_config_object_url_issue2235                 PASS
+  extract_go_binary_concat_url_issue1249                 PASS
+  extract_go_binary_concat_url_no_literal_suffix_issue1249PASS
+  extract_ts_template_base_url_issue2291                 PASS
+  extract_ts_template_base_url_no_literal_path_issue2291 PASS
+  extract_py_concat_const_url_issue706                   PASS
+  extract_py_url_fold_no_fabrication_issue706            PASS
+  extract_ts_const_template_url_issue1147                PASS
+  extract_ts_url_fold_no_fabrication_issue1147           PASS
+  extract_ts_folded_topics_keep_raw_identity             PASS
+  extract_py_folded_topic_keywords_keep_raw_identity     PASS
+  extract_ts_folded_config_url_and_exclusions            PASS
+  extract_ts_url_builder_issue1009                       PASS
+  extract_ts_await_generic_call_issue2210                PASS
+  extract_ts_route_handler_after_named_middleware        PASS
+  extract_ts_route_handler_after_inline_middleware       PASS
+  extract_ts_url_builder_composed_issue1009              PASS
+  extract_c_url_builder_gated_issue1009                  PASS
+  extract_ts_url_builder_mixed_returns_issue1009         PASS
+  extract_ts_url_builder_ambiguous_issue1009             PASS
+  extract_ts_url_builder_reference_issue1009             PASS
+  extract_ts_url_builder_non_url_issue1009               PASS
+  extract_java_no_double_class_qn                        PASS
+  extract_go_no_filename_in_module_qn                    PASS
+  extract_large_ts_has_functions_issue213                PASS
+  complexity_nested_loops_depth                          PASS
+  complexity_loop_with_branch                            PASS
+  complexity_flat_no_loops                               PASS
+  complexity_linear_scan_in_loop                         PASS
+  complexity_recursion_in_loop_unguarded                 PASS
+  complexity_guarded_recursion                           PASS
+  complexity_super_only_not_recursive                    PASS
+  complexity_same_name_other_receiver_not_recursive      PASS
+  complexity_self_receiver_still_recursive               PASS
+  complexity_chained_receiver_not_self                   PASS
+  complexity_go_method_receiver_self_recursion           PASS
+  complexity_delegation_receivers_not_recursive_issue876 PASS
+  complexity_access_depth_and_params                     PASS
+  walk_defs_wide_file_extracts_every_definition          PASS
+  complexity_wide_body_exceeds_old_stack_cap             PASS
+  count_branching_wide_body_exceeds_old_stack_cap        PASS
+  body_tokens_wide_body_samples_from_the_start           PASS
+  extract_c_ifdef_split_brace_fn_recovered_issue961      PASS
+  extract_cpp_preproc_signature_gap_issue946             PASS
+  extract_cpp_preproc_macro_generated_callable_skipped_issue949PASS
+  extract_c_ifdef_split_brace_after_include_remapped_issue949PASS
+  extract_c_clean_file_no_recovery_duplicates_issue961   PASS
+  extract_cpp_template_specialization_preprocessed_qn_single_spellingPASS
+  extract_c_misnested_raw_struct_replaced_by_flat_copy   PASS
+  extract_cpp_preprocessed_rescue_skips_raw_def_on_same_line  [rescue-site] def first: t.ns.box<int, 2>.first line 6
+PASS
+  extract_cpp_rescue_keeps_expanded_class_when_raw_qn_is_taken  [rescue-taken] Class t.holder.AddressInitHolder line 3
+  [rescue-taken] Function t.holder.AddressInitHolder line 5
+  [rescue-taken] Class t.holder.BaseWrapper.AddressInitHolder line 3
+  [rescue-taken] Method t.holder.BaseWrapper.AddressInitHolder.AddressInitHolder line 5
+PASS
+  extract_cpp_export_macro_class_recovery_issue1989      PASS
+  extract_cpp_export_macro_struct_recovery_issue1989     PASS
+  extract_cpp_export_macro_enum_recovery_issue1989       PASS
+  extract_cpp_export_macro_free_function_recovery_issue1989PASS
+  extract_cpp_export_macro_inline_method_recovery_issue1989PASS
+  extract_cpp_export_macro_negative_control_ordinary_caps_issue1989PASS
+  extract_c_export_macro_recovery_issue1989              PASS
+  extract_cpp_macro_prefixed_function_names_c1           PASS
+  extract_cpp_macro_prefixed_lsp_caller_c1               PASS
+  extract_c_macro_prefixed_function_name_c1              PASS
+  extract_c_tag_reference_is_not_a_definition_c1         PASS
+  extract_c_struct_head_in_error_region_recovered_c1     PASS
+  extract_c_keyword_is_never_a_function_name_c1          PASS
+  extract_c_function_lost_to_split_branches_restored_c1  PASS
+  extract_c_typedef_names_are_definitions_c1             PASS
+  extract_c_macro_qn_is_fenced_c1                        PASS
+  extract_c_enumerators_are_flat_c1                      PASS
+  extract_cpp_enum_scoping_c1                            PASS
+  extract_c_enum_inside_struct_is_file_scope_c1          PASS
+  extract_cpp_enum_inside_class_keeps_class_scope_c1     PASS
+  extract_c_enum_macro_wrapped_list_c1                   PASS
+  extract_c_variants_lists_same_file_duplicates_c1       PASS
+  extract_variants_only_in_c_preprocessor_languages_c1   PASS
+  extract_cpp_export_macro_overlong_candidate_safe_issue1989PASS
+  extract_cpp_export_macro_comment_string_budget_issue1989PASS
+  extract_cpp_export_macro_candidate_cap_issue1989       PASS
+  extract_cpp_export_macro_spliced_comment_budget_issue1989PASS
+  extract_cpp_export_macro_raw_string_issue1989          PASS
+  extract_cpp_export_macro_raw_string_delimited_issue1989PASS
+  extract_cpp_export_macro_collector_raw_string_contract_issue1989PASS
+  extract_cpp_export_macro_collector_raw_string_delim_contract_issue1989PASS
+  extract_cpp_export_macro_collector_raw_string_quote_delim_issue1989PASS
+  extract_cpp_export_macro_collector_raw_string_unterminated_issue1989PASS
+  extract_cpp_export_macro_suffix_variants_issue1989     PASS
+  extract_cpp_export_macro_explicit_define_priority_issue1989PASS
+  extract_cpp_macro_wrapped_declarator_names_def_issue946PASS
+  extract_c_macro_wrapped_declarator_controls_issue946   PASS
+  extract_c_fname_macro_definitions_stay_distinct_issue1957PASS
+  walk_defs_no_truncation_over_4096_issue668             PASS
+  extract_rust_test_attr_marks_is_test_issue855          PASS
+  extract_c_test_dir_marks_is_test_issue1294             PASS
+  extract_python_method_test_dir_marks_is_test_issue1294 PASS
+  docstring_utf8_truncation_boundary_issue1017           PASS
+  doc_go_comment_group_without_directives                PASS
+  doc_go_struct_field                                    PASS
+  doc_go_detached_comment_is_not_doc                     PASS
+  doc_python_comment_run_and_detached                    PASS
+  doc_rust_attribute_impl_method_and_inner_doc           PASS
+  doc_ts_export_and_arrow_wrapper                        PASS
+  doc_csharp_xml_doc_run_and_top_level_function          PASS
+  doc_java_javadoc_over_line_comment_and_field           PASS
+  doc_kotlin_kdoc_folded_after_imports                   PASS
+  doc_c_typedef_struct                                   PASS
+  doc_perl_pod_section_by_sub_name                       PASS
+  doc_perl_module_doc_is_the_pod_no_sub_holds            PASS
+  doc_long_comment_kept_whole                            PASS
+  doc_divider_only_run_is_not_doc                        PASS
+  extract_ts_decorators_survive_interleaved_comment      PASS
+  markdown_section_body_becomes_docstring_issue518       PASS
+  markdown_section_body_stops_at_next_heading_issue518   PASS
+  markdown_section_body_heading_only_has_no_docstring_issue518PASS
+  markdown_section_body_capped_utf8_safe_issue518        PASS
+  yaml_toplevel_description_promoted_to_module_issue519  PASS
+  yaml_block_scalar_description_promoted_issue519        PASS
+  yaml_summary_promoted_when_no_description_issue519     PASS
+  json_toplevel_description_promoted_to_module_issue519  PASS
+  config_description_only_at_top_level_issue519          PASS
+  non_config_language_module_has_no_promoted_description_issue519PASS
+  extract_enclosing_sweep_matches_scan_issue1527         PASS
+  extract_deep_callee_chain_completes                    PASS
+  extract_deep_error_regions_complete                    PASS
+  extract_deep_argument_nesting_completes                PASS
+
+────────────────────────────────────────────
+  464 passed
+────────────────────────────────────────────
+

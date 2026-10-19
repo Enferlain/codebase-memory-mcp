@@ -1,0 +1,15 @@
+{
+  "upstream_tag": "v0.12.1",
+  "upstream_commit": "a7158ac2f48ca646b4527341b76f930f2aeff87e",
+  "candidate_version": "0.12.1-fork.1",
+  "binary_sha256": "f4bbbe48db3d35f64c6ba16a67ee30ecdcbda17aec67863c0bf8a20503d2f656",
+  "source_snapshot_head": "9c4d7addc7fcac2bdd194a3d7cbadb7ce8603df9",
+  "source_manifest_sha256": "7250f1602862aa732eac394cd70e39a90bf6cdacc1f3fb8e5366c76227fff18b",
+  "snapshot_files": 943,
+  "cold_cache": "/tmp/cbm-v0121-validation-ogbobjst",
+  "installed_binary_sha256": "41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5",
+  "installed_binary_changed": false,
+  "live_indexes_changed": false,
+  "candidate_source": "e11da93305373b7913f44266068d8629d2addf04",
+  "production_source_commit": "e11da93305373b7913f44266068d8629d2addf04"
+}

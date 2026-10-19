@@ -1,0 +1,10 @@
+
+  codebase-memory-mcp  C test suite
+
+=== subprocess ===
+  subprocess_environment_path_preserves_caller_lookup      FAIL tests/test_subprocess.c:450: results[i].exit_code == 1, expected 0 == 0
+
+────────────────────────────────────────────
+  0 passed, 1 failed, 57 deselected
+────────────────────────────────────────────
+

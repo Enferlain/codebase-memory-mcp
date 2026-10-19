@@ -1,0 +1,2665 @@
+
+  codebase-memory-mcp  C test suite
+
+=== cli ===
+  cli_suite_uses_private_activation_runtime              PASS
+  cli_update_only_names_an_installer_that_exists_issue1632PASS
+  cli_update_yes_keeps_every_index_issue2200             note: --ui/--standard are accepted but no longer do anything; since v0.10.0 there is one build per platform and it always includes the graph UI.
+codebase-memory-mcp update (current: dev)
+
+The update runs from install.sh, not from this process. Run
+
+  bash "/home/imi/Projects/codebase-memory-mcp-v0121/build/audit/install.sh"
+
+It downloads the latest release, verifies its checksum, and replaces
+this binary in place. install.sh is idempotent, so re-running it IS
+the update. One build per platform — the graph UI is always
+included.
+codebase-memory-mcp update (current: dev)
+
+The update runs from install.sh, not from this process. Run
+
+  bash "/home/imi/Projects/codebase-memory-mcp-v0121/build/audit/install.sh"
+
+It downloads the latest release, verifies its checksum, and replaces
+this binary in place. install.sh is idempotent, so re-running it IS
+the update. One build per platform — the graph UI is always
+included.
+PASS
+  cli_hook_deadline_ignores_an_unreadable_value          PASS
+  cli_index_restart_cap_honours_zero_and_refuses_junk    level=warn msg=index.restart_cap.ignored value=abc action=using_default
+level=warn msg=index.restart_cap.ignored value=5x action=using_default
+level=warn msg=index.restart_cap.ignored value=_5 action=using_default
+level=warn msg=index.restart_cap.ignored value=5_ action=using_default
+PASS
+  cli_progress_visibility_policy                         PASS
+  cli_quiet_is_stripped_before_tool_argument_forwarding  PASS
+  cli_quiet_rejects_other_outer_output_modes_with_guidancePASS
+  cli_quiet_preserves_tool_level_verbose_argument        PASS
+  cli_quiet_suppresses_ordinary_diagnostics_but_preserves_errorsPASS
+  cli_raw_mcp_result_preserves_tool_error_status         PASS
+  cli_maintenance_cancellation_forces_failure_status     PASS
+  cli_progress_sink_accepts_worker_json_logs             PASS
+  cli_progress_sink_enables_lifecycle_info_then_restores_quiet_defaultPASS
+  cli_progress_sink_suppresses_noise_and_preserves_failuresPASS
+  cli_progress_sink_preserves_explicit_verbose_diagnosticsPASS
+  cli_progress_sink_serializes_concurrent_callbacks      PASS
+  cli_sha256_file_matches_known_vector                   PASS
+  cli_sha256_hardware_matches_portable_issue2441         PASS
+  cli_checksum_manifest_requires_exact_filename_and_accepts_starPASS
+  cli_checksum_manifest_rejects_invalid_missing_and_conflicting_digestPASS
+  cli_checksum_manifest_rejects_oversized_input          PASS
+  cli_activation_quiesces_active_cohort_before_mutation  PASS
+  cli_activation_refuses_when_cohort_does_not_drain      PASS
+  cli_activation_refusal_note_reaches_diagnostic_issue1416PASS
+  cli_activation_refusal_shows_the_detail_it_points_at_issue1537PASS
+  cli_activation_distinguishes_busy_from_reservation_failure_issue1537PASS
+  cli_activation_refuses_unsafe_cohort_reservation       PASS
+  cli_activation_releases_maintenance_lease_after_successPASS
+  cli_activation_releases_maintenance_lease_when_mutation_failsPASS
+  cli_activation_cleanup_failure_fail_stops_before_lease_releaselevel=error msg=coordination.cleanup_timeout component=activation_transaction_recovery_test action=process_exit
+PASS
+  cli_activation_quiesce_does_not_wait_on_bootstrap_startuplevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+codebase-memory-mcp test-runner
+codebase-memory-mcp install dev
+
+Stopping active CBM sessions and operations for install...
+level=info msg=activation.guard scope=/tmp/cli-activation-order-BWE5UO/runtime/cbm-daemon-1000 cache=1faaca8bad877001097cd09701ada28edd83b4508c49b0390f6694796ccf2c50 clients=0 decision=cohort_drained active_cache=
+Installed binary -> /tmp/cli-activation-order-BWE5UO/custom/bin/codebase-memory-mcp
+
+
+Added /tmp/cli-activation-order-BWE5UO/custom/bin to PATH in /tmp/cli-activation-order-BWE5UO/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-activation-order-BWE5UO/.zshrc
+PASS
+  cli_install_recovers_markerless_stale_rendezvous       codebase-memory-mcp test-runner
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+codebase-memory-mcp install dev
+
+Stopping active CBM sessions and operations for install...
+level=info msg=activation.guard scope=/tmp/cli-markerless-rendezvous-lLuQmf/runtime/cbm-daemon-1000 cache=05c82b0f3aca20358a715cc86bc7985675a470dee5fe1df7c27e2579aa5d20d0 clients=0 decision=no_active_cohort active_cache=
+Installed binary -> /tmp/cli-markerless-rendezvous-lLuQmf/custom/bin/codebase-memory-mcp
+
+
+Added /tmp/cli-markerless-rendezvous-lLuQmf/custom/bin to PATH in /tmp/cli-markerless-rendezvous-lLuQmf/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-markerless-rendezvous-lLuQmf/.zshrc
+PASS
+  cli_install_skip_binary_into_foreign_home_never_drains_host_cohortlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-skipbin-JN1tDZ/runtime/cbm-daemon-1000 cache=35e7c0377cc6af1449d5e45e414d8be9f24896ce7b34a6746dfdcb73b4862f20 clients=0 decision=nothing_to_replace active_cache=
+codebase-memory-mcp install dev
+
+Skipping binary placement (--skip-binary); configuring agents only.
+
+No CBM session needs to stop for install: the published binary and indexes are unchanged.
+level=info msg=daemon.runtime_stopping reason=service_stop
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-guard-scope-skipbin-JN1tDZ/sandbox/.zshrc
+PASS
+  cli_install_binary_into_foreign_home_never_drains_host_cohortlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+codebase-memory-mcp test-runner
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-binary-GMmE6O/runtime/cbm-daemon-1000 cache=43d9cc6d5bba0e40f259bb577b1576e07bfc1ba5a74b09f6e3aa580a3b1d97fa clients=0 decision=foreign_cohort active_cache=3af8137aea3e461523afe22cef15cc9cf2354891cadeb5318e51e7ef8daefeb1
+codebase-memory-mcp install dev
+
+Leaving active CBM sessions untouched: they serve another cache namespace than this install targets.
+level=info msg=daemon.runtime_stopping reason=service_stop
+Installed binary -> /tmp/cli-guard-scope-binary-GMmE6O/sandbox/custom/bin/codebase-memory-mcp
+
+
+Added /tmp/cli-guard-scope-binary-GMmE6O/sandbox/custom/bin to PATH in /tmp/cli-guard-scope-binary-GMmE6O/sandbox/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-guard-scope-binary-GMmE6O/sandbox/.zshrc
+PASS
+  cli_install_into_host_namespace_still_drains_host_cohortlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+codebase-memory-mcp test-runner
+codebase-memory-mcp install dev
+
+Stopping active CBM sessions and operations for install...
+level=info msg=daemon.runtime_stopping reason=activation_shutdown
+level=info msg=daemon.activation_shutdown requester_pid=1539241 requester_build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61 action=install active_clients=1 active_connections=1
+level=info msg=daemon.connection_end received=-1 frame_type=none
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-host-qHiAJV/runtime/cbm-daemon-1000 cache=d9533935983bd11b056b3fd87b7f0f2e3813810c1d73a64ec5332368cdfab6f2 clients=1 decision=cohort_drained active_cache=
+Installed binary -> /tmp/cli-guard-scope-host-qHiAJV/host/custom/bin/codebase-memory-mcp
+
+
+Added /tmp/cli-guard-scope-host-qHiAJV/host/custom/bin to PATH in /tmp/cli-guard-scope-host-qHiAJV/host/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-guard-scope-host-qHiAJV/host/.zshrc
+PASS
+  cli_install_skip_binary_unchanged_in_host_namespace_quiesces_nothinglevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-unchanged-ybCYF8/runtime/cbm-daemon-1000 cache=01eabbcc8d28072674c4580e2c74df4a69c6a6f3db7942e370ef1da2a05b9767 clients=0 decision=nothing_to_replace active_cache=
+codebase-memory-mcp install dev
+
+Skipping binary placement (--skip-binary); configuring agents only.
+
+No CBM session needs to stop for install: the published binary and indexes are unchanged.
+level=info msg=daemon.runtime_stopping reason=service_stop
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-guard-scope-unchanged-ybCYF8/host/.zshrc
+PASS
+  cli_scope_fixture_names_its_failing_setup_step         cli scope fixture no-such-parent/x: setup failed at creating the fixture directory: No such file or directory
+PASS
+  cli_scope_fixture_finish_keeps_env_after_an_early_failurecli scope fixture no-such-parent/y: setup failed at creating the fixture directory: No such file or directory
+PASS
+  cli_scope_retries_a_mute_endpoint_until_it_answers     PASS
+  cli_install_foreign_home_unreadable_cohort_cache_keeps_host_daemonlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-unread-8xTlyH/runtime/cbm-daemon-1000 cache=6e2e8c5ffc31efdab1534d0b03a9e54f7653c7752c24e432d658ce98993ba61e clients=0 decision=unconfirmed_cohort active_cache=
+level=info msg=daemon.runtime_stopping reason=service_stop
+PASS
+  cli_install_foreign_home_busy_cohort_keeps_host_daemon level=info msg=version_cohort.claimed_fresh prior_holder=none build=533032e4523037dd65863795bcaac3c6e7fa08639a1b2c5b1c120807d1a61b61
+level=info msg=activation.guard scope=/tmp/cli-guard-scope-busy-9EQXMU/runtime/cbm-daemon-1000 cache=d4c4f87876b499bc3e525ac6a679b38a9a35fe6381d72c8a3be61130f595d827 clients=0 decision=unconfirmed_cohort active_cache=
+level=info msg=daemon.runtime_stopping reason=service_stop
+PASS
+  cli_install_force_quiesces_active_cohort_before_replacing_binarycodebase-memory-mcp install dev
+
+Installed binary -> /tmp/cli-daemon-install-k72OZL/.local/bin/codebase-memory-mcp
+
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-daemon-install-k72OZL/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-daemon-install-k72OZL/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-daemon-install-k72OZL/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-daemon-install-k72OZL/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+
+Added /tmp/cli-daemon-install-k72OZL/.local/bin to PATH in /tmp/cli-daemon-install-k72OZL/.bash_profile
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-daemon-install-k72OZL/.bash_profile
+PASS
+  cli_install_dir_and_skip_config_stage_first_install_safelycodebase-memory-mcp install dev
+
+Installed binary -> /tmp/cli-install-dir-Z2346r/custom/new/bin/codebase-memory-mcp
+
+
+Added /tmp/cli-install-dir-Z2346r/custom/new/bin to PATH in /tmp/cli-install-dir-Z2346r/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-install-dir-Z2346r/.zshrc
+codebase-memory-mcp install dev
+
+Would install binary -> /tmp/cli-install-dir-Z2346r/custom/new/bin/codebase-memory-mcp
+
+
+PATH already includes /tmp/cli-install-dir-Z2346r/custom/new/bin
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-install-dir-Z2346r/.zshrc
+
+(dry-run — no files were modified)
+PASS
+  cli_activation_commands_reject_malformed_and_unknown_flagserror: --dir requires a non-empty path
+error: --dir requires a non-empty path
+error: unknown install option: --skip-config=value
+error: unknown update option: --not-an-update-option
+error: unknown uninstall option: --not-an-uninstall-option
+PASS
+  cli_install_reset_deletion_waits_for_final_activation_guardcodebase-memory-mcp install dev
+
+Found 1 existing index(es):
+  /tmp/cli-daemon-install-reset-D1BK0C/cache/project.db
+
+Delete these indexes and continue with install? (y/n): y (auto)
+PASS
+  cli_remove_indexes_deletes_orphan_sqlite_sidecars_issue2054PASS
+  cli_index_enumeration_skips_internal_cache_dbs           /tmp/cli-internal-dbs-HEh1e7/cache/_work-api.db
+  /tmp/cli-internal-dbs-HEh1e7/cache/proj.db
+PASS
+  cli_install_config_only_waits_for_cohort_drain         codebase-memory-mcp install dev
+
+A different binary already exists at:
+  /tmp/cli-daemon-install-config-race-V5ARdk/.local/bin/codebase-memory-mcp
+Replace it with the binary you ran install from? (y/n): n (auto)
+Keeping existing binary; configs will point at it.
+
+PASS
+  cli_install_config_and_path_finish_before_guard_releasecodebase-memory-mcp install dev
+
+A different binary already exists at:
+  /tmp/cli-daemon-install-window-qgflHk/.local/bin/codebase-memory-mcp
+Replace it with the binary you ran install from? (y/n): n (auto)
+Keeping existing binary; configs will point at it.
+
+Detected agents: Claude-Code Codex
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-daemon-install-window-qgflHk/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-daemon-install-window-qgflHk/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-daemon-install-window-qgflHk/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-daemon-install-window-qgflHk/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Codex CLI:
+  mcp: /tmp/cli-daemon-install-window-qgflHk/.codex/config.toml
+  instructions: /tmp/cli-daemon-install-window-qgflHk/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-daemon-install-window-qgflHk/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-daemon-install-window-qgflHk/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-daemon-install-window-qgflHk/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-daemon-install-window-qgflHk/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+
+Added /tmp/cli-daemon-install-window-qgflHk/.local/bin to PATH in /tmp/cli-daemon-install-window-qgflHk/.zshrc
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-daemon-install-window-qgflHk/.zshrc
+PASS
+  cli_install_config_failure_keeps_published_binary      error: agent_config agent=OpenClaw op=mcp_install path=/tmp/cli-install-partial-config-ZRkOMp/.openclaw/openclaw.json (target: regular file, 17 bytes)
+  warning: OpenClaw workspace is ambiguous; skipped AGENTS.md, TOOLS.md, and compaction augmentation
+error: one or more agent configurations failed; the published/current executable was kept, and PATH/index cleanup was not attempted
+codebase-memory-mcp install dev
+
+Installed binary -> /tmp/cli-install-partial-config-ZRkOMp/.local/bin/codebase-memory-mcp
+
+Detected agents: OpenClaw
+
+OpenClaw:
+  mcp: /tmp/cli-install-partial-config-ZRkOMp/.openclaw/openclaw.json
+PASS
+  cli_update_download_failure_does_not_quiesce_sessions  *** cbm test seam: portable update flow engaged; the script-update handoff is bypassed (test builds only) ***
+curl: (37) Could not open file /cbm-update-does-not-exist/codebase-memory-mcp-linux-amd64-portable.tar.gz
+error: download failed (exit 37)
+codebase-memory-mcp update (current: dev)
+
+Found 1 existing index(es) that must be rebuilt after update:
+  /tmp/cli-daemon-update-EK0gMx/cache/project.db
+
+Delete these indexes and continue with update? (y/n): y (auto)
+
+Downloading the binary for linux/amd64 ...
+  file:///cbm-update-does-not-exist/codebase-memory-mcp-linux-amd64-portable.tar.gz
+PASS
+  cli_update_already_current_does_not_quiesce_sessions   *** cbm test seam: portable update flow engaged; the script-update handoff is bypassed (test builds only) ***
+codebase-memory-mcp update (current: dev)
+
+Already up to date (dev).
+PASS
+  cli_ui_config_keys_are_discoverable_and_settable_issue1558PASS
+  cli_skill_frontmatter_scalars_with_colons_are_quoted_issue1554PASS
+  cli_external_manager_detection_needs_positive_evidence_issue1566PASS
+  cli_clients_selector_vocabulary_is_complete_and_strict_issue1558error: unknown client: codx
+
+Available --clients tokens:
+  claude           Claude Code
+  codex            Codex
+  gemini           Gemini
+  zed              Zed
+  opencode         OpenCode
+  antigravity      Antigravity
+  aider            Aider
+  kilocode         Kilo Code
+  vscode           VS Code
+  cursor           Cursor
+  windsurf         Windsurf
+  augment          Augment
+  openclaw         OpenClaw
+  kiro             Kiro
+  junie            Junie
+  hermes           Hermes
+  openhands        OpenHands
+  cline            Cline
+  warp             Warp
+  qwen             Qwen
+  copilot-cli      Copilot CLI
+  factory-droid    Factory Droid
+  crush            Crush
+  goose            Goose
+  mistral-vibe     Mistral Vibe
+  grok             Grok Build
+  qoder            Qoder CLI
+  kimi             Kimi Code CLI
+  gitlab-duo       GitLab Duo CLI
+  rovo-dev         Rovo Dev CLI
+  amp              Amp
+  devin            Devin CLI / Local
+  tabnine          Tabnine
+  continue         Continue / cn
+  visual-studio    Visual Studio
+  trae             TRAE
+  roo-code         Roo Code
+  amazon-q         Amazon Q Developer IDE
+  codebuddy        CodeBuddy Code CLI
+  ibm-bob-ide      IBM Bob IDE
+  ibm-bob-shell    IBM Bob Shell
+  pochi            Pochi
+  pi               Pi
+  sourcegraph-cody Sourcegraph Cody
+  omp              Oh My Pi (omp)
+
+Example: --clients=claude,codex
+Omit --clients to configure every detected client.
+PASS
+  cli_clients_selector_filters_registry_installs_issue1798Detected agents: (none)
+
+Detected agents: Qoder CLI
+
+Qoder CLI:
+  mcp: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/settings.json
+  skill: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/agents/codebase-memory.md
+  agent: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cbm_cli_clients_registry_pJFAPL/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+PASS
+  cli_update_accepts_retired_variant_flags_issue1544     note: --ui/--standard are accepted but no longer do anything; since v0.10.0 there is one build per platform and it always includes the graph UI.
+note: --ui/--standard are accepted but no longer do anything; since v0.10.0 there is one build per platform and it always includes the graph UI.
+error: unknown update option: --not-a-flag
+codebase-memory-mcp update (current: dev)
+
+The update runs from install.sh, not from this process. Run
+
+  bash "/home/imi/Projects/codebase-memory-mcp-v0121/build/audit/install.sh"
+
+It downloads the latest release, verifies its checksum, and replaces
+this binary in place. install.sh is idempotent, so re-running it IS
+the update. One build per platform — the graph UI is always
+included.
+codebase-memory-mcp update (current: dev)
+
+The update runs from install.sh, not from this process. Run
+
+  bash "/home/imi/Projects/codebase-memory-mcp-v0121/build/audit/install.sh"
+
+It downloads the latest release, verifies its checksum, and replaces
+this binary in place. install.sh is idempotent, so re-running it IS
+the update. One build per platform — the graph UI is always
+included.
+PASS
+  cli_update_agent_configs_finish_before_guard_release   *** cbm test seam: portable update flow engaged; the script-update handoff is bypassed (test builds only) ***
+######################################################################## 100.0%
+*** cbm test seam: portable update flow engaged; the script-update handoff is bypassed (test builds only) ***
+######################################################################## 100.0%
+error: agent_config agent=OpenClaw op=mcp_install path=/tmp/cli-daemon-update-window-g4GyuI/.openclaw/openclaw.json (target: regular file, 17 bytes)
+  warning: OpenClaw workspace is ambiguous; skipped AGENTS.md, TOOLS.md, and compaction augmentation
+error: one or more agent configurations failed; the published update was kept. Review the errors above and rerun update
+codebase-memory-mcp update (current: dev)
+
+
+Downloading the binary for linux/amd64 ...
+  file:///tmp/cli-daemon-update-window-g4GyuI/release/codebase-memory-mcp-linux-amd64-portable.tar.gz
+Checksum verified: 22f82887c7e91af4489b8d669d283c15e17067abd2de626b0dbb60763b2b6ca2
+Refreshing agent configurations...
+Detected agents: Claude-Code Codex
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-daemon-update-window-g4GyuI/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Codex CLI:
+  mcp: /tmp/cli-daemon-update-window-g4GyuI/.codex/config.toml
+  instructions: /tmp/cli-daemon-update-window-g4GyuI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-daemon-update-window-g4GyuI/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+
+Update complete. Verifying:
+
+All project indexes were cleared. They will be rebuilt
+automatically when you next use the MCP server.
+
+Update complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp update (current: dev)
+
+
+Downloading the binary for linux/amd64 ...
+  file:///tmp/cli-daemon-update-window-g4GyuI/release/codebase-memory-mcp-linux-amd64-portable.tar.gz
+Checksum verified: 22f82887c7e91af4489b8d669d283c15e17067abd2de626b0dbb60763b2b6ca2
+Refreshing agent configurations...
+Detected agents: Claude-Code Codex OpenClaw
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-daemon-update-window-g4GyuI/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Codex CLI:
+  mcp: /tmp/cli-daemon-update-window-g4GyuI/.codex/config.toml
+  instructions: /tmp/cli-daemon-update-window-g4GyuI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-daemon-update-window-g4GyuI/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-daemon-update-window-g4GyuI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+OpenClaw:
+  mcp: /tmp/cli-daemon-update-window-g4GyuI/.openclaw/openclaw.json
+PASS
+  cli_update_names_the_failing_staging_step_and_os_error PASS
+  cli_uninstall_quiesces_active_cohort_before_removing_binary_and_indexcodebase-memory-mcp uninstall
+
+
+Found 1 index(es):
+  /tmp/cli-daemon-uninstall-puzFog/cache/project.db
+Removed 1 index(es).
+Removed /tmp/cli-daemon-uninstall-puzFog/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_uninstall_preserves_binary_and_index_when_cohort_does_not_draincodebase-memory-mcp uninstall
+
+
+Found 1 index(es):
+  /tmp/cli-daemon-uninstall-race-fgil9w/cache/project.db
+PASS
+  cli_uninstall_auto_answers_keep_indexes_without_delete_indexescodebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-keep-Tli3jA/cache/project-2.db
+  /tmp/cli-uninstall-keep-Tli3jA/cache/project-0.db
+  /tmp/cli-uninstall-keep-Tli3jA/cache/project-1.db
+Indexes kept in /tmp/cli-uninstall-keep-Tli3jA/cache. To remove them, uninstall with --delete-indexes or delete the project .db files there.
+Removed /tmp/cli-uninstall-keep-Tli3jA/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-keep-Jqwo3e/cache/project-2.db
+  /tmp/cli-uninstall-keep-Jqwo3e/cache/project-0.db
+  /tmp/cli-uninstall-keep-Jqwo3e/cache/project-1.db
+Indexes kept in /tmp/cli-uninstall-keep-Jqwo3e/cache. To remove them, uninstall with --delete-indexes or delete the project .db files there.
+Removed /tmp/cli-uninstall-keep-Jqwo3e/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-keep-Lx5Q4l/cache/project-2.db
+  /tmp/cli-uninstall-keep-Lx5Q4l/cache/project-0.db
+  /tmp/cli-uninstall-keep-Lx5Q4l/cache/project-1.db
+Indexes kept in /tmp/cli-uninstall-keep-Lx5Q4l/cache. To remove them, uninstall with --delete-indexes or delete the project .db files there.
+Removed /tmp/cli-uninstall-keep-Lx5Q4l/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-keep-CuL4Qr/cache/project-2.db
+  /tmp/cli-uninstall-keep-CuL4Qr/cache/project-0.db
+  /tmp/cli-uninstall-keep-CuL4Qr/cache/project-1.db
+Indexes kept in /tmp/cli-uninstall-keep-CuL4Qr/cache. To remove them, uninstall with --delete-indexes or delete the project .db files there.
+Removed /tmp/cli-uninstall-keep-CuL4Qr/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_uninstall_delete_indexes_is_explicit_and_overrides_nocodebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-delete-897MR6/cache/project-2.db
+  /tmp/cli-uninstall-delete-897MR6/cache/project-0.db
+  /tmp/cli-uninstall-delete-897MR6/cache/project-1.db
+Removed 3 index(es).
+Removed /tmp/cli-uninstall-delete-897MR6/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-delete-5etORD/cache/project-2.db
+  /tmp/cli-uninstall-delete-5etORD/cache/project-0.db
+  /tmp/cli-uninstall-delete-5etORD/cache/project-1.db
+Removed 3 index(es).
+Removed /tmp/cli-uninstall-delete-5etORD/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-delete-TJ5bvG/cache/project-2.db
+  /tmp/cli-uninstall-delete-TJ5bvG/cache/project-0.db
+  /tmp/cli-uninstall-delete-TJ5bvG/cache/project-1.db
+Removed 3 index(es).
+Removed /tmp/cli-uninstall-delete-TJ5bvG/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+codebase-memory-mcp uninstall
+
+
+Found 3 index(es):
+  /tmp/cli-uninstall-delete-XQH1ad/cache/project-2.db
+  /tmp/cli-uninstall-delete-XQH1ad/cache/project-0.db
+  /tmp/cli-uninstall-delete-XQH1ad/cache/project-1.db
+Removed 3 index(es).
+Removed /tmp/cli-uninstall-delete-XQH1ad/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_uninstall_delete_indexes_dry_run_keeps_files       PASS
+  cli_uninstall_non_tty_affirmative_input_keeps_indexes  PASS
+  cli_uninstall_delete_indexes_help_and_invalid_options_preserve_fileserror: unknown uninstall option: --unknown
+error: --dir requires a non-empty path
+error: --dir requires a non-empty path
+Usage: codebase-memory-mcp uninstall [options]
+
+Removes the codebase-memory-mcp binary and its agent configurations.
+THIS IS DESTRUCTIVE. Project indexes are kept by default. An interactive
+terminal is asked separately; the default answer is to keep them.
+
+Options:
+  --dry-run          Show what would be removed, change nothing
+  --dir=PATH         Uninstall from a custom install directory
+  --delete-indexes   Also delete every project index (overrides --no)
+  -y, --yes          Do not prompt; indexes are kept unless explicitly deleted
+  -n, --no           Decline prompts; --delete-indexes still takes precedence
+  -h, --help         Show this help and exit
+
+Run with --dry-run first if you are unsure.
+PASS
+  cli_uninstall_removes_binary_and_index_when_agent_config_cleanup_failsPASS
+  cli_uninstall_cleans_user_owned_symlinked_config       PASS
+  cli_activation_guard_is_bypassed_for_dry_run_and_plan  *** cbm test seam: portable update flow engaged; the script-update handoff is bypassed (test builds only) ***
+codebase-memory-mcp install dev
+
+Would install binary -> /tmp/cli-daemon-stateless-TuZNlE/.local/bin/codebase-memory-mcp
+
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-daemon-stateless-TuZNlE/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+
+Added /tmp/cli-daemon-stateless-TuZNlE/.local/bin to PATH in /tmp/cli-daemon-stateless-TuZNlE/.bash_profile
+
+Install complete. Please restart your coding-agent sessions to properly take this into account.
+Restart your shell or run:
+  source /tmp/cli-daemon-stateless-TuZNlE/.bash_profile
+
+(dry-run — no files were modified)
+{
+    "type": "agent.install.plan.v1",
+    "agents_detected": [
+        "claude-code"
+    ],
+    "config_files_planned": [
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude.json"
+    ],
+    "instruction_files_planned": [
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/skills/codebase-memory/SKILL.md",
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-scout.md",
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory.md",
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-auditor.md"
+    ],
+    "skill_files_planned": [
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/skills/codebase-memory/SKILL.md"
+    ],
+    "agent_files_planned": [
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-scout.md",
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory.md",
+        "/tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-auditor.md"
+    ],
+    "prompt_files_planned": [],
+    "hooks_planned": [
+        {
+            "agent": "Claude Code",
+            "path": "/tmp/cli-daemon-stateless-TuZNlE/.claude/settings.json"
+        },
+        {
+            "agent": "Claude Code",
+            "path": "/tmp/cli-daemon-stateless-TuZNlE/.claude/hooks/cbm-code-discovery-gate"
+        },
+        {
+            "agent": "Claude Code",
+            "path": "/tmp/cli-daemon-stateless-TuZNlE/.claude/hooks/cbm-session-reminder"
+        },
+        {
+            "agent": "Claude Code",
+            "path": "/tmp/cli-daemon-stateless-TuZNlE/.claude/hooks/cbm-subagent-reminder"
+        }
+    ],
+    "writes_started": false,
+    "network_after_install": false,
+    "next_safe_command": "codebase-memory-mcp install -y"
+}
+codebase-memory-mcp update (current: dev)
+
+
+Would download the binary for linux/amd64 ...
+  https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-linux-amd64-portable.tar.gz
+
+(dry-run — skipping download, extraction, and binary replacement)
+  target: /tmp/cli-daemon-stateless-TuZNlE/.local/bin/codebase-memory-mcp
+  os/arch: linux/amd64
+
+Update dry-run complete.
+codebase-memory-mcp uninstall
+
+Claude Code: removed 0 skill(s)
+  Claude Code agent: would remove owned profile /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-scout.md
+  Claude Code agent: would remove owned profile /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory.md
+  Claude Code agent: would remove owned profile /tmp/cli-daemon-stateless-TuZNlE/.claude/agents/codebase-memory-auditor.md
+  removed MCP config entry
+  removed PreToolUse + SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+(dry-run — no files were modified)
+PASS
+  cli_compare_versions                                   PASS
+  cli_version_get_set                                    PASS
+  cli_detect_shell_rc_zsh                                PASS
+  cli_detect_shell_rc_bash                               PASS
+  cli_detect_shell_rc_bash_with_bashrc                   PASS
+  cli_detect_shell_rc_fish                               PASS
+  cli_detect_shell_rc_default                            PASS
+  cli_find_cli_not_found                                 PASS
+  cli_find_cli_result_is_thread_local                    PASS
+  cli_find_cli_on_path                                   PASS
+  cli_find_cli_fallback_paths                            PASS
+  cli_dry_run_flags                                      PASS
+  cli_skill_creation                                     PASS
+  cli_skill_idempotent                                   PASS
+  cli_skill_force_overwrite                              PASS
+  cli_skills_reject_symlink_and_preserve_unowned_content PASS
+  cli_legacy_skill_cleanup_rejects_links_and_user_contentPASS
+  cli_uninstall_removes_skills                           PASS
+  cli_remove_old_monolithic_skill                        PASS
+  cli_skill_files_content                                PASS
+  cli_codex_instructions                                 PASS
+  cli_editor_mcp_install                                 PASS
+  cli_editor_mcp_idempotent                              PASS
+  cli_editor_mcp_repairs_known_previous_managed_entry    PASS
+  cli_editor_mcp_preserves_unrecorded_posix_absolute_entries_without_probePASS
+  cli_editor_mcp_preserves_unresolved_relative_entry     PASS
+  cli_editor_mcp_rejects_unsafe_windows_probe_namespaces PASS
+  cli_editor_mcp_refuses_foreign_shaped_entry            PASS
+  cli_editor_mcp_preserves_others                        PASS
+  cli_editor_mcp_uninstall                               PASS
+  cli_junie_mcp_install_issue651                         PASS
+  cli_junie_mcp_repairs_all_known_previous_aliases_atomicallyPASS
+  cli_goose_block_carries_required_name_issue1675        PASS
+  cli_editor_mcp_field_repairs_annotated_entry_via_previous_issue1630PASS
+  cli_opencode_moved_entry_without_authority_refuses_issue1630PASS
+  cli_opencode_owns_backslash_command_issue1582          PASS
+  cli_gemini_mcp_install                                 PASS
+  cli_openclaw_mcp_install_uses_nested_servers           PASS
+  cli_openclaw_mcp_preserves_existing_config             PASS
+  cli_openclaw_mcp_preserves_valid_json5                 PASS
+  cli_openclaw_mcp_uninstall_uses_nested_servers         PASS
+  cli_openclaw_compaction_preserves_user_owned_section   level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: OpenClaw
+
+OpenClaw:
+  mcp: /tmp/cli-openclaw-compaction-Kp1xPD/.openclaw/openclaw.json
+  instructions: /tmp/cli-openclaw-compaction-Kp1xPD/.openclaw/workspace/AGENTS.md
+  tools context: /tmp/cli-openclaw-compaction-Kp1xPD/.openclaw/workspace/TOOLS.md
+  compaction: reinjects Codebase Memory
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=dbe98ae1590b0b830874544ef53276ac3d84c0535796da3ea983fae440fa87ea clients=0 decision=no_active_cohort active_cache=
+OpenClaw: removed MCP config entry
+  removed workspace instructions + compaction augmentation
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_openhands_registers_settings_mcp_config_and_profile_refs_issue1826level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: OpenHands
+
+OpenHands:
+  mcp: /tmp/cli-openhands-QcI4Nv/.openhands/mcp.json
+  skill: /tmp/cli-openhands-QcI4Nv/.agents/skills/codebase-memory/SKILL.md (1 installed)
+  settings mcp_config: /tmp/cli-openhands-QcI4Nv/.openhands/settings.json
+Detected agents: OpenHands
+
+OpenHands:
+  mcp: /tmp/cli-openhands-QcI4Nv/.openhands/mcp.json
+  skill: /tmp/cli-openhands-QcI4Nv/.agents/skills/codebase-memory/SKILL.md (0 installed)
+  settings mcp_config: /tmp/cli-openhands-QcI4Nv/.openhands/settings.json
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=349722754f3d3961ad9e62a76adc0979b7c44a33f5a3d3260f87e6eb888210dd clients=0 decision=no_active_cohort active_cache=
+OpenHands: removed MCP config entry
+  removed 1 skill(s)
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_openhands_creates_settings_and_skips_missing_profiles_issue1826level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: OpenHands
+
+OpenHands:
+  mcp: /tmp/cli-openhands-2fCTlC/.openhands/mcp.json
+  skill: /tmp/cli-openhands-2fCTlC/.agents/skills/codebase-memory/SKILL.md (1 installed)
+  settings mcp_config: /tmp/cli-openhands-2fCTlC/.openhands/settings.json
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=4139e9709581123a95219a0d77976e67d1382faa4749d527cfc423c2b632ad7f clients=0 decision=no_active_cohort active_cache=
+OpenHands: removed MCP config entry
+  removed 1 skill(s)
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_openclaw_profile_uses_profile_state_and_default_workspacePASS
+  cli_openclaw_uninstall_removes_compaction_when_workspace_is_ambiguouslevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=ac75e6847cada8fddd2fa64fbf8a8d69377bf4ab44da5fb16c05cb4110af205f clients=0 decision=no_active_cohort active_cache=
+OpenClaw: removed MCP config entry
+  removed compaction augmentation; workspace instructions unresolved
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_vscode_mcp_install                                 PASS
+  cli_vscode_mcp_uninstall                               PASS
+  cli_vscode_profile_mcp_uninstall                       level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=dc75b3d3a580e16f8f2afea4db30907cfcf88097ee0ae2c0b0cefebfd17954b0 clients=0 decision=no_active_cohort active_cache=
+VS Code: removed MCP config entry
+  Copilot skill: 0 removed
+  Copilot agent: removed owned profile /tmp/cli-vscode-profile-uninstall-8qzZ4Y/.copilot/agents/codebase-memory-scout.agent.md
+  Copilot agent: removed owned profile /tmp/cli-vscode-profile-uninstall-8qzZ4Y/.copilot/agents/codebase-memory.agent.md
+  Copilot agent: removed owned profile /tmp/cli-vscode-profile-uninstall-8qzZ4Y/.copilot/agents/codebase-memory-auditor.agent.md
+  removed SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_zed_mcp_install                                    PASS
+  cli_zed_mcp_preserves_settings                         PASS
+  cli_zed_mcp_uninstall                                  PASS
+  cli_zed_mcp_jsonc_comments                             PASS
+  cli_ensure_path_append                                 PASS
+  cli_ensure_path_already_present                        PASS
+  cli_ensure_path_dry_run                                PASS
+  cli_ensure_path_fish_syntax_issue319                   PASS
+  cli_copy_file                                          PASS
+  cli_copy_file_source_not_found                         PASS
+  cli_extract_binary_from_targz                          PASS
+  cli_extract_binary_from_targz_not_found                PASS
+  cli_extract_binary_from_targz_invalid_data             PASS
+  cli_extract_binary_from_zip                            PASS
+  cli_extract_binary_from_zip_not_found                  PASS
+  cli_extract_binary_from_zip_path_traversal             PASS
+  cli_extract_binary_from_zip_invalid                    PASS
+  cli_extract_binary_from_zip_rejects_truncated_deflate_size_over_int_maxPASS
+  cli_install_dry_run                                    PASS
+  cli_uninstall_dry_run                                  PASS
+  cli_install_and_uninstall                              PASS
+  cli_agent_install_reports_safe_editor_refusal          error: agent_config agent=OpenClaw op=mcp_install path=/tmp/cli-install-refusal-23JP59/.openclaw/openclaw.json (target: regular file, 17 bytes)
+  warning: OpenClaw workspace is ambiguous; skipped AGENTS.md, TOOLS.md, and compaction augmentation
+Detected agents: OpenClaw
+
+OpenClaw:
+  mcp: /tmp/cli-install-refusal-23JP59/.openclaw/openclaw.json
+PASS
+  cli_agent_uninstall_reports_safe_editor_refusal        error: agent_config agent=OpenClaw op=mcp_uninstall path=/tmp/cli-uninstall-refusal-5XV9RH/.openclaw/openclaw.json (target: regular file, 17 bytes)
+error: agent_config agent=OpenClaw op=compaction_uninstall path=/tmp/cli-uninstall-refusal-5XV9RH/.openclaw/openclaw.json (target: regular file, 17 bytes)
+
+error: uninstall finished with 2 agent configuration(s) left uncleaned:
+  OpenClaw (mcp_uninstall): /tmp/cli-uninstall-refusal-5XV9RH/.openclaw/openclaw.json (target: regular file, 17 bytes)
+  OpenClaw (compaction_uninstall): /tmp/cli-uninstall-refusal-5XV9RH/.openclaw/openclaw.json (target: regular file, 17 bytes)
+Remove the codebase-memory-mcp entries from these files by hand.
+codebase-memory-mcp uninstall
+
+OpenClaw: removed MCP config entry
+  removed compaction augmentation; workspace instructions unresolved
+Removed /tmp/cli-uninstall-refusal-5XV9RH/.local/bin/codebase-memory-mcp
+
+Uninstall finished with errors; the files listed above still hold codebase-memory-mcp entries. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_special_hook_failures_propagate_from_install_and_uninstallerror: agent_config agent=Factory Droid op=context_hook_install path=/tmp/cli-special-hook-refusal-FiICk6/.factory/hooks.json (target: regular file, 3 bytes)
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Factory-Droid
+
+Factory Droid:
+  mcp: /tmp/cli-special-hook-refusal-FiICk6/.factory/mcp.json
+  instructions: /tmp/cli-special-hook-refusal-FiICk6/.factory/AGENTS.md
+  skill: /tmp/cli-special-hook-refusal-FiICk6/.factory/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory-scout.md
+  agent: /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory.md
+  agent: /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=68ff631670bf5cf42f66973c646317d906dbab4a30fe040947c080bc4093c8e3 clients=0 decision=no_active_cohort active_cache=
+error: agent_config agent=Factory Droid op=context_hook_uninstall path=/tmp/cli-special-hook-refusal-FiICk6/.factory/hooks.json (target: regular file, 3 bytes)
+
+error: uninstall finished with 1 agent configuration(s) left uncleaned:
+  Factory Droid (context_hook_uninstall): /tmp/cli-special-hook-refusal-FiICk6/.factory/hooks.json (target: regular file, 3 bytes)
+Remove the codebase-memory-mcp entries from these files by hand.
+Factory Droid: removed MCP config entry
+  removed instructions
+  Factory Droid skill: 1 removed
+  Factory Droid agent: removed owned profile /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory-scout.md
+  Factory Droid agent: removed owned profile /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory.md
+  Factory Droid agent: removed owned profile /tmp/cli-special-hook-refusal-FiICk6/.factory/droids/codebase-memory-auditor.md
+  removed SessionStart + PostToolUse hooks
+
+Uninstall finished with errors; the files listed above still hold codebase-memory-mcp entries. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_install_copies_binary_to_target_issue472           PASS
+  cli_install_same_file_guard_issue472                   PASS
+  cli_yaml_parse_simple                                  PASS
+  cli_yaml_parse_nested                                  PASS
+  cli_yaml_parse_list                                    PASS
+  cli_yaml_parse_bool                                    PASS
+  cli_yaml_parse_comments                                PASS
+  cli_yaml_parse_empty                                   PASS
+  cli_yaml_has                                           PASS
+  cli_detect_agents_finds_claude                         PASS
+  cli_detect_agents_finds_claude_via_env                 PASS
+  cli_detect_claude_empty_dir_not_detected_issue1180     PASS
+  cli_detect_claude_empty_config_dir_env_not_detected_issue1180PASS
+  cli_detect_claude_real_install_detected_issue1180      PASS
+  cli_detect_opencode_desktop_storage_issue1180          PASS
+  cli_hermes_home_windows_localappdata_issue1180         PASS
+  cli_detect_hermes_desktop_home_issue1180               PASS
+  cli_detect_client_non_install_control_issue1167_1180   PASS
+  cli_detect_agents_finds_codex                          PASS
+  cli_detect_agents_finds_grok                           PASS
+  cli_detect_agents_finds_cursor_issue222                PASS
+  cli_install_plan_receipt_no_mutation_issue388          PASS
+  cli_supported_agent_surfaces_match_installers          PASS
+  cli_new_agent_install_plans_use_documented_paths       PASS
+  cli_new_agent_configs_use_documented_schemas           Detected agents: Hermes OpenHands Cline Qwen-Code Copilot-CLI Factory-Droid Crush Goose Mistral-Vibe Grok-Build
+
+Hermes:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.hermes/config.yaml
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.hermes/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-new-agent-configs-1cO7I5/.hermes/config.yaml (pre_llm_call)
+OpenHands:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.openhands/mcp.json
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.agents/skills/codebase-memory/SKILL.md (1 installed)
+  settings mcp_config: /tmp/cli-new-agent-configs-1cO7I5/.openhands/settings.json
+Cline:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.cline/mcp.json
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.cline/rules/codebase-memory-mcp.md
+Cline IDE:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.cline/data/settings/cline_mcp_settings.json
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.cline/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: withheld (file hooks auto-enable and do not reliably inject context)
+Qwen Code:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.qwen/settings.json
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.qwen/QWEN.md
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.qwen/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.qwen/agents/codebase-memory-scout.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.qwen/agents/codebase-memory.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.qwen/agents/codebase-memory-auditor.md
+  hooks: SessionStart + SubagentStart + PostToolUse ReadFile
+Copilot CLI:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.copilot/mcp-config.json
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.copilot/copilot-instructions.md
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+Factory Droid:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.factory/mcp.json
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.factory/AGENTS.md
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.factory/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.factory/droids/codebase-memory-scout.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.factory/droids/codebase-memory.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.factory/droids/codebase-memory-auditor.md
+  hooks: SessionStart + PostToolUse Read coverage
+Crush:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.config/crush/crush.json
+  task context: /tmp/cli-new-agent-configs-1cO7I5/.config/crush/codebase-memory.md
+Goose:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.config/goose/config.yaml
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.config/goose/.goosehints
+Mistral Vibe:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.vibe/config.toml
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.vibe/AGENTS.md
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.vibe/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.vibe/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.vibe/agents/codebase-memory.toml
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.vibe/agents/codebase-memory-auditor.toml
+  prompt: /tmp/cli-new-agent-configs-1cO7I5/.vibe/prompts/codebase-memory-scout.md
+  prompt: /tmp/cli-new-agent-configs-1cO7I5/.vibe/prompts/codebase-memory.md
+  prompt: /tmp/cli-new-agent-configs-1cO7I5/.vibe/prompts/codebase-memory-auditor.md
+Grok Build:
+  mcp: /tmp/cli-new-agent-configs-1cO7I5/.grok/config.toml
+  instructions: /tmp/cli-new-agent-configs-1cO7I5/.grok/rules/codebase-memory.md
+  skill: /tmp/cli-new-agent-configs-1cO7I5/.grok/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.grok/agents/codebase-memory-scout.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.grok/agents/codebase-memory.md
+  agent: /tmp/cli-new-agent-configs-1cO7I5/.grok/agents/codebase-memory-auditor.md
+  hooks: withheld (Grok passive hook events discard stdout; no context contract)
+PASS
+  cli_agent_reinstall_preserves_foreign_policy_entries   error: agent_config agent=OpenCode op=mcp_install path=/tmp/cli-agent-policy-GNEBrk/.config/opencode/opencode.json (target: regular file, 117 bytes)
+error: agent_config agent=OpenClaw op=mcp_install path=/tmp/cli-agent-policy-GNEBrk/.openclaw/openclaw.json (target: regular file, 122 bytes)
+error: agent_config agent=Cline op=mcp_install path=/tmp/cli-agent-policy-GNEBrk/.cline/mcp.json (target: regular file, 137 bytes)
+error: agent_config agent=Copilot CLI op=mcp_install path=/tmp/cli-agent-policy-GNEBrk/.copilot/mcp-config.json (target: regular file, 159 bytes)
+error: agent_config agent=Factory Droid op=mcp_install path=/tmp/cli-agent-policy-GNEBrk/.factory/mcp.json (target: regular file, 116 bytes)
+Detected agents: OpenCode OpenClaw Cline Copilot-CLI Factory-Droid
+
+OpenCode:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.config/opencode/opencode.json
+  instructions: /tmp/cli-agent-policy-GNEBrk/.config/opencode/AGENTS.md
+  skill: /tmp/cli-agent-policy-GNEBrk/.config/opencode/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-agent-policy-GNEBrk/.config/opencode/agents/codebase-memory-scout.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.config/opencode/agents/codebase-memory.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.config/opencode/agents/codebase-memory-auditor.md
+  extension: /tmp/cli-agent-policy-GNEBrk/.config/opencode/plugins/cbm-augment.ts
+OpenClaw:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.openclaw/openclaw.json
+  instructions: /tmp/cli-agent-policy-GNEBrk/.openclaw/workspace/AGENTS.md
+  tools context: /tmp/cli-agent-policy-GNEBrk/.openclaw/workspace/TOOLS.md
+  compaction: reinjects Codebase Memory
+Cline:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.cline/mcp.json
+  instructions: /tmp/cli-agent-policy-GNEBrk/.cline/rules/codebase-memory-mcp.md
+Cline IDE:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.cline/data/settings/cline_mcp_settings.json
+  skill: /tmp/cli-agent-policy-GNEBrk/.cline/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: withheld (file hooks auto-enable and do not reliably inject context)
+Copilot CLI:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.copilot/mcp-config.json
+  instructions: /tmp/cli-agent-policy-GNEBrk/.copilot/copilot-instructions.md
+  skill: /tmp/cli-agent-policy-GNEBrk/.copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-agent-policy-GNEBrk/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+Factory Droid:
+  mcp: /tmp/cli-agent-policy-GNEBrk/.factory/mcp.json
+  instructions: /tmp/cli-agent-policy-GNEBrk/.factory/AGENTS.md
+  skill: /tmp/cli-agent-policy-GNEBrk/.factory/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-agent-policy-GNEBrk/.factory/droids/codebase-memory-scout.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.factory/droids/codebase-memory.md
+  agent: /tmp/cli-agent-policy-GNEBrk/.factory/droids/codebase-memory-auditor.md
+  hooks: SessionStart + PostToolUse Read coverage
+PASS
+  cli_hook_conflict_emits_stdout_notice_issue1388        PASS
+  cli_install_preserves_hook_entries_when_scripts_unowned_issue1387error: agent_config agent=Claude Code op=hook_script_install path=/tmp/cli-hooks-preserve-nFMVdd/.claude/hooks/cbm-code-discovery-gate (target: regular file, 189 bytes)
+error: agent_config agent=Claude Code op=hook_script_install path=/tmp/cli-hooks-preserve-nFMVdd/.claude/hooks/cbm-session-reminder (target: regular file, 116 bytes)
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hooks-preserve-nFMVdd/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hooks-preserve-nFMVdd/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hooks-preserve-nFMVdd/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hooks-preserve-nFMVdd/.claude.json
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_existing_agents_install_durable_child_context      Detected agents: Zed OpenCode OpenClaw Kiro
+
+OpenCode:
+  mcp: /tmp/cli-durable-agents-BGiukX/.config/opencode/opencode.json
+  instructions: /tmp/cli-durable-agents-BGiukX/.config/opencode/AGENTS.md
+  skill: /tmp/cli-durable-agents-BGiukX/.config/opencode/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-durable-agents-BGiukX/.config/opencode/agents/codebase-memory-scout.md
+  agent: /tmp/cli-durable-agents-BGiukX/.config/opencode/agents/codebase-memory.md
+  agent: /tmp/cli-durable-agents-BGiukX/.config/opencode/agents/codebase-memory-auditor.md
+  extension: /tmp/cli-durable-agents-BGiukX/.config/opencode/plugins/cbm-augment.ts
+Zed:
+  mcp: /tmp/cli-durable-agents-BGiukX/.config/zed/settings.json
+  instructions: /tmp/cli-durable-agents-BGiukX/.config/zed/AGENTS.md
+  skill: /tmp/cli-durable-agents-BGiukX/.agents/skills/codebase-memory/SKILL.md (1 installed)
+OpenClaw:
+  mcp: /tmp/cli-durable-agents-BGiukX/.openclaw/openclaw.json
+  instructions: /tmp/cli-durable-agents-BGiukX/.openclaw/workspace/AGENTS.md
+  tools context: /tmp/cli-durable-agents-BGiukX/.openclaw/workspace/TOOLS.md
+  compaction: reinjects Codebase Memory
+Kiro:
+  mcp: /tmp/cli-durable-agents-BGiukX/.kiro/settings/mcp.json
+  instructions: /tmp/cli-durable-agents-BGiukX/.kiro/steering/codebase-memory.md
+  skill: /tmp/cli-durable-agents-BGiukX/.kiro/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-durable-agents-BGiukX/.kiro/agents/codebase-memory-scout.json
+  agent: /tmp/cli-durable-agents-BGiukX/.kiro/agents/codebase-memory.json
+  agent: /tmp/cli-durable-agents-BGiukX/.kiro/agents/codebase-memory-auditor.json
+PASS
+  cli_durable_profiles_follow_current_vendor_paths       Detected agents: Claude-Code Codex Zed OpenCode KiloCode Cursor Kiro Cline Qwen-Code Copilot-CLI Factory-Droid Mistral-Vibe Grok-Build
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Codex CLI:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/config.toml
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/agents/codebase-memory.toml
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+OpenCode:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/opencode.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/AGENTS.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/agents/codebase-memory-auditor.md
+  extension: /tmp/cli-vendor-profiles-U9bDLw/.config/opencode/plugins/cbm-augment.ts
+Zed:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.config/zed/settings.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/.config/zed/AGENTS.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/.agents/skills/codebase-memory/SKILL.md (1 installed)
+KiloCode:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.config/kilo/kilo.jsonc
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/.config/kilo/rules/codebase-memory-mcp.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/kilo/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/kilo/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.config/kilo/agents/codebase-memory-auditor.md
+Cursor:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.cursor/mcp.json
+  skill: /tmp/cli-vendor-profiles-U9bDLw/.cursor/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.cursor/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.cursor/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.cursor/agents/codebase-memory-auditor.md
+Kiro:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/settings/mcp.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/steering/codebase-memory.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/agents/codebase-memory-scout.json
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/agents/codebase-memory.json
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-kiro/agents/codebase-memory-auditor.json
+Cline:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.cline/mcp.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/.cline/rules/codebase-memory-mcp.md
+Cline IDE:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-cline-data/settings/cline_mcp_settings.json
+  skill: /tmp/cli-vendor-profiles-U9bDLw/.cline/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: withheld (file hooks auto-enable and do not reliably inject context)
+Qwen Code:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/settings.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/QWEN.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-qwen/agents/codebase-memory-auditor.md
+  hooks: SessionStart + SubagentStart + PostToolUse ReadFile
+Copilot CLI:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/mcp-config.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/copilot-instructions.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+Factory Droid:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/.factory/mcp.json
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/.factory/AGENTS.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/.factory/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.factory/droids/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.factory/droids/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/.factory/droids/codebase-memory-auditor.md
+  hooks: SessionStart + PostToolUse Read coverage
+Mistral Vibe:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/config.toml
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/AGENTS.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/agents/codebase-memory.toml
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/agents/codebase-memory-auditor.toml
+  prompt: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/prompts/codebase-memory-scout.md
+  prompt: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/prompts/codebase-memory.md
+  prompt: /tmp/cli-vendor-profiles-U9bDLw/vendor-vibe/prompts/codebase-memory-auditor.md
+Grok Build:
+  mcp: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/config.toml
+  instructions: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/rules/codebase-memory.md
+  skill: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/agents/codebase-memory-scout.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/agents/codebase-memory.md
+  agent: /tmp/cli-vendor-profiles-U9bDLw/vendor-grok/agents/codebase-memory-auditor.md
+  hooks: withheld (Grok passive hook events discard stdout; no context contract)
+PASS
+  cli_cline_data_dir_only_redirects_data_state           level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Cline
+
+Cline:
+  mcp: /tmp/cli-cline-data-root-zULX7F/.cline/mcp.json
+  instructions: /tmp/cli-cline-data-root-zULX7F/.cline/rules/codebase-memory-mcp.md
+Cline IDE:
+  mcp: /tmp/cli-cline-data-root-zULX7F/custom-cline-data/settings/cline_mcp_settings.json
+  skill: /tmp/cli-cline-data-root-zULX7F/.cline/skills/codebase-memory/SKILL.md (1 installed)
+  hook: preserved modified PreCompact adapter
+  hooks: withheld (file hooks auto-enable and do not reliably inject context)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=5c76b6c3b44fed745b0281e41c56355c9fa796ab9de78fdceb1af2488b2e8d63 clients=0 decision=no_active_cohort active_cache=
+Cline: removed MCP config entry
+  removed instructions
+Cline IDE: removed MCP config entry
+  Cline skill: 1 removed
+  hook: preserved modified PreCompact adapter
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_warp_installs_shared_skill_without_mcp_or_permissionslevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Warp
+
+  skill: /tmp/cli-warp-skill-E31uk2/.agents/skills/codebase-memory/SKILL.md (1 installed)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=28619581ee675f2ffece0eb7160bc67cc9248d8af9c81c993a9aeb19ff867cc9 clients=0 decision=no_active_cohort active_cache=
+  Warp skill: 0 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_owned_durable_profiles_preserve_user_files         error: agent_config agent=Cursor op=agent_install path=/tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory.md (target: regular file, 55 bytes)
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Codex OpenCode Cursor Kiro Qwen-Code Copilot-CLI
+
+Codex CLI:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.codex/config.toml
+  instructions: /tmp/cli-owned-profiles-ukguR3/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-owned-profiles-ukguR3/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+OpenCode:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.config/opencode/opencode.json
+  instructions: /tmp/cli-owned-profiles-ukguR3/.config/opencode/AGENTS.md
+  skill: /tmp/cli-owned-profiles-ukguR3/.config/opencode/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory-scout.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory-auditor.md
+  extension: /tmp/cli-owned-profiles-ukguR3/.config/opencode/plugins/cbm-augment.ts
+Cursor:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.cursor/mcp.json
+  skill: /tmp/cli-owned-profiles-ukguR3/.cursor/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory-scout.md
+  agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory-auditor.md
+Kiro:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.kiro/settings/mcp.json
+  instructions: /tmp/cli-owned-profiles-ukguR3/.kiro/steering/codebase-memory.md
+  skill: /tmp/cli-owned-profiles-ukguR3/.kiro/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory-scout.json
+  agent: /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory.json
+  agent: /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory-auditor.json
+Qwen Code:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.qwen/settings.json
+  instructions: /tmp/cli-owned-profiles-ukguR3/.qwen/QWEN.md
+  skill: /tmp/cli-owned-profiles-ukguR3/.qwen/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory-scout.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory-auditor.md
+  hooks: SessionStart + SubagentStart + PostToolUse ReadFile
+Copilot CLI:
+  mcp: /tmp/cli-owned-profiles-ukguR3/.copilot/mcp-config.json
+  instructions: /tmp/cli-owned-profiles-ukguR3/.copilot/copilot-instructions.md
+  skill: /tmp/cli-owned-profiles-ukguR3/.copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=e8393723ce27ac45eaf28df4e020fb3ccce18a88f6efde0b134b75cbe2cff9f9 clients=0 decision=no_active_cohort active_cache=
+Codex CLI: removed MCP config entry
+  instructions: removed managed activation pointer
+  Codex CLI skill: 1 removed
+  Codex CLI agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory-scout.toml
+  Codex CLI agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory.toml
+  Codex CLI agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.codex/agents/codebase-memory-auditor.toml
+OpenCode: removed MCP config entry
+  removed instructions
+  OpenCode skill: 1 removed
+  OpenCode agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory-scout.md
+  OpenCode agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory.md
+  OpenCode agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.config/opencode/agents/codebase-memory-auditor.md
+  extension: removed managed block
+Cursor: removed MCP config entry
+  Cursor skill: 1 removed
+  Cursor agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory-scout.md
+  Cursor agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory.md
+  Cursor agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.cursor/agents/codebase-memory-auditor.md
+Kiro: removed MCP config entry
+  removed instructions
+  Kiro skill: 1 removed
+  Kiro agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory-scout.json
+  Kiro agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory.json
+  Kiro agent: preserved modified profile /tmp/cli-owned-profiles-ukguR3/.kiro/agents/codebase-memory-auditor.json
+Qwen Code: removed MCP config entry
+  removed instructions
+  Qwen Code skill: 1 removed
+  Qwen Code agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory-scout.md
+  Qwen Code agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory.md
+  Qwen Code agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.qwen/agents/codebase-memory-auditor.md
+Copilot CLI: removed MCP config entry
+  removed instructions
+  Copilot skill: 0 removed
+  Copilot agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory-scout.agent.md
+  Copilot agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory.agent.md
+  Copilot agent: removed owned profile /tmp/cli-owned-profiles-ukguR3/.copilot/agents/codebase-memory-auditor.agent.md
+  removed SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_tiered_codex_profiles_migrate_preserve_and_uninstallerror: agent_config agent=Codex CLI op=agent_install path=/tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory-scout.toml (target: regular file, 60 bytes)
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-tiered-codex-A54Kyy/.codex/config.toml
+  instructions: /tmp/cli-tiered-codex-A54Kyy/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-tiered-codex-A54Kyy/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: preserved modified profile /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=ed541d027d6f94bc7e85073ac2943aefdf8fefcf4674695d4da07d3d789cbe5b clients=0 decision=no_active_cohort active_cache=
+Codex CLI: removed MCP config entry
+  instructions: removed managed activation pointer
+  Codex CLI skill: 1 removed
+  Codex CLI agent: preserved modified profile /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory-scout.toml
+  Codex CLI agent: preserved modified profile /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory.toml
+  Codex CLI agent: removed owned profile /tmp/cli-tiered-codex-A54Kyy/.codex/agents/codebase-memory-auditor.toml
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_tiered_opencode_profiles_migrate_v0108_render      level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: OpenCode
+
+OpenCode:
+  mcp: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/opencode.json
+  instructions: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/AGENTS.md
+  skill: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory-scout.md
+  agent: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory.md
+  agent: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory-auditor.md
+  extension: /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/plugins/cbm-augment.ts
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=848e127dab52d581bffa71b6219fbbcfe26da9724b81ec6c529cea0e81fe48bc clients=0 decision=no_active_cohort active_cache=
+OpenCode: removed MCP config entry
+  removed instructions
+  OpenCode skill: 1 removed
+  OpenCode agent: removed owned profile /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory-scout.md
+  OpenCode agent: removed owned profile /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory.md
+  OpenCode agent: removed owned profile /tmp/cli-tiered-opencode-fPZh8N/.config/opencode/agents/codebase-memory-auditor.md
+  extension: removed managed block
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_tiered_vibe_installs_matching_agent_prompt_sets    level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Mistral-Vibe
+
+Mistral Vibe:
+  mcp: /tmp/cli-tiered-vibe-TVF4cs/vibe/config.toml
+  instructions: /tmp/cli-tiered-vibe-TVF4cs/vibe/AGENTS.md
+  skill: /tmp/cli-tiered-vibe-TVF4cs/vibe/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory.toml
+  agent: /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory-auditor.toml
+  prompt: /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory-scout.md
+  prompt: /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory.md
+  prompt: /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=c679ab280eede8c81593aa51a5e154171b2606cd490f261d1c547c92c082a542 clients=0 decision=no_active_cohort active_cache=
+Mistral Vibe: preserved modified or foreign MCP entry
+Mistral Vibe: removed MCP config entry
+  removed instructions
+  Mistral Vibe skill: 1 removed
+  Mistral Vibe agent: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory-scout.toml
+  Mistral Vibe agent: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory.toml
+  Mistral Vibe agent: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/agents/codebase-memory-auditor.toml
+  Mistral Vibe prompt: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory-scout.md
+  Mistral Vibe prompt: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory.md
+  Mistral Vibe prompt: removed owned profile /tmp/cli-tiered-vibe-TVF4cs/vibe/prompts/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_tiered_grok_installs_profiles_and_withholds_hooks  level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Grok-Build
+
+Grok Build:
+  mcp: /tmp/cli-tiered-grok-KvidZ9/grok/config.toml
+  instructions: /tmp/cli-tiered-grok-KvidZ9/grok/rules/codebase-memory.md
+  skill: /tmp/cli-tiered-grok-KvidZ9/grok/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory-scout.md
+  agent: /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory.md
+  agent: /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory-auditor.md
+  hooks: withheld (Grok passive hook events discard stdout; no context contract)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=45d39d9c65895aca5d291329b401c6a4c28fbdd8927ebbe1ed2bbe3a14fa7c65 clients=0 decision=no_active_cohort active_cache=
+Grok Build: removed MCP config entry
+  removed instructions
+  Grok Build skill: 1 removed
+  Grok Build agent: removed owned profile /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory-scout.md
+  Grok Build agent: removed owned profile /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory.md
+  Grok Build agent: removed owned profile /tmp/cli-tiered-grok-KvidZ9/grok/agents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_grok_mcp_preserves_foreign_table                   error: agent_config agent=Grok Build op=mcp_install path=/tmp/cli-grok-foreign-pFufdt/.grok/config.toml (target: regular file, 120 bytes)
+Detected agents: Grok-Build
+
+Grok Build:
+  mcp: /tmp/cli-grok-foreign-pFufdt/.grok/config.toml
+  instructions: /tmp/cli-grok-foreign-pFufdt/.grok/rules/codebase-memory.md
+  skill: /tmp/cli-grok-foreign-pFufdt/.grok/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-grok-foreign-pFufdt/.grok/agents/codebase-memory-scout.md
+  agent: /tmp/cli-grok-foreign-pFufdt/.grok/agents/codebase-memory.md
+  agent: /tmp/cli-grok-foreign-pFufdt/.grok/agents/codebase-memory-auditor.md
+  hooks: withheld (Grok passive hook events discard stdout; no context contract)
+PASS
+  cli_junie_current_durable_context_contract             level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Junie
+
+Junie:
+  mcp: /tmp/cli-junie-current-3Gj7ks/.junie/mcp/mcp.json
+  skill: /tmp/cli-junie-current-3Gj7ks/.junie/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-scout.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-auditor.md
+Detected agents: Junie
+
+Junie:
+  mcp: /tmp/cli-junie-current-3Gj7ks/.junie/mcp/mcp.json
+  skill: /tmp/cli-junie-current-3Gj7ks/.junie/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-scout.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=61c9419d6b9e175dc90df6d1919648e35ce1554dad6732f8f50ba66be1c71cfc clients=0 decision=no_active_cohort active_cache=
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Junie: removed MCP config entry
+  Junie skill: 1 removed
+  Junie agent: removed owned profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-scout.md
+  Junie agent: removed owned profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory.md
+  Junie agent: removed owned profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+Detected agents: Junie
+
+Junie:
+  mcp: /tmp/cli-junie-current-3Gj7ks/.junie/mcp/mcp.json
+  skill: /tmp/cli-junie-current-3Gj7ks/.junie/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-scout.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory.md
+  agent: /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=61c9419d6b9e175dc90df6d1919648e35ce1554dad6732f8f50ba66be1c71cfc clients=0 decision=no_active_cohort active_cache=
+Junie: removed MCP config entry
+  Junie skill: 0 removed
+  Junie agent: removed owned profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-scout.md
+  Junie agent: preserved modified profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory.md
+  Junie agent: removed owned profile /tmp/cli-junie-current-3Gj7ks/.junie/agents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_rovo_installs_documented_global_memory             level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Rovo Dev CLI
+
+Rovo Dev CLI:
+  mcp: /tmp/cli-rovo-memory-serfso/.rovodev/mcp.json
+  instructions: /tmp/cli-rovo-memory-serfso/.rovodev/AGENTS.md
+  skill: /tmp/cli-rovo-memory-serfso/.rovodev/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-scout.md
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory.md
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-auditor.md
+Detected agents: Rovo Dev CLI
+
+Rovo Dev CLI:
+  mcp: /tmp/cli-rovo-memory-serfso/.rovodev/mcp.json
+  instructions: /tmp/cli-rovo-memory-serfso/.rovodev/AGENTS.md
+  skill: /tmp/cli-rovo-memory-serfso/.rovodev/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-scout.md
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory.md
+  agent: /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=a14d7db5a5461340ced319ed604f7a9b6466358e9c26ad134c71404defbd1f02 clients=0 decision=no_active_cohort active_cache=
+Rovo Dev CLI:
+  mcp: preserved modified or foreign entry in /tmp/cli-rovo-memory-serfso/.rovodev/mcp.json
+  instructions: removed managed context
+  Rovo Dev CLI skill: 1 removed
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-scout.md
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory.md
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-rovo-memory-serfso/.rovodev/subagents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_hermes_stable_shell_context_contract               level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Hermes
+
+Hermes:
+  mcp: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml
+  skill: /tmp/cli-hermes-hook-9bpl9Y/.hermes/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml (pre_llm_call)
+Detected agents: Hermes
+
+Hermes:
+  mcp: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml
+  skill: /tmp/cli-hermes-hook-9bpl9Y/.hermes/skills/codebase-memory/SKILL.md (0 installed)
+  hook: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml (pre_llm_call)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=8caa276a1ff4ba13d4f5460df6011c757bee75d00cc96a266f47f8d05d81d135 clients=0 decision=no_active_cohort active_cache=
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  hook: removed canonical pre_llm_call entry
+Hermes: removed MCP config entry
+  Hermes skill: 1 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+Detected agents: Hermes
+
+Hermes:
+  mcp: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml
+  skill: /tmp/cli-hermes-hook-9bpl9Y/.hermes/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-hermes-hook-9bpl9Y/.hermes/config.yaml (pre_llm_call)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=8caa276a1ff4ba13d4f5460df6011c757bee75d00cc96a266f47f8d05d81d135 clients=0 decision=no_active_cohort active_cache=
+  hook: preserved modified pre_llm_call entry
+Hermes: removed MCP config entry
+  Hermes skill: 1 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_detected_agent_summary_includes_registry_clients   PASS
+  cli_dry_run_predicts_refused_hook_script_issue1387     PASS
+  cli_agent_client_registry_routes_plan_install_and_uninstalllevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Qoder CLI Roo Code Amazon Q Developer IDE Pi Sourcegraph Cody
+
+Qoder CLI:
+  mcp: /tmp/cli-agent-registry-PLDqFu/.qoder/settings.json
+  skill: /tmp/cli-agent-registry-PLDqFu/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-agent-registry-PLDqFu/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+Roo Code:
+  mcp: /tmp/cli-agent-registry-PLDqFu/explicit/roo.json
+Amazon Q Developer IDE:
+  mcp: /tmp/cli-agent-registry-PLDqFu/.aws/amazonq/agents/default.json
+Pi:
+  instructions: /tmp/cli-agent-registry-PLDqFu/.pi/agent/AGENTS.md
+  skill: /tmp/cli-agent-registry-PLDqFu/.pi/agent/skills/codebase-memory/SKILL.md (1 installed)
+  extension: /tmp/cli-agent-registry-PLDqFu/.pi/agent/extensions/cbmem.ts
+Sourcegraph Cody:
+  mcp: /tmp/cli-agent-registry-PLDqFu/explicit/cody.json
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=156d99bcc041047543dfdc1a2f95f4804247c7e2c1a09ea3ea9fd3a38e54865d clients=0 decision=no_active_cohort active_cache=
+Qoder CLI:
+  mcp: removed canonical entry from /tmp/cli-agent-registry-PLDqFu/.qoder/settings.json
+  hook: canonical lifecycle/read cleanup complete; modified or foreign entries preserved
+  Qoder CLI skill: 1 removed
+  Qoder CLI agent: removed owned profile /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory-scout.md
+  Qoder CLI agent: preserved modified profile /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory.md
+  Qoder CLI agent: removed owned profile /tmp/cli-agent-registry-PLDqFu/.qoder/agents/codebase-memory-auditor.md
+Roo Code:
+  mcp: removed canonical entry from /tmp/cli-agent-registry-PLDqFu/explicit/roo.json
+Amazon Q Developer IDE:
+  mcp: removed canonical entry from /tmp/cli-agent-registry-PLDqFu/.aws/amazonq/agents/default.json
+Pi:
+  instructions: removed managed context
+  Pi skill: 1 removed
+  extension: removed managed block
+Sourcegraph Cody:
+  mcp: preserved modified or foreign entry in /tmp/cli-agent-registry-PLDqFu/explicit/cody.json
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_registry_installs_kimi_rovo_amp_durable_context    level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Kimi Code CLI Rovo Dev CLI Amp
+
+Kimi Code CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/config.toml (UserPromptSubmit)
+Rovo Dev CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.rovodev/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.rovodev/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.rovodev/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-auditor.md
+Amp:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.config/amp/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/SKILL.md (1 installed)
+Detected agents: Kimi Code CLI Rovo Dev CLI Amp
+
+Kimi Code CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/skills/codebase-memory/SKILL.md (0 installed)
+  hook: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/config.toml (UserPromptSubmit)
+Rovo Dev CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.rovodev/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.rovodev/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.rovodev/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-auditor.md
+Amp:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.config/amp/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/SKILL.md (0 installed)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=453b805ec4b9c74096db414a8c1a9db89c0d178e26ddab3b0fb3dbf64a286137 clients=0 decision=no_active_cohort active_cache=
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Kimi Code CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/vendor-kimi/mcp.json
+  hook: removed managed UserPromptSubmit entry
+  instructions: removed managed context
+  Kimi Code CLI skill: 1 removed
+Rovo Dev CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/.rovodev/mcp.json
+  instructions: removed managed context
+  Rovo Dev CLI skill: 1 removed
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-scout.md
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory.md
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-auditor.md
+Amp:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/mcp.json
+  instructions: removed managed context
+  Amp skill: 1 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+Detected agents: Kimi Code CLI Rovo Dev CLI Amp
+
+Kimi Code CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-registry-durable-z7IZb2/vendor-kimi/config.toml (UserPromptSubmit)
+Rovo Dev CLI:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.rovodev/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.rovodev/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.rovodev/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory.md
+  agent: /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-auditor.md
+Amp:
+  mcp: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/mcp.json
+  instructions: /tmp/cli-registry-durable-z7IZb2/.config/amp/AGENTS.md
+  skill: /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/SKILL.md (1 installed)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=453b805ec4b9c74096db414a8c1a9db89c0d178e26ddab3b0fb3dbf64a286137 clients=0 decision=no_active_cohort active_cache=
+Kimi Code CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/vendor-kimi/mcp.json
+  hook: removed managed UserPromptSubmit entry
+  instructions: removed managed context
+  Kimi Code CLI skill: 0 removed
+Rovo Dev CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/.rovodev/mcp.json
+  instructions: removed managed context
+  Rovo Dev CLI skill: 1 removed
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-scout.md
+  Rovo Dev CLI agent: preserved modified profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory.md
+  Rovo Dev CLI agent: removed owned profile /tmp/cli-registry-durable-z7IZb2/.rovodev/subagents/codebase-memory-auditor.md
+Amp:
+  mcp: removed canonical entry from /tmp/cli-registry-durable-z7IZb2/.config/agents/skills/codebase-memory/mcp.json
+  instructions: removed managed context
+  Amp skill: 0 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_registry_routes_omp_via_profile_and_pi_coding_agent_dirPASS
+  cli_registry_omp_named_profile_install_and_uninstall_preserve_user_contentlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Oh My Pi (omp)
+
+Oh My Pi (omp):
+  mcp: /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/mcp.json
+  skill: /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory.md
+  agent: /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=cacc608a39298f080283fb5139a306dc11f2d4d3978e7e1d44afb55252ad8f92 clients=0 decision=no_active_cohort active_cache=
+Oh My Pi (omp):
+  mcp: removed canonical entry from /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/mcp.json
+  Oh My Pi (omp) skill: 1 removed
+  Oh My Pi (omp) agent: removed owned profile /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory-scout.md
+  Oh My Pi (omp) agent: preserved modified profile /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory.md
+  Oh My Pi (omp) agent: removed owned profile /tmp/cli-registry-omp-lifecycle-SRppxD/.omp/profiles/work/agent/agents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_registry_omp_relocated_dry_run_is_non_mutating     Detected agents: Oh My Pi (omp)
+
+Oh My Pi (omp):
+  mcp: /tmp/cli-registry-omp-dry-run-y0N4HL/custom-agent/mcp.json
+  skill: /tmp/cli-registry-omp-dry-run-y0N4HL/custom-agent/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-omp-dry-run-y0N4HL/custom-agent/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-omp-dry-run-y0N4HL/custom-agent/agents/codebase-memory.md
+  agent: /tmp/cli-registry-omp-dry-run-y0N4HL/custom-agent/agents/codebase-memory-auditor.md
+PASS
+  cli_registry_installs_gitlab_and_devin_lifecycle_contextlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: GitLab Duo CLI Devin CLI / Local
+
+GitLab Duo CLI:
+  mcp: /tmp/cli-registry-lifecycle-Tx0wAQ/xdg/gitlab/duo/mcp.json
+  hook: /tmp/cli-registry-lifecycle-Tx0wAQ/.gitlab/duo/hooks.json (SessionStart; experimental vendor surface)
+Devin CLI / Local:
+  mcp: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/config.json
+  instructions: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/AGENTS.md
+  skill: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: SessionStart + UserPromptSubmit + PostCompaction (fail-open context)
+Detected agents: GitLab Duo CLI Devin CLI / Local
+
+GitLab Duo CLI:
+  mcp: /tmp/cli-registry-lifecycle-Tx0wAQ/xdg/gitlab/duo/mcp.json
+  hook: /tmp/cli-registry-lifecycle-Tx0wAQ/.gitlab/duo/hooks.json (SessionStart; experimental vendor surface)
+Devin CLI / Local:
+  mcp: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/config.json
+  instructions: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/AGENTS.md
+  skill: /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/skills/codebase-memory/SKILL.md (0 installed)
+  hooks: SessionStart + UserPromptSubmit + PostCompaction (fail-open context)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=cadd6ed7403405b75c295a158120bcffd533e1b50ee06a1af6403c8359ab785b clients=0 decision=no_active_cohort active_cache=
+GitLab Duo CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-lifecycle-Tx0wAQ/xdg/gitlab/duo/mcp.json
+  hook: removed canonical SessionStart entry
+Devin CLI / Local:
+  mcp: removed canonical entry from /tmp/cli-registry-lifecycle-Tx0wAQ/.config/devin/config.json
+  hooks: canonical lifecycle cleanup complete; modified or foreign entries preserved
+  instructions: removed managed context
+  Devin CLI / Local skill: 1 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_registry_hook_cleanup_is_independent_from_mcp_ownershiplevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Qoder CLI Devin CLI / Local
+
+Qoder CLI:
+  mcp: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+Devin CLI / Local:
+  mcp: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/config.json
+  instructions: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/AGENTS.md
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: SessionStart + UserPromptSubmit + PostCompaction (fail-open context)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=e1d57c4a4200581eef4ef9cc4db2f45f0d0ceafbf2ff173a087621f8bf2f38a4 clients=0 decision=no_active_cohort active_cache=
+error: agent_config agent=Qoder CLI op=mcp_foreign path=/tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json (target: regular file, 167 bytes)
+error: agent_config agent=Devin CLI / Local op=mcp_foreign path=/tmp/cli-registry-hook-owner-NcQvYu/.config/devin/config.json (target: regular file, 167 bytes)
+Qoder CLI:
+  mcp: preserved modified or foreign entry in /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json
+  hook: canonical lifecycle/read cleanup complete; modified or foreign entries preserved
+  Qoder CLI skill: 1 removed
+  Qoder CLI agent: removed owned profile /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-scout.md
+  Qoder CLI agent: removed owned profile /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory.md
+  Qoder CLI agent: removed owned profile /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-auditor.md
+Devin CLI / Local:
+  mcp: preserved modified or foreign entry in /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/config.json
+  hooks: canonical lifecycle cleanup complete; modified or foreign entries preserved
+  instructions: removed managed context
+  Devin CLI / Local skill: 1 removed
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+Detected agents: Qoder CLI Devin CLI / Local
+
+Qoder CLI:
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+Devin CLI / Local:
+  instructions: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/AGENTS.md
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: SessionStart + UserPromptSubmit + PostCompaction (fail-open context)
+Detected agents: Qoder CLI Devin CLI / Local
+
+Qoder CLI:
+  mcp: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-registry-hook-owner-NcQvYu/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+Devin CLI / Local:
+  mcp: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/config.json
+  instructions: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/AGENTS.md
+  skill: /tmp/cli-registry-hook-owner-NcQvYu/.config/devin/skills/codebase-memory/SKILL.md (0 installed)
+  hooks: SessionStart + UserPromptSubmit + PostCompaction (fail-open context)
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=e1d57c4a4200581eef4ef9cc4db2f45f0d0ceafbf2ff173a087621f8bf2f38a4 clients=0 decision=no_active_cohort active_cache=
+PASS
+  cli_devin_does_not_duplicate_owned_claude_session_startDetected agents: Claude-Code Devin CLI / Local
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-devin-claude-hooks-JemRbL/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-devin-claude-hooks-JemRbL/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-devin-claude-hooks-JemRbL/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-devin-claude-hooks-JemRbL/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Devin CLI / Local:
+  mcp: /tmp/cli-devin-claude-hooks-JemRbL/.config/devin/config.json
+  instructions: /tmp/cli-devin-claude-hooks-JemRbL/.config/devin/AGENTS.md
+  skill: /tmp/cli-devin-claude-hooks-JemRbL/.config/devin/skills/codebase-memory/SKILL.md (1 installed)
+  hooks: UserPromptSubmit + PostCompaction (fail-open context)
+PASS
+  cli_registry_installs_codebuddy_bob_and_pochi_durable_contextlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: CodeBuddy Code CLI IBM Bob IDE IBM Bob Shell Pochi
+
+CodeBuddy Code CLI:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/.mcp.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/CODEBUDDY.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-auditor.md
+IBM Bob IDE:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.bob/rules/codebase-memory.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.bob/skills/codebase-memory/SKILL.md (1 installed)
+IBM Bob Shell:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp_settings.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.bob/rules/codebase-memory.md
+Pochi:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.pochi/config.jsonc
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.pochi/README.pochi.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.pochi/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-auditor.md
+Detected agents: CodeBuddy Code CLI IBM Bob IDE IBM Bob Shell Pochi
+
+CodeBuddy Code CLI:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/.mcp.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/CODEBUDDY.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-auditor.md
+IBM Bob IDE:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.bob/rules/codebase-memory.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.bob/skills/codebase-memory/SKILL.md (0 installed)
+IBM Bob Shell:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp_settings.json
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.bob/rules/codebase-memory.md
+Pochi:
+  mcp: /tmp/cli-registry-new-clients-R4N57Y/.pochi/config.jsonc
+  instructions: /tmp/cli-registry-new-clients-R4N57Y/.pochi/README.pochi.md
+  skill: /tmp/cli-registry-new-clients-R4N57Y/.pochi/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-scout.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory.md
+  agent: /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-auditor.md
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=73cc42123c5cc610d17a95d779e2051b1e08883411910838e1f49b72ab0d4662 clients=0 decision=no_active_cohort active_cache=
+CodeBuddy Code CLI:
+  mcp: removed canonical entry from /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/.mcp.json
+  instructions: removed managed context
+  CodeBuddy Code CLI skill: 1 removed
+  CodeBuddy Code CLI agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-scout.md
+  CodeBuddy Code CLI agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory.md
+  CodeBuddy Code CLI agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.codebuddy/agents/codebase-memory-auditor.md
+IBM Bob IDE:
+  mcp: removed canonical entry from /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp.json
+  instructions: removed managed context
+  IBM Bob IDE skill: 1 removed
+IBM Bob Shell:
+  mcp: removed canonical entry from /tmp/cli-registry-new-clients-R4N57Y/.bob/mcp_settings.json
+  instructions: removed managed context
+Pochi:
+  mcp: removed canonical entry from /tmp/cli-registry-new-clients-R4N57Y/.pochi/config.jsonc
+  instructions: removed managed context
+  Pochi skill: 1 removed
+  Pochi agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-scout.md
+  Pochi agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory.md
+  Pochi agent: removed owned profile /tmp/cli-registry-new-clients-R4N57Y/.pochi/agents/codebase-memory-auditor.md
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_openclaw_resolves_active_json5_workspace           Detected agents: OpenClaw
+
+OpenClaw:
+  mcp: /tmp/cli-openclaw-workspace-WHPqu5/.openclaw/openclaw.json
+  instructions: /tmp/cli-openclaw-workspace-WHPqu5/active claw/AGENTS.md
+  tools context: /tmp/cli-openclaw-workspace-WHPqu5/active claw/TOOLS.md
+  compaction: reinjects Codebase Memory
+PASS
+  cli_claude_user_scope_avoids_nested_mcp_json           PASS
+  cli_codex_respects_codex_home                          PASS
+  cli_grok_respects_grok_home                            PASS
+  cli_codex_install_uses_global_activation_pointer_issue1689Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic gerror: agent_config agent=Codex CLI op=instructions_install path=/tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (target: regular file, 55 bytes)
+level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+raph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/config.toml
+  instructions: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=e4d631426639af68f8f24daee6cf12d0479b79c4529e7d0668a5b9936d2c5d86 clients=0 decision=no_active_cohort active_cache=
+Codex CLI: removed MCP config entry
+  instructions: removed managed activation pointer
+  Codex CLI skill: 1 removed
+  Codex CLI agent: removed owned profile /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-scout.toml
+  Codex CLI agent: removed owned profile /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory.toml
+  Codex CLI agent: removed owned profile /tmp/cli-codex-agents-pointer-QDLBmI/.codex/agents/codebase-memory-auditor.toml
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_gemini_session_hook_uses_json_for_all_sources      PASS
+  cli_gemini_installs_dedicated_graph_subagent           level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Gemini-CLI
+
+Gemini CLI:
+  mcp: /tmp/cli-gemini-subagent-4x1be1/.gemini/settings.json
+  instructions: /tmp/cli-gemini-subagent-4x1be1/.gemini/GEMINI.md
+  agent: /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory-scout.md
+  agent: /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory.md
+  agent: /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory-auditor.md
+  hooks: BeforeTool + AfterTool read_file + SessionStart
+  subagents: Scout + Verify + Auditor
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=913fbe27e1862defb0f19cdae0d6ec5f83cc50e001794bbb2ce856fddf7ca845 clients=0 decision=no_active_cohort active_cache=
+  Gemini CLI agent: removed owned profile /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory-scout.md
+  Gemini CLI agent: removed owned profile /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory.md
+  Gemini CLI agent: removed owned profile /tmp/cli-gemini-subagent-4x1be1/.gemini/agents/codebase-memory-auditor.md
+Gemini CLI: removed MCP config + hooks + instructions + tiered subagents
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_antigravity_does_not_imply_gemini                  PASS
+  cli_antigravity_plan_uses_documented_global_files      PASS
+  cli_opencode_honors_custom_config                      PASS
+  cli_opencode_prefers_existing_jsonc_config_discussion1560PASS
+  cli_opencode_accepts_entry_annotated_with_enabled_issue1630PASS
+  cli_opencode_still_refuses_foreign_command_issue1630   PASS
+  cli_uninstall_help_does_not_uninstall_issue1038        Usage: codebase-memory-mcp uninstall [options]
+
+Removes the codebase-memory-mcp binary and its agent configurations.
+THIS IS DESTRUCTIVE. Project indexes are kept by default. An interactive
+terminal is asked separately; the default answer is to keep them.
+
+Options:
+  --dry-run          Show what would be removed, change nothing
+  --dir=PATH         Uninstall from a custom install directory
+  --delete-indexes   Also delete every project index (overrides --no)
+  -y, --yes          Do not prompt; indexes are kept unless explicitly deleted
+  -n, --no           Decline prompts; --delete-indexes still takes precedence
+  -h, --help         Show this help and exit
+
+Run with --dry-run first if you are unsure.
+PASS
+  cli_opencode_config_dir_detects_without_retargeting_global_jsonPASS
+  cli_kiro_and_hermes_homes_are_honored                  PASS
+  cli_detect_agents_finds_official_kiro_cli_executable   PASS
+  cli_relative_kiro_and_hermes_homes_never_target_root   PASS
+  cli_fresh_cli_only_yaml_and_toml_agents_create_parent_dirsDetected agents: Hermes Goose Mistral-Vibe
+
+Hermes:
+  mcp: /tmp/cli-fresh-agent-parents-KL4LiU/.hermes/config.yaml
+  skill: /tmp/cli-fresh-agent-parents-KL4LiU/.hermes/skills/codebase-memory/SKILL.md (1 installed)
+  hook: /tmp/cli-fresh-agent-parents-KL4LiU/.hermes/config.yaml (pre_llm_call)
+Goose:
+  mcp: /tmp/cli-fresh-agent-parents-KL4LiU/.config/goose/config.yaml
+  instructions: /tmp/cli-fresh-agent-parents-KL4LiU/.config/goose/.goosehints
+Mistral Vibe:
+  mcp: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/config.toml
+  instructions: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/AGENTS.md
+  skill: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/agents/codebase-memory.toml
+  agent: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/agents/codebase-memory-auditor.toml
+  prompt: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/prompts/codebase-memory-scout.md
+  prompt: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/prompts/codebase-memory.md
+  prompt: /tmp/cli-fresh-agent-parents-KL4LiU/.vibe/prompts/codebase-memory-auditor.md
+PASS
+  cli_windsurf_plan_uses_official_global_paths           PASS
+  cli_windsurf_rules_refuse_to_exceed_official_limit     error: agent_config agent=Windsurf op=instructions_install path=/tmp/cli-windsurf-limit-iSz5zr/.codeium/windsurf/memories/global_rules.md (target: regular file, 5900 bytes)
+Detected agents: Windsurf
+
+Windsurf:
+  mcp: /tmp/cli-windsurf-limit-iSz5zr/.codeium/windsurf/mcp_config.json
+  instructions: /tmp/cli-windsurf-limit-iSz5zr/.codeium/windsurf/memories/global_rules.md
+PASS
+  cli_augment_installs_session_context_and_subagent      level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Augment-Auggie
+
+Augment/Auggie:
+  mcp: /tmp/cli-augment-install-SzLI6C/.augment/settings.json
+  instructions: /tmp/cli-augment-install-SzLI6C/.augment/rules/codebase-memory.md
+  agent: /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory-scout.md
+  agent: /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory.md
+  agent: /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory-auditor.md
+  hooks: SessionStart + PostToolUse view coverage
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=a5082e6cea8aa7b94732a1e68c639629e4806e613bc29397adb77df0e03158a4 clients=0 decision=no_active_cohort active_cache=
+Augment/Auggie: removed MCP config entry
+  removed instructions
+  Augment/Auggie agent: removed owned profile /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory-scout.md
+  Augment/Auggie agent: removed owned profile /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory.md
+  Augment/Auggie agent: removed owned profile /tmp/cli-augment-install-SzLI6C/.augment/agents/codebase-memory-auditor.md
+  removed SessionStart + PostToolUse hooks + dedicated subagent
+Removed /tmp/cli-augment-install-SzLI6C/.local/bin/codebase-memory-mcp
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_augment_session_uses_workspace_roots               PASS
+  cli_hook_session_resolves_custom_named_index_by_root_pathPASS
+  cli_hook_session_exhausts_project_registry_pages       PASS
+  cli_hook_worktree_cwd_resolves_own_indexed_project     PASS
+  cli_hook_unindexed_worktree_reports_no_match_not_silentPASS
+  cli_hook_session_sanitizes_untrusted_project_metadata  PASS
+  cli_hook_ownership_requires_exact_command_identity     PASS
+  cli_gemini_hook_upgrade_migrates_released_exact_commandsPASS
+  cli_uninstall_preserves_hook_script_with_modified_binarylevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-bin-owner-0UjDbi/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=c10ed6256be50568110ef1af992e2315f763dc6973c195db7a4b5430a11c5ba9 clients=0 decision=no_active_cohort active_cache=
+Claude Code: removed 1 skill(s)
+  Claude Code agent: removed owned profile /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory-scout.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-bin-owner-0UjDbi/.claude/agents/codebase-memory-auditor.md
+  removed MCP config entry
+  removed PreToolUse + SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_hook_metadata_rejects_truncated_utf8_without_oob   PASS
+  cli_aider_config_loads_installed_conventions           PASS
+  cli_codex_session_hook_issue330                        PASS
+  cli_gemini_session_hook_parity                         PASS
+  cli_claude_subagent_hook                               PASS
+  cli_claude_hook_mutation_converges_mixed_owned_duplicatesPASS
+  cli_claude_subagent_hook_preserves_user_entry          PASS
+  cli_claude_session_hook_preserves_user_entry           Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-session-user-ZSJOKy/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-session-user-ZSJOKy/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-session-user-ZSJOKy/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-session-user-ZSJOKy/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_claude_lifecycle_hooks_delegate_to_augmenter       Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-lifecycle-hooks-AesOIq/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-lifecycle-hooks-AesOIq/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-lifecycle-hooks-AesOIq/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-lifecycle-hooks-AesOIq/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_copilot_install_preserves_foreign_named_manifest   Detected agents: (none)
+
+PASS
+  cli_copilot_uninstall_preserves_foreign_named_manifest level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=a5573230b896e36159dcc91b49a5db714b731a7ece4b9d49e58a5477046abe58 clients=0 decision=no_active_cohort active_cache=
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_copilot_uninstall_preserves_canonical_shaped_foreign_manifestlevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=5306db89dc67a0f7af58d0590da686665bb7e333a953eef9e1f80b1d4e25d5b0 clients=0 decision=no_active_cohort active_cache=
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_vscode_only_installs_copilot_durable_context       level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: VS-Code
+
+VS Code:
+  mcp: /tmp/cli-vscode-durable-d7RbvI/.config/Code/User/mcp.json
+  skill: /tmp/cli-vscode-durable-d7RbvI/.copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+Detected agents: VS-Code
+
+VS Code:
+  mcp: /tmp/cli-vscode-durable-d7RbvI/.config/Code/User/mcp.json
+  skill: /tmp/cli-vscode-durable-d7RbvI/.copilot/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=a3e52d4a3eb8307495645058066fd3ccb7f1ee66441d4e93aff8662a5ee99436 clients=0 decision=no_active_cohort active_cache=
+VS Code: removed MCP config entry
+  Copilot skill: 1 removed
+  Copilot agent: removed owned profile /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-scout.agent.md
+  Copilot agent: preserved modified profile /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory.agent.md
+  Copilot agent: removed owned profile /tmp/cli-vscode-durable-d7RbvI/.copilot/agents/codebase-memory-auditor.agent.md
+  removed SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_lifecycle_hooks_preserve_foreign_substring_commandslevel=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Qwen-Code Factory-Droid
+
+Qwen Code:
+  mcp: /tmp/cli-hook-ownership-a6tDBU/.qwen/settings.json
+  instructions: /tmp/cli-hook-ownership-a6tDBU/.qwen/QWEN.md
+  skill: /tmp/cli-hook-ownership-a6tDBU/.qwen/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory.md
+  agent: /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory-auditor.md
+  hooks: SessionStart + SubagentStart + PostToolUse ReadFile
+Factory Droid:
+  mcp: /tmp/cli-hook-ownership-a6tDBU/.factory/mcp.json
+  instructions: /tmp/cli-hook-ownership-a6tDBU/.factory/AGENTS.md
+  skill: /tmp/cli-hook-ownership-a6tDBU/.factory/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory-scout.md
+  agent: /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory.md
+  agent: /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory-auditor.md
+  hooks: SessionStart + PostToolUse Read coverage
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=64557a31110b1eee5ab53c4fcef9db99f12667646bf5a4a35cfe0291eb9657d1 clients=0 decision=no_active_cohort active_cache=
+Qwen Code: removed MCP config entry
+  removed instructions
+  Qwen Code skill: 1 removed
+  Qwen Code agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory-scout.md
+  Qwen Code agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory.md
+  Qwen Code agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.qwen/agents/codebase-memory-auditor.md
+Factory Droid: removed MCP config entry
+  removed instructions
+  Factory Droid skill: 1 removed
+  Factory Droid agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory-scout.md
+  Factory Droid agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory.md
+  Factory Droid agent: removed owned profile /tmp/cli-hook-ownership-a6tDBU/.factory/droids/codebase-memory-auditor.md
+  removed SessionStart + PostToolUse hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_read_only_agents_do_not_receive_mutating_mcp_serverDetected agents: Kiro Junie Qoder CLI
+
+Kiro:
+  mcp: /tmp/cli-readonly-agent-h3YXJH/.kiro/settings/mcp.json
+  instructions: /tmp/cli-readonly-agent-h3YXJH/.kiro/steering/codebase-memory.md
+  skill: /tmp/cli-readonly-agent-h3YXJH/.kiro/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-readonly-agent-h3YXJH/.kiro/agents/codebase-memory-scout.json
+  agent: /tmp/cli-readonly-agent-h3YXJH/.kiro/agents/codebase-memory.json
+  agent: /tmp/cli-readonly-agent-h3YXJH/.kiro/agents/codebase-memory-auditor.json
+Junie:
+  mcp: /tmp/cli-readonly-agent-h3YXJH/.junie/mcp/mcp.json
+  skill: /tmp/cli-readonly-agent-h3YXJH/.junie/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-readonly-agent-h3YXJH/.junie/agents/codebase-memory-scout.md
+  agent: /tmp/cli-readonly-agent-h3YXJH/.junie/agents/codebase-memory.md
+  agent: /tmp/cli-readonly-agent-h3YXJH/.junie/agents/codebase-memory-auditor.md
+Qoder CLI:
+  mcp: /tmp/cli-readonly-agent-h3YXJH/.qoder/settings.json
+  skill: /tmp/cli-readonly-agent-h3YXJH/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-readonly-agent-h3YXJH/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-readonly-agent-h3YXJH/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-readonly-agent-h3YXJH/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-readonly-agent-h3YXJH/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+PASS
+  cli_junie_foreign_analysis_alias_falls_back_to_parent_handofferror: agent_config agent=Junie op=mcp_install path=/tmp/cli-junie-alias-9a84xH/.junie/mcp/mcp.json (target: regular file, 109 bytes)
+Detected agents: Junie
+
+Junie:
+  mcp: /tmp/cli-junie-alias-9a84xH/.junie/mcp/mcp.json
+  skill: /tmp/cli-junie-alias-9a84xH/.junie/skills/codebase-memory/SKILL.md (1 installed)
+  subagents: direct MCP withheld; installed parent-handoff profiles
+  agent: /tmp/cli-junie-alias-9a84xH/.junie/agents/codebase-memory-scout.md
+  agent: /tmp/cli-junie-alias-9a84xH/.junie/agents/codebase-memory.md
+  agent: /tmp/cli-junie-alias-9a84xH/.junie/agents/codebase-memory-auditor.md
+PASS
+  cli_mcp_installers_preserve_foreign_same_name_entries  PASS
+  cli_installer_follows_symlinked_agent_roots_only_for_trusted_ownersDetected agents: Qoder CLI
+
+Qoder CLI:
+  mcp: /tmp/cli-linked-roots-wWtNE0/.qoder/settings.json
+  skill: /tmp/cli-linked-roots-wWtNE0/.qoder/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-linked-roots-wWtNE0/.qoder/agents/codebase-memory-scout.md
+  agent: /tmp/cli-linked-roots-wWtNE0/.qoder/agents/codebase-memory.md
+  agent: /tmp/cli-linked-roots-wWtNE0/.qoder/agents/codebase-memory-auditor.md
+  hooks: /tmp/cli-linked-roots-wWtNE0/.qoder/settings.json (SessionStart + SubagentStart + PostToolUse Read)
+PASS
+  cli_claude_hook_scripts_shell_quote_binary_path        Detected agents: Claude-Code Copilot-CLI
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-quote-FkPg8P/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-quote-FkPg8P/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-quote-FkPg8P/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-quote-FkPg8P/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Copilot CLI:
+  mcp: /tmp/cli-hook-quote-FkPg8P/.copilot/mcp-config.json
+  instructions: /tmp/cli-hook-quote-FkPg8P/.copilot/copilot-instructions.md
+  skill: /tmp/cli-hook-quote-FkPg8P/.copilot/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-hook-quote-FkPg8P/.copilot/agents/codebase-memory-scout.agent.md
+  agent: /tmp/cli-hook-quote-FkPg8P/.copilot/agents/codebase-memory.agent.md
+  agent: /tmp/cli-hook-quote-FkPg8P/.copilot/agents/codebase-memory-auditor.agent.md
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+PASS
+  cli_claude_hook_commands_use_exec_form_with_custom_config_dirDetected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-config-quote-JhwqMt/custom claude;$(touch cbm-hook-path-pwned)/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-config-quote-JhwqMt/custom claude;$(touch cbm-hook-path-pwned)/agents/codebase-memory.md
+  agent: /tmp/cli-hook-config-quote-JhwqMt/custom claude;$(touch cbm-hook-path-pwned)/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-config-quote-JhwqMt/custom claude;$(touch cbm-hook-path-pwned)/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_codex_migrates_to_single_hook_representation       level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml
+  instructions: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/skills/codebase-memory/SKILL.md (1 installed)
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml
+  instructions: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml
+  instructions: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+Detected agents: Codex
+
+Codex CLI:
+  mcp: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml
+  instructions: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/AGENTS.md (managed activation pointer)
+  skill: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/skills/codebase-memory/SKILL.md (0 installed)
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-scout.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory.toml
+  agent: /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-auditor.toml
+  hooks: SessionStart + SubagentStart (dynamic graph context)
+  note: non-managed hooks require /hooks trust; definition changes require re-trust
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=c946ecd98e2fdb2257ee28344c54432ed0d10a757c26b544dfbf960800b37105 clients=0 decision=no_active_cohort active_cache=
+Codex CLI:
+error: agent_config agent=Codex CLI op=hook_preflight path=/tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml reason=ambiguous_hook_ownership (target: regular file, 208 bytes)
+
+error: uninstall finished with 1 agent configuration(s) left uncleaned:
+  Codex CLI (hook_preflight): /tmp/cli-codex-hook-migrate-q9kIHG/.codex/config.toml reason=ambiguous_hook_ownership (target: regular file, 208 bytes)
+Remove the codebase-memory-mcp entries from these files by hand.
+  instructions: removed managed activation pointer
+  Codex CLI skill: 1 removed
+  Codex CLI agent: removed owned profile /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-scout.toml
+  Codex CLI agent: removed owned profile /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory.toml
+  Codex CLI agent: removed owned profile /tmp/cli-codex-hook-migrate-q9kIHG/.codex/agents/codebase-memory-auditor.toml
+Removed /tmp/cli-codex-hook-migrate-q9kIHG/.local/bin/codebase-memory-mcp
+
+Uninstall finished with errors; the files listed above still hold codebase-memory-mcp entries. Please restart your coding-agent sessions to properly take this into account.
+Detected agents: Codex
+
+Codex CLI:
+error: agent_config agent=Codex CLI op=hook_preflight path=/tmp/cli-codex-preflight-HCyKBA/.codex/config.toml reason=ambiguous_hook_ownership (target: regular file, 208 bytes)
+  instructions: /tmp/cli-codex-preflight-HCyKBA/.codex/AGENTS.md (managed activation pointer)
+PASS
+  cli_codex_pointer_migration_precedes_hook_preflight_issue1689error: agent_config agent=Codex CLI op=hook_preflight path=/tmp/cli-codex-cleanup-preflight-Pt2Bdh/.codex/config.toml reason=ambiguous_hook_ownership (target: regular file, 191 bytes)
+Detected agents: Codex
+
+Codex CLI:
+error: agent_config agent=Codex CLI op=hook_preflight path=/tmp/cli-codex-cleanup-preflight-Pt2Bdh/.codex/config.toml reason=ambiguous_hook_ownership (target: regular file, 191 bytes)
+  instructions: /tmp/cli-codex-cleanup-preflight-Pt2Bdh/.codex/AGENTS.md (managed activation pointer)
+PASS
+  cli_codex_preflight_reports_heading_and_reason         PASS
+  cli_hook_augment_context_tracks_search_json_shape      PASS
+  cli_hook_augment_bash_pretooluse_reaches_augmenter     PASS
+  cli_hook_augment_bash_pattern_extractor                PASS
+  cli_hook_augment_coverage_requests_machine_json        level=info msg=publish.timing.coverage del=0 rows=0 prune=0 meta=1 commit=0 row_count=1 detail_bytes=5
+PASS
+  cli_hook_augment_lifecycle_output_contract             PASS
+  cli_hook_augment_subagent_tier_router_contract         PASS
+  cli_hook_augment_subagent_no_project_guidance_is_read_onlyPASS
+  cli_hook_augment_post_read_event_and_path_contract     PASS
+  cli_hook_augment_hermes_dialect_contract               PASS
+  cli_hook_augment_qoder_lifecycle_contract              PASS
+  cli_qoder_migrates_user_prompt_hook_to_lifecycle_and_readPASS
+  cli_hook_augment_kimi_user_prompt_contract             PASS
+  cli_hook_augment_devin_lifecycle_contract              PASS
+  cli_hook_augment_cline_lifecycle_contract              PASS
+  cli_hook_upsert_rejects_malformed_settings             PASS
+  cli_hook_upsert_rejects_concurrent_same_event_update   PASS
+  cli_upgrade_migrates_released_claude_hook_scripts      Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-upgrade-mhWZMJ/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-upgrade-mhWZMJ/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-upgrade-mhWZMJ/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-upgrade-mhWZMJ/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_upgrade_preserves_near_legacy_claude_hook_script   error: agent_config agent=Claude Code op=hook_script_install path=/tmp/cli-hook-near-legacy-IhOhc6/.claude/hooks/cbm-code-discovery-gate (target: regular file, 382 bytes)
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-near-legacy-IhOhc6/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-near-legacy-IhOhc6/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-near-legacy-IhOhc6/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-near-legacy-IhOhc6/.claude.json
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_hook_upsert_rejects_linked_settings                PASS
+  cli_claude_hook_script_collisions_are_not_registered   error: agent_config agent=Claude Code op=hook_script_install path=/tmp/cli-hook-script-collision-t1sGHB/.claude/hooks/cbm-code-discovery-gate (target: symlink, 44 bytes)
+error: agent_config agent=Claude Code op=hook_script_install path=/tmp/cli-hook-script-collision-t1sGHB/.claude/hooks/cbm-session-reminder (target: regular file, 26 bytes)
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-script-collision-t1sGHB/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-script-collision-t1sGHB/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-script-collision-t1sGHB/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-script-collision-t1sGHB/.claude.json
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_codex_legacy_migration_rejects_linked_config       PASS
+  cli_uninstall_removes_claude_hook_scripts              level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-uninstall-meSrGw/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=b9132ae7bf45c8be4847533cef6d73d668a4ed19c996b94a45d8e34164268031 clients=0 decision=no_active_cohort active_cache=
+Claude Code: removed 1 skill(s)
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory-scout.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-meSrGw/.claude/agents/codebase-memory-auditor.md
+  removed MCP config entry
+  removed PreToolUse + SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_uninstall_preserves_modified_claude_hook_script    level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-preserve-5H1Tkq/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=894b18e17cf36d7315f2c8fa347e55ad0f2a3cdf845f2feb2be57a5c478167d3 clients=0 decision=no_active_cohort active_cache=
+Claude Code: removed 1 skill(s)
+  Claude Code agent: removed owned profile /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory-scout.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-preserve-5H1Tkq/.claude/agents/codebase-memory-auditor.md
+  removed MCP config entry
+  removed PreToolUse + SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_detect_agents_finds_gemini                         PASS
+  cli_detect_agents_finds_zed                            PASS
+  cli_detect_agents_finds_zed_via_xdg_config_home        PASS
+  cli_detect_agents_finds_antigravity                    PASS
+  cli_detect_agents_finds_kilocode                       PASS
+  cli_detect_agents_finds_modern_kilo                    PASS
+  cli_detect_agents_finds_kiro                           PASS
+  cli_detect_agents_finds_junie_issue651                 PASS
+  cli_detect_agents_none_found                           PASS
+  cli_upsert_codex_mcp_fresh                             PASS
+  cli_upsert_codex_mcp_escapes_windows_path              PASS
+  cli_codex_mcp_keeps_foreign_tables_in_managed_region_issue2228PASS
+  cli_upsert_codex_mcp_existing                          PASS
+  cli_upsert_codex_mcp_replace                           PASS
+  cli_codex_legacy_migration_ignores_header_text_in_multiline_stringPASS
+  cli_upsert_codex_mcp_adopts_codex_rewritten_table      PASS
+  cli_zed_mcp_uses_args_format                           PASS
+  cli_zed_mcp_preserves_jsonc_comments                   PASS
+  cli_upsert_opencode_mcp_fresh                          PASS
+  cli_upsert_opencode_mcp_preserves_jsonc_comments       PASS
+  cli_upsert_opencode_mcp_existing                       PASS
+  cli_upsert_antigravity_mcp_fresh                       PASS
+  cli_upsert_antigravity_mcp_replace                     PASS
+  cli_aider_instructions_are_cli_form_issue1032          PASS
+  cli_upsert_instructions_fresh                          PASS
+  cli_upsert_instructions_existing                       PASS
+  cli_upsert_instructions_replace                        PASS
+  cli_upsert_instructions_no_duplicate                   PASS
+  cli_remove_instructions                                PASS
+  cli_agent_instructions_content                         PASS
+  cli_guidance_resolves_project_by_root_path_issue1690   PASS
+  cli_qwen_windows_hook_command_uses_powershell_schema   PASS
+  cli_windows_optional_hooks_require_a_documented_shell  PASS
+  cli_installed_skill_limits_match_server_contract       PASS
+  cli_hook_gate_script_no_predictable_tmp_issue384       PASS
+  cli_hook_scripts_platform_shape_issue929               PASS
+  cli_windows_claude_hook_command_is_shell_portable      PASS
+  cli_claude_hooks_use_exec_form_across_shells_issue1733 Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-exec-XHm9gc/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-exec-XHm9gc/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-exec-XHm9gc/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-exec-XHm9gc/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-exec-dQZI4J/custom Claude & $(inert)!100%/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-exec-dQZI4J/custom Claude & $(inert)!100%/agents/codebase-memory.md
+  agent: /tmp/cli-hook-exec-dQZI4J/custom Claude & $(inert)!100%/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-exec-dQZI4J/custom Claude & $(inert)!100%/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+PASS
+  cli_claude_exec_hooks_custom_dir_uninstall_issue1733   level=info msg=version_cohort.claimed_fresh prior_holder=none build=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Detected agents: Claude-Code
+
+Claude Code:
+  skills: 1 installed
+  agent: /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory-scout.md
+  agent: /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory.md
+  agent: /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory-auditor.md
+  mcp: /tmp/cli-hook-uninstall-fxYix6/.claude.json
+  hooks: PreToolUse Grep/Glob/Bash search augmentation + PostToolUse Read coverage (non-blocking)
+  hooks: SessionStart (MCP usage reminder on startup/resume/clear/compact)
+  hooks: SubagentStart (MCP usage reminder for subagents)
+codebase-memory-mcp uninstall
+
+Stopping active CBM sessions and operations for uninstall...
+level=info msg=activation.guard scope=/tmp/cbm-runtime-cli-suite-jCwW1k/cbm-daemon-1000 cache=81b84ce97a1857b3fbec1c03fd849126dc16b603b02d4c366800bbd0c626dea3 clients=0 decision=no_active_cohort active_cache=
+Claude Code: removed 1 skill(s)
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory-scout.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory.md
+  Claude Code agent: removed owned profile /tmp/cli-hook-uninstall-fxYix6/.claude/agents/codebase-memory-auditor.md
+  removed MCP config entry
+  removed PreToolUse + SessionStart + SubagentStart hooks
+
+Uninstall complete. Please restart your coding-agent sessions to properly take this into account.
+PASS
+  cli_hook_augment_path_is_abs                           PASS
+  cli_hook_augment_deadline_breadcrumb_issue858          PASS
+  cli_hook_augment_log_long_home_creates_no_cut_path     PASS
+  cli_hook_augment_log_honours_cache_dir                 PASS
+  cli_hook_augment_log_default_location_unchanged        PASS
+  cli_upsert_claude_hook_fresh                           PASS
+  cli_upsert_claude_hook_existing                        PASS
+  cli_tool_hooks_preserve_foreign_same_matcher           PASS
+  cli_upsert_claude_hook_replace                         PASS
+  cli_upsert_claude_hook_preserves_others                PASS
+  cli_remove_claude_hooks                                PASS
+  cli_upsert_gemini_hook_fresh                           PASS
+  cli_upsert_gemini_hook_existing                        PASS
+  cli_upsert_gemini_hook_replace                         PASS
+  cli_remove_gemini_hooks                                PASS
+  cli_skill_descriptions_directive                       PASS
+  cli_config_open_close                                  PASS
+  cli_config_get_set                                     PASS
+  cli_config_cmd_get_prints_defaults_and_rejects_unknown_keyserror: unknown config key: totally_bogus_key
+Known keys: auto_index auto_index_limit auto_watch doc_candidates watcher_enabled watch_non_git ui-lang ui_enabled ui_port index_max_files index_max_source_mb
+error: unknown config key: totally_bogus_key
+Known keys: auto_index auto_index_limit auto_watch doc_candidates watcher_enabled watch_non_git ui-lang ui_enabled ui_port index_max_files index_max_source_mb
+error: unknown config key: totally_bogus_key
+Known keys: auto_index auto_index_limit auto_watch doc_candidates watcher_enabled watch_non_git ui-lang ui_enabled ui_port index_max_files index_max_source_mb
+PASS
+  cli_config_get_result_storage_is_per_thread            PASS
+  cli_config_get_bool                                    PASS
+  cli_config_get_int                                     PASS
+  cli_config_delete                                      PASS
+  cli_config_persists                                    PASS
+  cli_config_watcher_enabled_default_and_persist         PASS
+  cli_config_watch_non_git_default_off_and_listed_issue1948PASS
+  replace_binary_overwrites_readonly                     PASS
+  replace_binary_creates_new_file                        PASS
+  cli_build_args_json_string_flag_issue680               PASS
+  cli_build_args_json_integer_flag_issue680              PASS
+  cli_build_args_json_bare_boolean_issue680              PASS
+  cli_build_args_json_array_flag_accepts_json_literal    PASS
+  cli_build_args_json_target_projects_literal_issue1133  PASS
+  cli_build_args_json_unknown_flag_rejected              PASS
+  cli_build_args_json_repeated_array_issue680            PASS
+  cli_build_args_json_array_literal                      PASS
+  cli_build_args_json_array_literal_empty                PASS
+  cli_build_args_json_array_literal_malformed            PASS
+  cli_build_args_json_array_literal_non_string_items     PASS
+  cli_build_args_json_array_literal_mixed_with_repeated  PASS
+  cli_build_args_json_array_literal_repeated             PASS
+  cli_build_args_json_kebab_to_snake_issue680            PASS
+  cli_build_args_json_key_equals_value_issue680          PASS
+  cli_build_args_json_bad_positional_errors_issue680     PASS
+  cli_print_tool_help_issue680                           PASS
+  cli_usage_points_to_tool_format_json_issue2102         PASS
+  cli_zero_argument_tool_never_reads_stdin_issue1359     PASS
+  cli_optional_argument_tool_never_reads_stream_stdin    PASS
+  cli_stdin_kind_classifies_file_and_pipe                PASS
+  cli_stdin_args_gate_tracks_tool_schema_issue1359       PASS
+
+────────────────────────────────────────────
+  362 passed
+────────────────────────────────────────────
+

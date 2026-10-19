@@ -1,0 +1,38 @@
+[
+  {
+    "script": "tests/test_git_env_isolation_contract.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_parent_watchdog.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_thread_stack_tls_contract.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_worker_error_response.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_watcher_disabled.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_worker_session_scope.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_security_strings_allowlist.sh",
+    "exit": 0
+  },
+  {
+    "script": "tests/test_destructive_ordering_contract.sh",
+    "exit": 0
+  },
+  {
+    "script": "scripts/ci/check-binary-composition.sh",
+    "exit": 0
+  }
+]

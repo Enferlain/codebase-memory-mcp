@@ -1,0 +1,22 @@
+
+── release/codebase-memory-mcp [elf] ──
+PASS A0-canary              release/codebase-memory-mcp: 'codebase-memory-mcp' present (the needle scan can read this file)
+PASS A1-noexec-stack        release/codebase-memory-mcp: GNU_STACK is RW (no execute bit)
+PASS A1b-rodata-noexec      release/codebase-memory-mcp: executable PT_LOAD segments cover 7% of the file (read-only data is outside them)
+PASS A1c-relro              release/codebase-memory-mcp: PT_GNU_RELRO covers 985760 bytes
+PASS A1d-bind-now           release/codebase-memory-mcp: 1 GOT section(s) inside PT_GNU_RELRO and the dynamic section requests BIND_NOW
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_WORKER_DESCENDANT_PID_FILE' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_CRASH_ON' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_HANG_ON' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: no CBM_TEST_* seams beyond the smoke allowlist
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'releases/latest/download' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'api.github.com/repos' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'releases/latest' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'Accept: application/vnd.github+json' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'sqlite3_load_extension' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'sqlite3_enable_load_extension' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'unable to open shared library [' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'OMIT_LOAD_EXTENSION' present (sqlite reports SQLITE_OMIT_LOAD_EXTENSION)
+n/a  A5-no-ui-http          release/codebase-memory-mcp: UI-capable artifact, HTTP server ships here by design
+
+BINARY COMPOSITION OK: 17 assertion(s) passed over 1 binary/binaries

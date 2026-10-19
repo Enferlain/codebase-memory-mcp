@@ -1,0 +1,17 @@
+{
+  "same_source_manifest": true,
+  "old_only": {
+    "SEMANTICALLY_RELATED": 85,
+    "CONTAINS_FILE": 1,
+    "CONTAINS_FOLDER": 1,
+    "HAS_BRANCH": 1
+  },
+  "new_only": {
+    "SEMANTICALLY_RELATED": 78,
+    "CONTAINS_FOLDER": 1,
+    "HAS_BRANCH": 1,
+    "CONTAINS_FILE": 1
+  },
+  "calls_equal": true,
+  "overrides_equal": true
+}

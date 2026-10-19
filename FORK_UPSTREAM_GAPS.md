@@ -6,6 +6,12 @@ removed, or a new reproducer is confirmed.
 
 Installed-fork baseline: **2026-09-07**. Upstream replacement audit: **2026-10-18**.
 
+**Migration trial (2026-10-19):** this branch is the upstream v0.12.1 candidate
+`fork/v0.12.1-patches`. P1-P5 are implemented and pass the focused behavioral
+checks. The installed fork remains unchanged. See the
+[trial results and remaining qualification limits](docs/UPSTREAM_MIGRATION_2026-10-19.md).
+The source map and audit below retain their historical installed-fork context.
+
 - Working branch: `fork/usable-graph-refresh`
 - Installed source: `33efd7c2` (includes the local daemon device-renumbering recovery patch)
 - Installed fork's upstream base: `3de05cd6`
@@ -15,7 +21,7 @@ Installed-fork baseline: **2026-09-07**. Upstream replacement audit: **2026-10-1
 - Installed binary: `/home/imi/.local/bin/codebase-memory-mcp`
 - Installed SHA-256: `41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5`
 
-The working branch has **not** been refreshed to the audited target. Some of its
+The installed fork has **not** been replaced by the migration trial. Some of its
 local code is now superseded upstream. Use the action labels below when porting;
 do not replay this branch's commits or the old comparison branch wholesale.
 See [LOCAL_MCP_CLIENT_SETUP.md](LOCAL_MCP_CLIENT_SETUP.md) for installing this
@@ -24,7 +30,7 @@ exact binary into other agent environments.
 ## Refresh action labels
 
 These actions compare installed fork `33efd7c2` with v0.12.1 / `9dba7fe1`.
-They describe what to carry into a new branch, not changes already made here.
+They record the original porting decisions; the trial report above records implementation.
 
 - **PORT**: upstream still misses tested behavior supplied by this fork. Adapt
   the relevant code and regressions to the new implementation.
@@ -66,16 +72,17 @@ runtime probe. This is not full cold `sd-scripts` integration acceptance.
 
 ## Porting checklist and source map
 
-Use these five bounded behavior groups. The checkboxes remain unchecked until
-implementation and verification on the new branch are complete.
+These five behavior groups are implemented and pass the focused regressions
+on the trial branch. The checkboxes denote behavior qualification; remaining
+whole-repository and host limits are recorded separately in the trial report.
 
 | Group | Local source to consult | Binding regression / acceptance |
 | --- | --- | --- |
-| [ ] **P1 — guarded static imports** | `internal/cbm/extract_imports.c`: `process_python_type_checking_block`; `internal/cbm/lsp/py_lsp.c`: `py_is_type_checking_if`, guarded import classification/replay | `pipeline_python_crossfile_field_resolves_inherited_contract_method` must resolve the declared contract with guarded imports, not just ordinary imports. Also retain `py_type_checking_guard` / `py_qualified_type_checking_guard` extraction cases. |
-| [ ] **P2 — sibling mixins** | `src/pipeline/pass_semantic.c`: `override_python_sibling_mixins`, `collect_branch_methods` and supporting method/abstract checks | `explicit_override_models_python_sibling_mixin`: implementation -> abstract contract with `python_mro_sibling` / assembly metadata. Preserve upstream nearest-ancestor and cycle/dedup behavior. |
-| [ ] **P3 — dispatch and trace edges** | `src/store/store.c`: mixed-direction OVERRIDE joins; `src/mcp/mcp.c`: dispatch composition and `bfs_topology_json` / `bfs_topology_table` | `store_bfs_composes_calls_with_reverse_override`, then public `trace_path` checks in both directions with `CALLS` + `OVERRIDE`, pagination, test filtering, and edge metadata. Add explicit MCP output coverage; the audit only source-checked the topology schema. |
-| [ ] **P4 — false-target safeguards** | `internal/cbm/extract_calls.c`: nested-function binding detection; `src/pipeline/registry.c`: `cbm_suppress_weak_test_target`; matching guards in `pass_calls.c`, `pass_parallel.c`, declarations in `pipeline.h` | `pipeline_python_receiver_suppresses_weak_method_edge` and `pipeline_python_receiver_parallel_suppresses_weak_method_edges`, plus test-target unit controls. Keep genuine imported/test and local helper calls. |
-| [ ] **P5 — daemon recovery** | `src/daemon/ipc.c`: `posix_socket_record_rebase_device` and both committed/temporary-publication recovery call sites | `daemon_ipc_posix_crash_cleanup_after_device_renumbering` and the renumbered cases in `daemon_ipc_posix_record_publication_windows_recover_from_crash`; preserve inode/ctime/device-conflict rejection and ownership/lock checks. |
+| [x] **P1 — guarded static imports** | `internal/cbm/extract_imports.c`: `process_python_type_checking_block`; `internal/cbm/lsp/py_lsp.c`: `py_is_type_checking_if`, guarded import classification/replay | `pipeline_python_crossfile_field_resolves_inherited_contract_method` must resolve the declared contract with guarded imports, not just ordinary imports. Also retain `py_type_checking_guard` / `py_qualified_type_checking_guard` extraction cases. |
+| [x] **P2 — sibling mixins** | `src/pipeline/pass_semantic.c`: `override_python_sibling_mixins`, `collect_branch_methods` and supporting method/abstract checks | `explicit_override_models_python_sibling_mixin`: implementation -> abstract contract with `python_mro_sibling` / assembly metadata. Preserve upstream nearest-ancestor and cycle/dedup behavior. |
+| [x] **P3 — dispatch and trace edges** | `src/store/store.c`: mixed-direction OVERRIDE joins; `src/mcp/mcp.c`: dispatch composition and `bfs_topology_json` / `bfs_topology_table` | `store_bfs_composes_calls_with_reverse_override`, then public `trace_path` checks in both directions with `CALLS` + `OVERRIDE`, pagination, test filtering, and edge metadata. Add explicit MCP output coverage; the audit only source-checked the topology schema. |
+| [x] **P4 — false-target safeguards** | `internal/cbm/extract_calls.c`: nested-function binding detection; `src/pipeline/registry.c`: `cbm_suppress_weak_test_target`; matching guards in `pass_calls.c`, `pass_parallel.c`, declarations in `pipeline.h` | `pipeline_python_receiver_suppresses_weak_method_edge` and `pipeline_python_receiver_parallel_suppresses_weak_method_edges`, plus test-target unit controls. Keep genuine imported/test and local helper calls. |
+| [x] **P5 — daemon recovery** | `src/daemon/ipc.c`: `posix_socket_record_rebase_device` and both committed/temporary-publication recovery call sites | `daemon_ipc_posix_crash_cleanup_after_device_renumbering` and the renumbered cases in `daemon_ipc_posix_record_publication_windows_recover_from_crash`; preserve inode/ctime/device-conflict rejection and ownership/lock checks. |
 
 Porting boundaries:
 
