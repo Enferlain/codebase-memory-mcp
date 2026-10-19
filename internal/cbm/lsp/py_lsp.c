@@ -726,7 +726,8 @@ static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
             TSNode c = py_kid(&rk, i);
             if (py_is_type_checking_if(ctx, c)) {
                 TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-                capacity += ts_node_named_child_count(body);
+                if (!ts_node_is_null(body))
+                    capacity += ts_node_named_child_count(body);
             }
         }
         if (capacity > 0) {
@@ -741,7 +742,7 @@ static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
                 stmts[stmt_count++] = c;
             if (py_is_type_checking_if(ctx, c)) {
                 TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-                uint32_t count = ts_node_named_child_count(body);
+                uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
                 for (uint32_t j = 0; j < count; j++) {
                     TSNode stmt = ts_node_named_child(body, j);
                     const char *kind = ts_node_type(stmt);
@@ -5336,7 +5337,7 @@ void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
             }
         } else if (py_is_type_checking_if(ctx, c)) {
             TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-            uint32_t count = ts_node_named_child_count(body);
+            uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
             for (uint32_t j = 0; j < count; j++) {
                 TSNode stmt = ts_node_named_child(body, j);
                 const char *kind = ts_node_type(stmt);

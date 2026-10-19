@@ -1234,9 +1234,10 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
             yyjson_mut_doc_set_root(doc, props);
             yyjson_mut_obj_add_str(doc, props, "dispatch", "python_mro_sibling");
             yyjson_mut_obj_add_str(doc, props, "assembly", assembly->qualified_name);
-            const yyjson_alc allocator = {.malloc=assembly_json_alloc,
-                                          .realloc=assembly_json_realloc,
-                                          .free=assembly_json_free, .ctx=NULL};
+            const yyjson_alc allocator = {.malloc = assembly_json_alloc,
+                                          .realloc = assembly_json_realloc,
+                                          .free = assembly_json_free,
+                                          .ctx = NULL};
             char *json = yyjson_mut_write_opts(doc, 0, &allocator, NULL, NULL);
             if (json) {
                 cbm_gbuf_insert_edge(ctx->gbuf, winner->id, contract->id, "OVERRIDE", json);

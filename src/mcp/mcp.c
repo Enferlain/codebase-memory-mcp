@@ -636,7 +636,9 @@ static const tool_def_t TOOLS[] = {
      "env).\"},"
      "\"parameter_name\":{\"type\":\"string\",\"description\":\"data_flow parameter filter.\"},"
      "\"edge_types\":{\"type\":\"array\",\"items\":{"
-     "\"type\":\"string\"}},\"risk_labels\":{\"type\":\"boolean\",\"default\":false,"
+     "\"type\":\"string\"},\"description\":\"Combining CALLS and OVERRIDE traverses "
+     "overrides in both directions to include declared and concrete dispatch "
+     "targets.\"},\"risk_labels\":{\"type\":\"boolean\",\"default\":false,"
      "\"description\":\"Add hop-risk labels.\"},\"include_tests\":{\"type\":\"boolean\","
      "\"default\":false},"
      "\"format\":{\"type\":\"string\",\"enum\":[\"tree\",\"json\"],\"default\":\"tree\","
@@ -644,7 +646,8 @@ static const tool_def_t TOOLS[] = {
      "grouped tables.\"},"
      "\"topology\":{\"type\":\"boolean\",\"default\":false,"
      "\"description\":\"Include typed edges incident to this page's nodes, with endpoint "
-     "qualified names and dispatch properties. Other endpoints may occur on another page.\"},"
+     "qualified names and dispatch properties, independently of mode. Other endpoints may "
+     "occur on another page; deduplicate edges by source, target, and type.\"},"
      "\"include_evidence\":{\"type\":\"boolean\",\"default\":false,"
      "\"description\":\"Add resolver class and confidence.\"}},"
      "\"required\":[\"function_name\",\"project\"]}"},
@@ -8888,8 +8891,10 @@ static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge
         yyjson_mut_obj_add_str(doc, item, "source", source->qualified_name);
         yyjson_mut_obj_add_str(doc, item, "target", target->qualified_name);
         yyjson_mut_obj_add_str(doc, item, "type", edge->type);
-        yyjson_doc *properties = edge->properties_json
-            ? yyjson_read(edge->properties_json, strlen(edge->properties_json), 0) : NULL;
+        yyjson_doc *properties =
+            edge->properties_json
+                ? yyjson_read(edge->properties_json, strlen(edge->properties_json), 0)
+                : NULL;
         yyjson_val *props = properties ? yyjson_doc_get_root(properties) : NULL;
         yyjson_val *recorded = yyjson_obj_get(props, "confidence");
         double confidence = yyjson_get_num(recorded);
