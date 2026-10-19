@@ -24,6 +24,11 @@
  *   - find_first_descendant_by_kind (Verilog/SystemVerilog name wrappers)
  *   - find_first_descendant_of (Dart/Zig import URI/string nesting)
  *
+ * Python project-graph C3 assembly proof:
+ *   - py_assembly_mro (at most PY_ASSEMBLY_LIMIT=128 distinct classes in its
+ *     cache; visiting-state cycle rejection, each recursive call claims a new
+ *     slot before descending; overflow omits the proof rather than truncating).
+ *
  * To add a function: add it below AND add NOLINT(misc-no-recursion) on
  * the function definition line. The lint gate verifies both match.
  */
@@ -32,4 +37,4 @@
         "eval_expr", "eval_expr_partial", "cypher_expr_selectivity", "glob_match",              \
         "glob_match_star", "glob_match_doublestar", "glob_match_doublestar_slash",              \
         "glob_match_doublestar_any", "parse_bool_expr", "parse_bool_atom", "r_collect_imports", \
-        "find_first_descendant_by_kind", "find_first_descendant_of"
+        "find_first_descendant_by_kind", "find_first_descendant_of", "py_assembly_mro"

@@ -11,6 +11,7 @@
  *
  * Depends on: pass_definitions having populated the registry and graph buffer
  */
+#include "yyjson/yyjson.h"
 #include "foundation/constants.h"
 #include "foundation/mem_core.h"
 #include "foundation/str_util.h" // cbm_json_escape
@@ -1042,7 +1043,8 @@ typedef struct {
     int count;
 } py_assembly_cache_t;
 
-static py_assembly_mro_t *py_assembly_mro(cbm_gbuf_t *gb, int64_t id, py_assembly_cache_t *cache) {
+static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
+    cbm_gbuf_t *gb, int64_t id, py_assembly_cache_t *cache) {
     for (int i = 0; i < cache->count; i++) {
         if (cache->entries[i].id == id)
             return cache->entries[i].state == 2 ? &cache->entries[i] : NULL;
@@ -1162,6 +1164,22 @@ static const cbm_gbuf_node_t *py_assembly_method(cbm_gbuf_t *gb, int64_t owner, 
     return NULL;
 }
 
+static void *assembly_json_alloc(void *ctx, size_t size) {
+    (void)ctx;
+    return cbm_alloc(CBM_MEM_CLASS_SEMANTIC, size);
+}
+
+static void *assembly_json_realloc(void *ctx, void *ptr, size_t old_size, size_t size) {
+    (void)ctx;
+    (void)old_size;
+    return cbm_realloc(CBM_MEM_CLASS_SEMANTIC, ptr, size);
+}
+
+static void assembly_json_free(void *ctx, void *ptr) {
+    (void)ctx;
+    cbm_free(CBM_MEM_CLASS_SEMANTIC, ptr);
+}
+
 static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
                                           const cbm_gbuf_node_t *assembly) {
     if (!assembly->file_path || !fp_ends_with(assembly->file_path, ".py"))
@@ -1171,7 +1189,7 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
     cbm_gbuf_find_edges_by_source_type(ctx->gbuf, assembly->id, "INHERITS", &bases, &base_count);
     if (base_count < 2)
         return 0;
-    py_assembly_cache_t *cache = cbm_calloc(CBM_MEM_CLASS_SEMANTIC, 1, sizeof(*cache));
+    py_assembly_cache_t *cache = cbm_calloc(CBM_MEM_CLASS_SEMANTIC, sizeof(*cache));
     if (!cache)
         return 0;
     py_assembly_mro_t *mro = py_assembly_mro(ctx->gbuf, assembly->id, cache);
@@ -1216,12 +1234,15 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
             yyjson_mut_doc_set_root(doc, props);
             yyjson_mut_obj_add_str(doc, props, "dispatch", "python_mro_sibling");
             yyjson_mut_obj_add_str(doc, props, "assembly", assembly->qualified_name);
-            char *json = yyjson_mut_write(doc, 0, NULL);
+            const yyjson_alc allocator = {.malloc=assembly_json_alloc,
+                                          .realloc=assembly_json_realloc,
+                                          .free=assembly_json_free, .ctx=NULL};
+            char *json = yyjson_mut_write_opts(doc, 0, &allocator, NULL, NULL);
             if (json) {
                 cbm_gbuf_insert_edge(ctx->gbuf, winner->id, contract->id, "OVERRIDE", json);
                 created++;
             }
-            free(json);
+            cbm_free(CBM_MEM_CLASS_SEMANTIC, json);
             yyjson_mut_doc_free(doc);
         }
     }
