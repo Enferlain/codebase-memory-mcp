@@ -23548,6 +23548,18 @@ TEST(audit_pipeline_python_receiver_suppresses_weak_method_edge) {
                     "        return 1\n"
                     "    return process_batch()\n");
 
+    /* These have no local declaration: only the test-target guard can
+     * reject the weak guess, independently of nested-binding suppression. */
+    write_temp_file(tmp, "weak_test_guard.py",
+                    "def unknown_constructor():\n"
+                    "    return MockAccelerator()\n"
+                    "def unknown_member(self):\n"
+                    "    return self.untyped.weak_only_member()\n");
+    write_temp_file(tmp, "tests/test_weak_member_target.py",
+                    "class OnlyTestMethods:\n"
+                    "    def weak_only_member(self):\n"
+                    "        return 1\n");
+
     char db_path[512];
     snprintf(db_path, sizeof(db_path), "%s/python_recv.db", tmp);
     cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
@@ -23577,6 +23589,8 @@ TEST(audit_pipeline_python_receiver_suppresses_weak_method_edge) {
      * assertion vacuously. */
     ASSERT_GTE(cbm_store_count_edges_by_type(s, project, "CALLS"), 1);
 
+    ASSERT_FALSE(cross_file_call_exists(s, project, "unknown_constructor", "MockAccelerator"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "unknown_member", "weak_only_member"));
     cbm_store_close(s);
     cbm_pipeline_free(p);
     th_rmtree(tmp);
@@ -23671,6 +23685,18 @@ TEST(audit_pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     char *saved = old_workers ? strdup(old_workers) : NULL;
     cbm_setenv("CBM_WORKERS", "4", 1);
 
+    /* These have no local declaration: only the test-target guard can
+     * reject the weak guess, independently of nested-binding suppression. */
+    write_temp_file(tmp, "weak_test_guard.py",
+                    "def unknown_constructor():\n"
+                    "    return TestOnlyAccelerator()\n"
+                    "def unknown_member(self):\n"
+                    "    return self.untyped.weak_only_member()\n");
+    write_temp_file(tmp, "tests/test_weak_member_target.py",
+                    "class OnlyTestMethods:\n"
+                    "    def weak_only_member(self):\n"
+                    "        return 1\n");
+
     char db_path[512];
     snprintf(db_path, sizeof(db_path), "%s/python_par.db", tmp);
     cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
@@ -23692,6 +23718,8 @@ TEST(audit_pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
     ASSERT_TRUE(cross_file_call_exists(s, project, "train", "compute"));
     ASSERT_TRUE(cross_file_call_exists(s, project, "train", "local_helper"));
 
+    ASSERT_FALSE(cross_file_call_exists(s, project, "unknown_constructor", "TestOnlyAccelerator"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "unknown_member", "weak_only_member"));
     cbm_store_close(s);
     cbm_pipeline_free(p);
     if (saved) {
