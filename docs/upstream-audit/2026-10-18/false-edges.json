@@ -1,0 +1,57 @@
+[
+  {
+    "db": "/tmp/cbm_python_recv_2CGlQY/python_recv.db",
+    "calls": [
+      [
+        "tmp-cbm_python_recv_2CGlQY.caller.local_constructor",
+        "tmp-cbm_python_recv_2CGlQY.tests.test_targets.MockAccelerator",
+        "{\"callee\":\"MockAccelerator\",\"confidence\":0.75,\"strategy\":\"unique_name\",\"candidates\":1,\"line\":14}"
+      ],
+      [
+        "tmp-cbm_python_recv_2CGlQY.caller.imported_test_constructor",
+        "tmp-cbm_python_recv_2CGlQY.tests.test_targets.MockAccelerator",
+        "{\"callee\":\"ImportedMockAccelerator\",\"confidence\":0.85,\"strategy\":\"lsp_import_alias\",\"candidates\":1,\"line\":17}"
+      ],
+      [
+        "tmp-cbm_python_recv_2CGlQY.caller.imported_call",
+        "tmp-cbm_python_recv_2CGlQY.pkg.helper.compute",
+        "{\"callee\":\"helper.compute\",\"confidence\":0.85,\"strategy\":\"import_map_suffix\",\"candidates\":1,\"line\":20,\"args\":[{\"i\":0,\"e\":\"42\"}]}"
+      ],
+      [
+        "tmp-cbm_python_recv_2CGlQY.caller.bare_call",
+        "tmp-cbm_python_recv_2CGlQY.caller.local_helper",
+        "{\"callee\":\"local_helper\",\"confidence\":0.95,\"strategy\":\"lsp_direct\",\"candidates\":1,\"line\":26}"
+      ],
+      [
+        "tmp-cbm_python_recv_2CGlQY.caller.nested_call",
+        "tmp-cbm_python_recv_2CGlQY.worker.WorkerProcessor.process_batch",
+        "{\"callee\":\"process_batch\",\"confidence\":0.38,\"strategy\":\"unique_name\",\"candidates\":1,\"line\":31}"
+      ]
+    ]
+  },
+  {
+    "db": "/tmp/cbm_python_par_2pN9iL/python_par.db",
+    "calls": [
+      [
+        "tmp-cbm_python_par_2pN9iL.caller.local_constructor",
+        "tmp-cbm_python_par_2pN9iL.tests.test_targets.TestOnlyAccelerator",
+        "{\"callee\":\"TestOnlyAccelerator\",\"confidence\":0.38,\"strategy\":\"unique_name\",\"candidates\":1,\"line\":13}"
+      ],
+      [
+        "tmp-cbm_python_par_2pN9iL.caller.train",
+        "tmp-cbm_python_par_2pN9iL.pkg.helper.compute",
+        "{\"callee\":\"helper.compute\",\"confidence\":0.95,\"strategy\":\"import_map\",\"candidates\":1,\"args\":[{\"i\":0,\"e\":\"42\"}],\"line\":22}"
+      ],
+      [
+        "tmp-cbm_python_par_2pN9iL.caller.train",
+        "tmp-cbm_python_par_2pN9iL.targets.OtherProcessor.process_batch",
+        "{\"callee\":\"process_batch\",\"confidence\":0.28,\"strategy\":\"suffix_match\",\"candidates\":2,\"args\":[{\"i\":0,\"e\":\"True\"}],\"line\":23}"
+      ],
+      [
+        "tmp-cbm_python_par_2pN9iL.caller.train",
+        "tmp-cbm_python_par_2pN9iL.caller.local_helper",
+        "{\"callee\":\"local_helper\",\"confidence\":0.95,\"strategy\":\"lsp_direct\",\"candidates\":1,\"line\":24}"
+      ]
+    ]
+  }
+]
