@@ -131,6 +131,43 @@ This trial does not claim a clean full clang-tidy sweep.
 Raw cold-index responses, selected tests, focused results, process results,
 and checksums are under [the trial evidence](upstream-audit/2026-10-19/).
 
+## Open issues and fix plan
+
+These are recorded follow-ups, not completed fixes.
+
+- [ ] **Portable subprocess environment test.** The current fixture uses a
+  shell to check the child's exact PATH, but this host's shell wrapper changes
+  that value after CBM supplies it. Separate the assertions: use a native
+  test-runner probe to inspect the exact child environment, and retain shell
+  fixtures with distinct exit markers to prove caller-side executable lookup
+  for both shebang and ENOEXEC fallback paths. Keep the missing-caller-tool
+  case even when a matching executable exists in the child's PATH. Acceptance:
+  the subprocess suite passes here while still checking exact environment
+  overrides, unchanged parent environment, both lookup paths, and exit 127 for
+  the missing caller-side executable. Do not skip the failing test or change
+  the host's global `/bin/sh`.
+
+- [ ] **Strict lint cleanup in the ports.** Split C3 base ordering, candidate
+  selection, and sibling winner/contract matching into smaller helpers. Name
+  the MRO states and meaningful buffer limits; address remaining declaration
+  and style diagnostics in added code. Apply the same focused cleanup to new
+  dispatch/topology helpers where needed. Preserve bounded fail-closed MRO
+  handling and avoid a general rewrite of large upstream functions. Acceptance:
+  no remaining introduced diagnostics under the configured clang-tidy checks
+  on valid translation units, plus passing MRO order/shadowing, SQL/CSR parity,
+  topology pagination/filter/budget, and all 22 compatibility checks. Record
+  unchanged upstream findings separately; do not suppress checks to pass.
+
+- [ ] **Complete the whole-tree cppcheck gate.** Measure which translation
+  units/configurations dominate the scan, then evaluate parallel checking with
+  a persistent build directory. Verify that this retains whole-program
+  analysis and the existing enabled checks/configurations before adopting it.
+  Keep per-file completion and exit results so a crashed or missing job cannot
+  produce a green aggregate. Acceptance: every intended source/configuration
+  completes within the CI bound, failures propagate, and the complete scan is
+  clean. The already-corrected upstream test-hook condition is covered by
+  `corrected-semantic-lint.log`; that file-level pass does not close this item.
+
 ## Moving the trial into service
 
 Continue using the isolated candidate while resolving the static-lint
