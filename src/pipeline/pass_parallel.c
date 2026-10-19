@@ -3353,7 +3353,9 @@ static void resolve_file_calls(resolve_ctx_t *rc, resolve_worker_state_t *ws, CB
                                                  call->callee_name, res.strategy)) ||
             cbm_suppress_weak_local_binding_call(suppress_weak_local_binding,
                                                  call->callee_is_locally_bound, res.strategy) ||
-            /* Import-binding suppression (#2127) — see pass_calls.c; this gate
+            /* Import-binding suppression (#2127) — see pass_calls.c ||
+        cbm_suppress_weak_test_target(lang == CBM_LANG_PYTHON, source_node->qualified_name,
+                                      res.qualified_name, res.strategy); this gate
              * MUST stay identical to the one there. */
             (lang == CBM_LANG_PYTHON &&
              cbm_suppress_weak_import_bound_call(true, true, res.strategy) &&

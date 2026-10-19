@@ -288,6 +288,37 @@ static const char *py_parameter_name(CBMExtractCtx *ctx, TSNode param) {
 /* Bind this node's parameters into the frame just pushed for it. Called after
  * every push in push_boundary_scopes, so the top frame is this node's own and
  * pop_expired_scopes unwinds them at exactly the right depth. */
+/* Nested declarations bind their names for the whole enclosing function.
+ * Collect each lexical body once, skipping nested bodies, and reuse the
+ * parameter binding table's frame lifetime and O(1) call-site lookup. */
+static void py_bind_local_definitions(CBMExtractCtx *ctx, TSNode body, WalkState *state) {
+    if (ts_node_is_null(body))
+        return;
+    TSTreeCursor cursor = ts_tree_cursor_new(body);
+    bool more = ts_tree_cursor_goto_first_child(&cursor);
+    while (more) {
+        TSNode node = ts_tree_cursor_current_node(&cursor);
+        const char *kind = ts_node_type(node);
+        bool boundary = strcmp(kind, "function_definition") == 0 ||
+                        strcmp(kind, "class_definition") == 0 || strcmp(kind, "lambda") == 0;
+        if (boundary) {
+            TSNode name = ts_node_child_by_field_name(node, TS_FIELD("name"));
+            if (!ts_node_is_null(name))
+                py_param_bind(state, cbm_node_text(ctx->arena, name, ctx->source));
+        }
+        if (!boundary && ts_tree_cursor_goto_first_child(&cursor))
+            continue;
+        while (!ts_tree_cursor_goto_next_sibling(&cursor)) {
+            if (!ts_tree_cursor_goto_parent(&cursor) ||
+                ts_node_eq(ts_tree_cursor_current_node(&cursor), body)) {
+                more = false;
+                break;
+            }
+        }
+    }
+    ts_tree_cursor_delete(&cursor);
+}
+
 static void py_bind_scope_parameters(CBMExtractCtx *ctx, TSNode node, WalkState *state) {
     if (ctx->language != CBM_LANG_PYTHON || state->scope_top == 0) {
         return;
@@ -304,6 +335,8 @@ static void py_bind_scope_parameters(CBMExtractCtx *ctx, TSNode node, WalkState 
     for (uint32_t i = 0; i < count; i++) {
         py_param_bind(state, py_parameter_name(ctx, ts_node_named_child(params, i)));
     }
+    if (strcmp(kind, "function_definition") == 0)
+        py_bind_local_definitions(ctx, ts_node_child_by_field_name(node, TS_FIELD("body")), state);
 }
 
 static bool push_scope(WalkState *state, uint8_t kind, uint32_t depth, const char *qn) {

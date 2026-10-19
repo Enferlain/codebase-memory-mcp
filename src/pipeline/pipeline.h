@@ -378,6 +378,11 @@ bool cbm_weak_member_unique_name_exempt(bool is_python, bool receiver_is_self_at
 bool cbm_suppress_weak_local_binding_call(bool enabled, bool callee_is_locally_bound,
                                           const char *strategy);
 
+/* Reject weak guesses from production into an explicit tests namespace;
+ * preserve strong imports/LSP and test callers. */
+bool cbm_suppress_weak_test_target(bool enabled, const char *source_qn, const char *target_qn,
+                                   const char *strategy);
+
 /* Import-binding counterpart (#2127). True when the callee's root identifier
  * is bound by an import of this file whose module chain contradicts the
  * resolved target (`from unittest.mock import patch; patch()` must not bind a
