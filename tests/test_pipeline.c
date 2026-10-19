@@ -24043,7 +24043,55 @@ TEST(audit_pipeline_python_crossfile_field_resolves_inherited_contract_method_di
     PASS();
 }
 
+TEST(python_sibling_mro_respects_order_and_shadowing) {
+    for (int scenario = 0; scenario < 5; scenario++) {
+        cbm_gbuf_t *gb = cbm_gbuf_new("test", "/tmp/test");
+        ASSERT_NOT_NULL(gb);
+        int64_t left = cbm_gbuf_upsert_node(gb, "Class", "Facet", "p.Facet", "p.py", 1, 3, "{}");
+        int64_t impl = cbm_gbuf_upsert_node(gb, "Method", "run", "p.Facet.run", "p.py", 2, 3, "{}");
+        int64_t right =
+            cbm_gbuf_upsert_node(gb, "Class", "Contract", "p.Contract", "p.py", 4, 6, "{}");
+        int64_t contract = cbm_gbuf_upsert_node(gb, "Method", "run", "p.Contract.run", "p.py", 5, 6,
+                                                "{\"decorators\":[\"abstractmethod\"]}");
+        int64_t assembly =
+            cbm_gbuf_upsert_node(gb, "Class", "Final", "p.Final", "p.py", 7, 9, "{}");
+        cbm_gbuf_insert_edge(gb, left, impl, "DEFINES_METHOD", "{}");
+        cbm_gbuf_insert_edge(gb, right, contract, "DEFINES_METHOD", "{}");
+        /* Rank metadata, rather than worker insertion order, defines Python order. */
+        if (scenario == 4) {
+            cbm_gbuf_insert_edge(gb, assembly, right, "INHERITS", "{\"base_index\":1}");
+            cbm_gbuf_insert_edge(gb, assembly, left, "INHERITS", "{\"base_index\":0}");
+        } else {
+            cbm_gbuf_insert_edge(gb, assembly, left, "INHERITS",
+                                 scenario == 1 ? "{\"base_index\":1}" : "{\"base_index\":0}");
+            cbm_gbuf_insert_edge(gb, assembly, right, "INHERITS",
+                                 scenario == 1 ? "{\"base_index\":0}" : "{\"base_index\":1}");
+        }
+        if (scenario == 2) {
+            int64_t own = cbm_gbuf_upsert_node(gb, "Method", "run", "p.Final.run", "p.py", 8, 9,
+                                               "{\"is_abstract\":true}");
+            cbm_gbuf_insert_edge(gb, assembly, own, "DEFINES_METHOD", "{}");
+        }
+        if (scenario == 3)
+            cbm_gbuf_insert_edge(gb, assembly, assembly, "INHERITS", "{\"base_index\":2}");
+        atomic_int cancelled = 0;
+        cbm_pipeline_ctx_t ctx = {
+            .project_name = "test", .repo_path = "/tmp/test", .gbuf = gb, .cancelled = &cancelled};
+        cbm_pipeline_override_explicit(&ctx);
+        const cbm_gbuf_edge_t **edges = NULL;
+        int n = 0;
+        cbm_gbuf_find_edges_by_source_type(gb, impl, "OVERRIDE", &edges, &n);
+        bool found = false;
+        for (int i = 0; i < n; i++)
+            found |= edges[i]->target_id == contract;
+        cbm_gbuf_free(gb);
+        ASSERT_EQ(found, scenario == 0 || scenario == 4);
+    }
+    PASS();
+}
+
 SUITE(pipeline) {
+    RUN_TEST(python_sibling_mro_respects_order_and_shadowing);
     RUN_TEST(audit_pipeline_python_receiver_suppresses_weak_method_edge);
     RUN_TEST(audit_pipeline_python_receiver_parallel_suppresses_weak_method_edges);
     RUN_TEST(audit_pipeline_python_bare_local_binding_suppresses_weak_edge);
