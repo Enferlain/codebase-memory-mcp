@@ -23488,7 +23488,570 @@ TEST(pipeline_calls_args_overlong_argument_stops_cleanly) {
     PASS();
 }
 
+TEST(audit_pipeline_python_receiver_suppresses_weak_method_edge) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_recv_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "worker.py",
+                    "class Worker:\n"
+                    "    def backward(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class BitWriter:\n"
+                    "    def write(self, fd, payload):\n"
+                    "        return len(payload)\n"
+                    "\n"
+                    "class WorkerProcessor:\n"
+                    "    def process_batch(self):\n"
+                    "        return 1\n");
+    write_temp_file(tmp, "pkg/__init__.py", "from .helper import compute\n");
+    write_temp_file(tmp, "pkg/helper.py",
+                    "def compute(value):\n"
+                    "    return value * 2\n");
+    write_temp_file(tmp, "tests/__init__.py", "");
+    write_temp_file(tmp, "tests/test_targets.py",
+                    "class MockAccelerator:\n"
+                    "    pass\n");
+    write_temp_file(tmp, "caller.py",
+                    "import os\n"
+                    "from pkg import helper\n"
+                    "from tests.test_targets import MockAccelerator as ImportedMockAccelerator\n"
+                    "\n"
+                    "def external_call(accelerator):\n"
+                    "    return accelerator.backward()\n"
+                    "\n"
+                    "def standard_library_call(payload):\n"
+                    "    return os.write(2, payload)\n"
+                    "\n"
+                    "def local_constructor():\n"
+                    "    class MockAccelerator:\n"
+                    "        pass\n"
+                    "    return MockAccelerator()\n"
+                    "\n"
+                    "def imported_test_constructor():\n"
+                    "    return ImportedMockAccelerator()\n"
+                    "\n"
+                    "def imported_call():\n"
+                    "    return helper.compute(42)\n"
+                    "\n"
+                    "def local_helper():\n"
+                    "    return 1\n"
+                    "\n"
+                    "def bare_call():\n"
+                    "    return local_helper()\n"
+                    "\n"
+                    "def nested_call():\n"
+                    "    def process_batch():\n"
+                    "        return 1\n"
+                    "    return process_batch()\n");
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/python_recv.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+
+    /* NEGATIVE: `accelerator` is a parameter — Worker.backward must not bind. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "external_call", "backward"));
+    /* Some Python module attributes are extracted as dotted non-method calls.
+     * The spelling still supplies a receiver: os.write must not bind a project
+     * method named write through unique_name. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "standard_library_call", "write"));
+    /* A local class not represented as a graph node must not fall through to
+     * an unrelated same-named class in tests. Explicit imports from tests stay
+     * valid because import_map is a strong strategy. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "local_constructor", "MockAccelerator"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "nested_call", "process_batch"));
+    ASSERT_TRUE(cross_file_call_exists(s, project, "imported_test_constructor", "MockAccelerator"));
+    /* POSITIVE: import-bound receiver and bare local call both survive. */
+    ASSERT_TRUE(cross_file_call_exists(s, project, "imported_call", "compute"));
+    ASSERT_TRUE(cross_file_call_exists(s, project, "bare_call", "local_helper"));
+    /* Tripwire: a run that emitted no edges at all would satisfy the negative
+     * assertion vacuously. */
+    ASSERT_GTE(cbm_store_count_edges_by_type(s, project, "CALLS"), 1);
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    th_rmtree(tmp);
+    PASS();
+}
+
+TEST(audit_pipeline_python_receiver_parallel_suppresses_weak_method_edges) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_par_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "targets.py",
+                    "class MockAccelerator:\n"
+                    "    def print(self, value):\n"
+                    "        return value\n"
+                    "\n"
+                    "class OtherPrinter:\n"
+                    "    def print(self, value):\n"
+                    "        return value\n"
+                    "\n"
+                    "class FlashAttentionFunction:\n"
+                    "    def backward(self, loss):\n"
+                    "        return loss\n"
+                    "\n"
+                    "class OtherBackward:\n"
+                    "    def backward(self, loss):\n"
+                    "        return loss\n"
+                    "\n"
+                    "class EulerScheduler:\n"
+                    "    def step(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class OtherScheduler:\n"
+                    "    def step(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class UnrelatedProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n"
+                    "\n"
+                    "class OtherProcessor:\n"
+                    "    def process_batch(self, is_last):\n"
+                    "        return is_last\n");
+    write_temp_file(tmp, "pkg/__init__.py", "from .helper import compute\n");
+    write_temp_file(tmp, "pkg/helper.py",
+                    "def compute(value):\n"
+                    "    return value * 2\n");
+    write_temp_file(tmp, "tests/__init__.py", "");
+    write_temp_file(tmp, "tests/test_targets.py",
+                    "class BitWriter:\n"
+                    "    def write(self, fd, payload):\n"
+                    "        return len(payload)\n"
+                    "\n"
+                    "class TestOnlyAccelerator:\n"
+                    "    pass\n");
+    write_temp_file(tmp, "caller.py",
+                    "import os\n"
+                    "from pkg import helper\n"
+                    "\n"
+                    "def local_helper():\n"
+                    "    return 1\n"
+                    "\n"
+                    "def standard_library_call(payload):\n"
+                    "    return os.write(2, payload)\n"
+                    "\n"
+                    "def local_constructor():\n"
+                    "    class TestOnlyAccelerator:\n"
+                    "        pass\n"
+                    "    return TestOnlyAccelerator()\n"
+                    "\n"
+                    "def train(accelerator, trainer):\n"
+                    "    def process_batch(is_last):\n"
+                    "        return is_last\n"
+                    "\n"
+                    "    accelerator.print('hello')\n"
+                    "    accelerator.backward(1)\n"
+                    "    trainer.lr_scheduler.step()\n"
+                    "    helper.compute(42)\n"
+                    "    process_batch(True)\n"
+                    "    return local_helper()\n");
+    for (int i = 0; i < 52; i++) {
+        char name[64];
+        char body[128];
+        snprintf(name, sizeof(name), "filler%d.py", i);
+        snprintf(body, sizeof(body), "def filler%d():\n    return %d\n", i, i);
+        write_temp_file(tmp, name, body);
+    }
+
+    char *old_workers = getenv("CBM_WORKERS");
+    char *saved = old_workers ? strdup(old_workers) : NULL;
+    cbm_setenv("CBM_WORKERS", "4", 1);
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/python_par.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+
+    /* NEGATIVE: every receiver here is a parameter or an attribute of one. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "print"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "backward"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "step"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "train", "process_batch"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "standard_library_call", "write"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "local_constructor", "TestOnlyAccelerator"));
+    /* POSITIVE: import-bound and bare local calls survive the parallel path too. */
+    ASSERT_TRUE(cross_file_call_exists(s, project, "train", "compute"));
+    ASSERT_TRUE(cross_file_call_exists(s, project, "train", "local_helper"));
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    if (saved) {
+        cbm_setenv("CBM_WORKERS", saved, 1);
+        free(saved);
+    } else {
+        cbm_unsetenv("CBM_WORKERS");
+    }
+    th_rmtree(tmp);
+    PASS();
+}
+
+TEST(audit_pipeline_python_bare_local_binding_suppresses_weak_edge) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_py_bare_seq_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "live.py",
+                    "class SatoriLive:\n"
+                    "    def run(self):\n"
+                    "        return 1\n");
+    write_temp_file(tmp, "helpers.py",
+                    "def compute_widget_total():\n"
+                    "    return 7\n");
+    write_temp_file(tmp, "gate.py",
+                    "def _run_with_heavy_slot(run):\n"
+                    "    return run()\n"
+                    "\n"
+                    "def uses_free_function():\n"
+                    "    return compute_widget_total()\n");
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/py_bare.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+
+    /* NEGATIVE: the callee is shadowed by a parameter. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "_run_with_heavy_slot", "run"));
+    /* POSITIVE: an unshadowed cross-file bare call survives. */
+    ASSERT_TRUE(cross_file_call_exists(s, project, "uses_free_function", "compute_widget_total"));
+    /* Tripwire: a run that emitted no edges at all would satisfy the negative
+     * assertion vacuously. */
+    ASSERT_GTE(cbm_store_count_edges_by_type(s, project, "CALLS"), 1);
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    th_rmtree(tmp);
+    PASS();
+}
+
+TEST(audit_pipeline_python_bare_local_binding_parallel_suppresses_weak_edge) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_py_bare_par_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "live.py",
+                    "class SatoriLive:\n"
+                    "    def run(self):\n"
+                    "        return 1\n"
+                    "\n"
+                    "class BatchJob:\n"
+                    "    def execute(self):\n"
+                    "        return 2\n");
+    write_temp_file(tmp, "helpers.py",
+                    "def compute_widget_total():\n"
+                    "    return 7\n");
+    write_temp_file(tmp, "gate.py",
+                    "def _run_with_heavy_slot(run, execute):\n"
+                    "    run()\n"
+                    "    return execute()\n"
+                    "\n"
+                    "def uses_free_function():\n"
+                    "    return compute_widget_total()\n");
+    for (int i = 0; i < 52; i++) {
+        char name[64];
+        char body[128];
+        snprintf(name, sizeof(name), "filler%d.py", i);
+        snprintf(body, sizeof(body), "def filler%d():\n    return %d\n", i, i);
+        write_temp_file(tmp, name, body);
+    }
+
+    char *old_workers = getenv("CBM_WORKERS");
+    char *saved = old_workers ? strdup(old_workers) : NULL;
+    cbm_setenv("CBM_WORKERS", "4", 1);
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/py_bare_par.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+
+    /* NEGATIVE: both callees are shadowed by parameters. */
+    ASSERT_FALSE(cross_file_call_exists(s, project, "_run_with_heavy_slot", "run"));
+    ASSERT_FALSE(cross_file_call_exists(s, project, "_run_with_heavy_slot", "execute"));
+    /* POSITIVE: the unshadowed cross-file bare call survives the parallel path. */
+    ASSERT_TRUE(cross_file_call_exists(s, project, "uses_free_function", "compute_widget_total"));
+    /* Tripwire against a vacuous pass. */
+    ASSERT_GTE(cbm_store_count_edges_by_type(s, project, "CALLS"), 1);
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    if (saved) {
+        cbm_setenv("CBM_WORKERS", saved, 1);
+        free(saved);
+    } else {
+        cbm_unsetenv("CBM_WORKERS");
+    }
+    th_rmtree(tmp);
+    PASS();
+}
+
+TEST(audit_explicit_override_walks_empty_intermediate) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t contract =
+        cbm_gbuf_upsert_node(gb, "Class", "Contract", "pkg.Contract", "pkg/repro.py", 1, 4, "{}");
+    int64_t contract_method =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Contract.process", "pkg/repro.py", 2, 3,
+                             "{\"decorators\":[\"abstractmethod\"]}");
+    int64_t intermediate = cbm_gbuf_upsert_node(gb, "Class", "Intermediate", "pkg.Intermediate",
+                                                "pkg/repro.py", 6, 7, "{}");
+    int64_t leaf =
+        cbm_gbuf_upsert_node(gb, "Class", "Leaf", "pkg.Leaf", "pkg/repro.py", 9, 12, "{}");
+    int64_t leaf_method = cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Leaf.process",
+                                               "pkg/repro.py", 10, 11, "{}");
+    cbm_gbuf_insert_edge(gb, contract, contract_method, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, intermediate, contract, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, intermediate, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, leaf, leaf_method, "DEFINES_METHOD", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {
+        .project_name = "test-proj", .repo_path = "/tmp/test", .gbuf = gb, .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, leaf_method, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, contract_method);
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
+TEST(audit_explicit_override_models_python_sibling_mixin) {
+    cbm_gbuf_t *gb = cbm_gbuf_new("test-proj", "/tmp/test");
+    ASSERT_NOT_NULL(gb);
+    int64_t facet =
+        cbm_gbuf_upsert_node(gb, "Class", "Facet", "pkg.Facet", "pkg/repro.py", 1, 4, "{}");
+    int64_t impl = cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Facet.process",
+                                        "pkg/repro.py", 2, 3, "{}");
+    int64_t capability = cbm_gbuf_upsert_node(gb, "Class", "Capability", "pkg.Capability",
+                                              "pkg/repro.py", 6, 9, "{}");
+    int64_t abstract =
+        cbm_gbuf_upsert_node(gb, "Method", "process", "pkg.Capability.process", "pkg/repro.py", 7,
+                             8, "{\"decorators\":[\"abc.abstractmethod\"]}");
+    int64_t assembly =
+        cbm_gbuf_upsert_node(gb, "Class", "Final", "pkg.Final", "pkg/repro.py", 11, 12, "{}");
+    cbm_gbuf_insert_edge(gb, facet, impl, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, capability, abstract, "DEFINES_METHOD", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, facet, "INHERITS", "{}");
+    cbm_gbuf_insert_edge(gb, assembly, capability, "INHERITS", "{}");
+
+    atomic_int cancelled = 0;
+    cbm_pipeline_ctx_t ctx = {
+        .project_name = "test-proj", .repo_path = "/tmp/test", .gbuf = gb, .cancelled = &cancelled};
+    ASSERT_GT(cbm_pipeline_override_explicit(&ctx), 0);
+    const cbm_gbuf_edge_t **edges = NULL;
+    int edge_count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, impl, "OVERRIDE", &edges, &edge_count);
+    ASSERT_EQ(edge_count, 1);
+    ASSERT_EQ(edges[0]->target_id, abstract);
+    ASSERT_NOT_NULL(strstr(edges[0]->properties_json, "python_mro_sibling"));
+    cbm_gbuf_free(gb);
+    PASS();
+}
+
+TEST(audit_pipeline_python_crossfile_field_resolves_inherited_contract_method) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_inherited_field_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "contracts.py",
+                    "from abc import ABC, abstractmethod\n"
+                    "\n"
+                    "class ModelLoadingStrategy: pass\n"
+                    "class TokenizationStrategy: pass\n"
+                    "class TextEncodingStrategy: pass\n"
+                    "class ConditioningStrategy: pass\n"
+                    "class CachingStrategy: pass\n"
+                    "class SampleGenerationStrategy: pass\n"
+                    "class CheckpointingStrategy: pass\n"
+                    "class ValidationStrategy: pass\n"
+                    "class DiffusionTrainingStrategy(ABC):\n"
+                    "    @abstractmethod\n"
+                    "    def process_batch(self):\n"
+                    "        raise NotImplementedError\n"
+                    "\n"
+                    "class DenoiserCallingStrategy: pass\n"
+                    "class ModelPreparationStrategy: pass\n"
+                    "\n"
+                    "class TrainingStrategy(ModelLoadingStrategy, TokenizationStrategy, "
+                    "TextEncodingStrategy, ConditioningStrategy, CachingStrategy, "
+                    "SampleGenerationStrategy, CheckpointingStrategy, ValidationStrategy, "
+                    "DiffusionTrainingStrategy, DenoiserCallingStrategy, "
+                    "ModelPreparationStrategy):\n"
+                    "    pass\n");
+    write_temp_file(tmp, "trainer.py",
+                    "from __future__ import annotations\n"
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from contracts import TrainingStrategy\n"
+                    "\n"
+                    "class Trainer:\n"
+                    "    def __init__(self, strategies: TrainingStrategy):\n"
+                    "        self.strategies = strategies\n");
+    write_temp_file(tmp, "loop.py",
+                    "from __future__ import annotations\n"
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    "if TYPE_CHECKING:\n"
+                    "    from trainer import Trainer\n"
+                    "\n"
+                    "def run(trainer: Trainer):\n"
+                    "    strategies = trainer.strategies\n"
+                    "    for _ in [0]:\n"
+                    "        return strategies.process_batch()\n");
+    write_temp_file(tmp, "duplicate.py", "class TrainingStrategy:\n    pass\n");
+
+    /* Force the fused parallel pipeline. The small three-file form exercises
+     * only the sequential cross-file pass and can hide surface-transfer
+     * regressions that occur in production-sized repositories. */
+    for (int i = 0; i < 55; i++) {
+        char rel[64];
+        snprintf(rel, sizeof(rel), "filler_%02d.py", i);
+        write_temp_file(tmp, rel, "VALUE = 1\n");
+    }
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/inherited_field.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+    ASSERT_TRUE(cross_file_call_exists(s, project, "run", "process_batch"));
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    th_rmtree(tmp);
+    PASS();
+}
+
+TEST(audit_pipeline_python_crossfile_field_resolves_inherited_contract_method_direct_imports) {
+    char tmp[256];
+    snprintf(tmp, sizeof(tmp), "/tmp/cbm_python_inherited_field_XXXXXX");
+    if (!cbm_mkdtemp(tmp)) {
+        FAIL("tmpdir");
+    }
+
+    write_temp_file(tmp, "contracts.py",
+                    "from abc import ABC, abstractmethod\n"
+                    "\n"
+                    "class ModelLoadingStrategy: pass\n"
+                    "class TokenizationStrategy: pass\n"
+                    "class TextEncodingStrategy: pass\n"
+                    "class ConditioningStrategy: pass\n"
+                    "class CachingStrategy: pass\n"
+                    "class SampleGenerationStrategy: pass\n"
+                    "class CheckpointingStrategy: pass\n"
+                    "class ValidationStrategy: pass\n"
+                    "class DiffusionTrainingStrategy(ABC):\n"
+                    "    @abstractmethod\n"
+                    "    def process_batch(self):\n"
+                    "        raise NotImplementedError\n"
+                    "\n"
+                    "class DenoiserCallingStrategy: pass\n"
+                    "class ModelPreparationStrategy: pass\n"
+                    "\n"
+                    "class TrainingStrategy(ModelLoadingStrategy, TokenizationStrategy, "
+                    "TextEncodingStrategy, ConditioningStrategy, CachingStrategy, "
+                    "SampleGenerationStrategy, CheckpointingStrategy, ValidationStrategy, "
+                    "DiffusionTrainingStrategy, DenoiserCallingStrategy, "
+                    "ModelPreparationStrategy):\n"
+                    "    pass\n");
+    write_temp_file(tmp, "trainer.py",
+                    "from __future__ import annotations\n"
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    ""
+                    "from contracts import TrainingStrategy\n"
+                    "\n"
+                    "class Trainer:\n"
+                    "    def __init__(self, strategies: TrainingStrategy):\n"
+                    "        self.strategies = strategies\n");
+    write_temp_file(tmp, "loop.py",
+                    "from __future__ import annotations\n"
+                    "from typing import TYPE_CHECKING\n"
+                    "\n"
+                    ""
+                    "from trainer import Trainer\n"
+                    "\n"
+                    "def run(trainer: Trainer):\n"
+                    "    strategies = trainer.strategies\n"
+                    "    for _ in [0]:\n"
+                    "        return strategies.process_batch()\n");
+    write_temp_file(tmp, "duplicate.py", "class TrainingStrategy:\n    pass\n");
+
+    /* Force the fused parallel pipeline. The small three-file form exercises
+     * only the sequential cross-file pass and can hide surface-transfer
+     * regressions that occur in production-sized repositories. */
+    for (int i = 0; i < 55; i++) {
+        char rel[64];
+        snprintf(rel, sizeof(rel), "filler_%02d.py", i);
+        write_temp_file(tmp, rel, "VALUE = 1\n");
+    }
+
+    char db_path[512];
+    snprintf(db_path, sizeof(db_path), "%s/inherited_field.db", tmp);
+    cbm_pipeline_t *p = cbm_pipeline_new(tmp, db_path, CBM_MODE_FULL);
+    ASSERT_NOT_NULL(p);
+    ASSERT_EQ(cbm_pipeline_run(p), 0);
+    const char *project = cbm_pipeline_project_name(p);
+
+    cbm_store_t *s = cbm_store_open_path(db_path);
+    ASSERT_NOT_NULL(s);
+    ASSERT_TRUE(cross_file_call_exists(s, project, "run", "process_batch"));
+
+    cbm_store_close(s);
+    cbm_pipeline_free(p);
+    th_rmtree(tmp);
+    PASS();
+}
+
 SUITE(pipeline) {
+    RUN_TEST(audit_pipeline_python_receiver_suppresses_weak_method_edge);
+    RUN_TEST(audit_pipeline_python_receiver_parallel_suppresses_weak_method_edges);
+    RUN_TEST(audit_pipeline_python_bare_local_binding_suppresses_weak_edge);
+    RUN_TEST(audit_pipeline_python_bare_local_binding_parallel_suppresses_weak_edge);
+    RUN_TEST(audit_explicit_override_walks_empty_intermediate);
+    RUN_TEST(audit_explicit_override_models_python_sibling_mixin);
+    RUN_TEST(audit_pipeline_python_crossfile_field_resolves_inherited_contract_method);
+    RUN_TEST(audit_pipeline_python_crossfile_field_resolves_inherited_contract_method_direct_imports);
     RUN_TEST(pipeline_python_module_callers_sequential);
     RUN_TEST(pipeline_python_module_callers_parallel);
     RUN_TEST(pipeline_python_class_body_calls_sequential);

@@ -5755,7 +5755,101 @@ TEST(daemon_ipc_listen_failure_names_errno_and_path) {
 }
 #endif
 
+TEST(audit_daemon_ipc_posix_crash_cleanup_after_device_renumbering) {
+#ifdef _WIN32
+    PASS();
+#else
+    static const char key[] = "8f7e6d5c4b3a2910";
+    /* Committed pair, partial cleanup, pending before/after linking, then
+     * records with a wrong inode/ctime or conflicting device IDs. */
+    for (int scenario = 0; scenario < 8; scenario++) {
+        char parent[TEST_PATH_CAP] = {0};
+        char runtime_dir[TEST_PATH_CAP] = {0};
+        char socket_path[TEST_PATH_CAP] = {0};
+        char anchor_path[TEST_PATH_CAP] = {0};
+        char record_path[TEST_PATH_CAP] = {0};
+        cbm_daemon_ipc_posix_publication_stage_t stage =
+            scenario == 2   ? CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_DURABLE
+            : scenario == 3 ? CBM_DAEMON_IPC_POSIX_PUBLICATION_STABLE_DURABLE
+            : scenario >= 6 ? CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_DURABLE
+                            : CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_REMOVED;
+        ASSERT_TRUE(ipc_test_parent_new(parent, "device-renumber"));
+        cbm_daemon_ipc_endpoint_t *endpoint = cbm_daemon_ipc_endpoint_new(key, parent);
+        ASSERT_NOT_NULL(endpoint);
+        ipc_test_copy_path(runtime_dir, cbm_daemon_ipc_endpoint_runtime_dir(endpoint));
+        ipc_test_copy_path(socket_path, cbm_daemon_ipc_endpoint_address(endpoint));
+        ASSERT_TRUE(ipc_test_socket_anchor_path(anchor_path, runtime_dir, key));
+        ASSERT_TRUE(scenario == 2 || scenario == 3
+                        ? ipc_test_socket_pending_path(record_path, socket_path)
+                        : ipc_test_socket_identity_path(record_path, socket_path));
+        cbm_daemon_ipc_posix_publication_hook_set_for_test(ipc_test_publication_crash_hook, &stage);
+        pid_t child = fork();
+        if (child == 0) {
+            (void)cbm_daemon_ipc_listen(endpoint);
+            _exit(99);
+        }
+        cbm_daemon_ipc_posix_publication_hook_set_for_test(NULL, NULL);
+        ASSERT_GT(child, 0);
+        int child_status = 0;
+        while (waitpid(child, &child_status, 0) < 0 && errno == EINTR) {}
+        ASSERT_TRUE(WIFEXITED(child_status));
+        ASSERT_EQ(WEXITSTATUS(child_status), 40 + (int)stage);
+
+        /* The v2 record stores little-endian device at byte 8, inode at 16,
+         * ctime seconds at 24. Change only the persisted device to simulate a
+         * remount; touching the socket would change the ctime under test. */
+        int fd = open(record_path, O_RDWR | O_CLOEXEC | O_NOFOLLOW);
+        ASSERT_GT(fd, -1);
+        unsigned char bytes[104];
+        ASSERT_EQ(pread(fd, bytes, sizeof(bytes), 0), sizeof(bytes));
+        bytes[8] ^= 1;
+        if (scenario == 4) {
+            bytes[16] ^= 1;
+        } else if (scenario == 5) {
+            bytes[24] ^= 1;
+        }
+        ASSERT_EQ(pwrite(fd, bytes, sizeof(bytes), 0), sizeof(bytes));
+        ASSERT_EQ(fsync(fd), 0);
+        ASSERT_EQ(close(fd), 0);
+        if (scenario == 1) {
+            ASSERT_EQ(unlink(socket_path), 0);
+        }
+        if (scenario == 7) {
+            char pending_path[TEST_PATH_CAP] = {0};
+            ASSERT_TRUE(ipc_test_socket_pending_path(pending_path, socket_path));
+            fd = open(pending_path, O_RDWR | O_CLOEXEC | O_NOFOLLOW);
+            ASSERT_GT(fd, -1);
+            ASSERT_EQ(pread(fd, bytes, sizeof(bytes), 0), sizeof(bytes));
+            bytes[8] ^= 1;
+            ASSERT_EQ(pwrite(fd, bytes, sizeof(bytes), 0), sizeof(bytes));
+            ASSERT_EQ(fsync(fd), 0);
+            ASSERT_EQ(close(fd), 0);
+        }
+
+        cbm_daemon_ipc_startup_lock_t *startup = NULL;
+        ASSERT_EQ(cbm_daemon_ipc_startup_lock_try_acquire(endpoint, &startup), 1);
+        int result = cbm_daemon_ipc_stale_generation_cleanup(endpoint, startup);
+        cbm_daemon_ipc_startup_lock_release(&startup);
+        struct stat status;
+        bool anchor_exists = lstat(anchor_path, &status) == 0;
+        bool record_exists = lstat(record_path, &status) == 0;
+        bool stable_exists = lstat(socket_path, &status) == 0;
+        cbm_daemon_ipc_endpoint_free(endpoint);
+        ipc_test_remove_tree(runtime_dir, parent);
+        if (scenario >= 4 && scenario <= 6) {
+            ASSERT_EQ(result, scenario == 6 ? 0 : -1);
+            ASSERT_TRUE(anchor_exists && record_exists && stable_exists);
+        } else {
+            ASSERT_EQ(result, 1);
+            ASSERT_FALSE(anchor_exists || record_exists || stable_exists);
+        }
+    }
+    PASS();
+#endif
+}
+
 SUITE(daemon_ipc) {
+    RUN_TEST(audit_daemon_ipc_posix_crash_cleanup_after_device_renumbering);
     RUN_TEST(daemon_ipc_pending_timeout_race_returns_completed_io);
     RUN_TEST(daemon_ipc_pending_wait_failure_cancels_and_drains);
     RUN_TEST(daemon_ipc_pending_timeout_cancelled_returns_timeout);
