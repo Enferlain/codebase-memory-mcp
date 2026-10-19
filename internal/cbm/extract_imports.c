@@ -25,34 +25,6 @@ enum {
 
 // Forward declarations
 static void parse_go_imports(CBMExtractCtx *ctx);
-static void process_python_import_node(CBMExtractCtx *ctx, TSNode node) {
-    const char *kind = ts_node_type(node);
-    if (strcmp(kind, "import_statement") == 0) {
-        process_py_import_stmt(ctx, node);
-    } else if (strcmp(kind, "import_from_statement") == 0 ||
-               strcmp(kind, "future_import_statement") == 0) {
-        process_py_import_from(ctx, node);
-    }
-}
-
-static void process_python_type_checking_block(CBMExtractCtx *ctx, TSNode if_node) {
-    TSNode condition = ts_node_child_by_field_name(if_node, TS_FIELD("condition"));
-    if (ts_node_is_null(condition))
-        return;
-    char *text = cbm_node_text(ctx->arena, condition, ctx->source);
-    if (!text || (strcmp(text, "TYPE_CHECKING") != 0 &&
-                  strcmp(text, "typing.TYPE_CHECKING") != 0)) {
-        return;
-    }
-
-    TSNode body = ts_node_child_by_field_name(if_node, TS_FIELD("consequence"));
-    if (ts_node_is_null(body))
-        return;
-    uint32_t count = ts_node_named_child_count(body);
-    for (uint32_t i = 0; i < count; i++)
-        process_python_import_node(ctx, ts_node_named_child(body, i));
-}
-
 static void parse_python_imports(CBMExtractCtx *ctx);
 static void parse_es_imports(CBMExtractCtx *ctx);
 static void parse_java_imports(CBMExtractCtx *ctx);
@@ -77,7 +49,8 @@ static void parse_lisp_imports(CBMExtractCtx *ctx);
 static void parse_starlark_imports(CBMExtractCtx *ctx);
 static void parse_tcl_imports(CBMExtractCtx *ctx);
 static void parse_teal_imports(CBMExtractCtx *ctx);
-static void parse_zsh_imports(CBMExtractCtx *ctx);
+static void parse_shell_source_imports(CBMExtractCtx *ctx);
+static void parse_make_imports(CBMExtractCtx *ctx);
 static void parse_css_imports(CBMExtractCtx *ctx);
 static void parse_html_imports(CBMExtractCtx *ctx);
 static void parse_cmake_imports(CBMExtractCtx *ctx);
@@ -348,6 +321,34 @@ static void process_py_import_from(CBMExtractCtx *ctx, TSNode node) {
     }
 }
 
+static void process_python_import_node(CBMExtractCtx *ctx, TSNode node) {
+    const char *kind = ts_node_type(node);
+    if (strcmp(kind, "import_statement") == 0) {
+        process_py_import_stmt(ctx, node);
+    } else if (strcmp(kind, "import_from_statement") == 0 ||
+               strcmp(kind, "future_import_statement") == 0) {
+        process_py_import_from(ctx, node);
+    }
+}
+
+static void process_python_type_checking_block(CBMExtractCtx *ctx, TSNode if_node) {
+    TSNode condition = ts_node_child_by_field_name(if_node, TS_FIELD("condition"));
+    if (ts_node_is_null(condition))
+        return;
+    char *text = cbm_node_text(ctx->arena, condition, ctx->source);
+    if (!text ||
+        (strcmp(text, "TYPE_CHECKING") != 0 && strcmp(text, "typing.TYPE_CHECKING") != 0)) {
+        return;
+    }
+
+    TSNode body = ts_node_child_by_field_name(if_node, TS_FIELD("consequence"));
+    if (ts_node_is_null(body))
+        return;
+    uint32_t count = ts_node_named_child_count(body);
+    for (uint32_t i = 0; i < count; i++)
+        process_python_import_node(ctx, ts_node_named_child(body, i));
+}
+
 static void parse_python_imports(CBMExtractCtx *ctx) {
     TSTreeCursor cursor = ts_tree_cursor_new(ctx->root);
     if (!ts_tree_cursor_goto_first_child(&cursor)) {
@@ -356,16 +357,9 @@ static void parse_python_imports(CBMExtractCtx *ctx) {
     }
     do {
         TSNode node = ts_tree_cursor_current_node(&cursor);
-        const char *kind = ts_node_type(node);
-
-        if (strcmp(kind, "import_statement") == 0) {
-            process_py_import_stmt(ctx, node);
-        } else if (strcmp(kind, "import_from_statement") == 0 ||
-                   strcmp(kind, "future_import_statement") == 0) {
-            // `from __future__ import annotations` is a distinct node type in
-            // tree-sitter-python but has the same shape (module + name list).
-            process_py_import_from(ctx, node);
-        }
+        process_python_import_node(ctx, node);
+        if (strcmp(ts_node_type(node), "if_statement") == 0)
+            process_python_type_checking_block(ctx, node);
     } while (ts_tree_cursor_goto_next_sibling(&cursor));
     ts_tree_cursor_delete(&cursor);
 }

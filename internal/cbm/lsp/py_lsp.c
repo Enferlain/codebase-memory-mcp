@@ -705,8 +705,8 @@ static bool py_is_type_checking_if(PyLSPContext *ctx, TSNode stmt) {
     TSNode condition = ts_node_child_by_field_name(stmt, "condition", 9);
     char *text =
         ts_node_is_null(condition) ? NULL : cbm_node_text(ctx->arena, condition, ctx->source);
-    return text && (strcmp(text, "TYPE_CHECKING") == 0 ||
-                    strcmp(text, "typing.TYPE_CHECKING") == 0);
+    return text &&
+           (strcmp(text, "TYPE_CHECKING") == 0 || strcmp(text, "typing.TYPE_CHECKING") == 0);
 }
 
 static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {

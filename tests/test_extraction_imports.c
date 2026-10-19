@@ -250,87 +250,118 @@ TEST(go_import_table) {
 
 static const import_case_t python_cases[] = {
     /* simple import */
-    { CBM_LANG_PYTHON, "a.py",
-      "import os\n",
-      {"os", NULL}, 1, "py_simple" },
+    {CBM_LANG_PYTHON, "a.py", "import os\n", {"os", NULL}, 1, "py_simple"},
 
     /* from-import */
-    { CBM_LANG_PYTHON, "b.py",
-      "from sys import argv\n",
-      {"sys", NULL}, 1, "py_from" },
+    {CBM_LANG_PYTHON, "b.py", "from sys import argv\n", {"sys", NULL}, 1, "py_from"},
 
     /* from-import multiple */
-    { CBM_LANG_PYTHON, "c.py",
-      "from collections import defaultdict, OrderedDict\n",
-      {"collections", NULL}, 1, "py_from_multiple" },
+    {CBM_LANG_PYTHON,
+     "c.py",
+     "from collections import defaultdict, OrderedDict\n",
+     {"collections", NULL},
+     1,
+     "py_from_multiple"},
 
     /* aliased import */
-    { CBM_LANG_PYTHON, "d.py",
-      "import numpy as np\n",
-      {"numpy", NULL}, 1, "py_aliased" },
+    {CBM_LANG_PYTHON, "d.py", "import numpy as np\n", {"numpy", NULL}, 1, "py_aliased"},
 
     /* from-import with alias */
-    { CBM_LANG_PYTHON, "e.py",
-      "from pathlib import Path as P\n",
-      {"pathlib", NULL}, 1, "py_from_aliased" },
+    {CBM_LANG_PYTHON,
+     "e.py",
+     "from pathlib import Path as P\n",
+     {"pathlib", NULL},
+     1,
+     "py_from_aliased"},
 
     /* wildcard from-import */
-    { CBM_LANG_PYTHON, "f.py",
-      "from os.path import *\n",
-      {"os.path", NULL}, 1, "py_wildcard" },
+    {CBM_LANG_PYTHON, "f.py", "from os.path import *\n", {"os.path", NULL}, 1, "py_wildcard"},
 
     /* relative import (single dot) */
-    { CBM_LANG_PYTHON, "g.py",
-      "from . import utils\n",
-      {NULL}, 1, "py_relative_dot" },  /* module_path may be "." — just count */
+    {CBM_LANG_PYTHON,
+     "g.py",
+     "from . import utils\n",
+     {NULL},
+     1,
+     "py_relative_dot"}, /* module_path may be "." — just count */
 
     /* relative import with path */
-    { CBM_LANG_PYTHON, "h.py",
-      "from .models import User\n",
-      {"models", NULL}, 1, "py_relative_models" },
+    {CBM_LANG_PYTHON,
+     "h.py",
+     "from .models import User\n",
+     {"models", NULL},
+     1,
+     "py_relative_models"},
 
     /* nested module */
-    { CBM_LANG_PYTHON, "i.py",
-      "import xml.etree.ElementTree as ET\n",
-      {"xml.etree.ElementTree", NULL}, 1, "py_nested_module" },
+    {CBM_LANG_PYTHON,
+     "i.py",
+     "import xml.etree.ElementTree as ET\n",
+     {"xml.etree.ElementTree", NULL},
+     1,
+     "py_nested_module"},
 
     /* multiple top-level imports */
-    { CBM_LANG_PYTHON, "j.py",
-      "import os\nimport sys\nimport re\nfrom typing import List, Dict\n",
-      {"os", "sys", "re", "typing", NULL}, 4, "py_multi" },
+    {CBM_LANG_PYTHON,
+     "j.py",
+     "import os\nimport sys\nimport re\nfrom typing import List, Dict\n",
+     {"os", "sys", "re", "typing", NULL},
+     4,
+     "py_multi"},
 
     /* stdlib + third-party */
-    { CBM_LANG_PYTHON, "k.py",
-      "import json\nfrom flask import Flask\nimport requests\n",
-      {"json", "flask", "requests", NULL}, 3, "py_stdlib_thirdparty" },
+    {CBM_LANG_PYTHON,
+     "k.py",
+     "import json\nfrom flask import Flask\nimport requests\n",
+     {"json", "flask", "requests", NULL},
+     3,
+     "py_stdlib_thirdparty"},
 
     /* from __future__ import */
-    { CBM_LANG_PYTHON, "l.py",
-      "from __future__ import annotations\nimport os\n",
-      {"__future__", "os", NULL}, 2, "py_future" },
+    {CBM_LANG_PYTHON,
+     "l.py",
+     "from __future__ import annotations\nimport os\n",
+     {"__future__", "os", NULL},
+     2,
+     "py_future"},
 
     /* from-import with parentheses (multi-line) */
-    { CBM_LANG_PYTHON, "m.py",
-      "from typing import (\n    List,\n    Dict,\n    Optional,\n)\n",
-      {"typing", NULL}, 1, "py_from_parens" },
+    {CBM_LANG_PYTHON,
+     "m.py",
+     "from typing import (\n    List,\n    Dict,\n    Optional,\n)\n",
+     {"typing", NULL},
+     1,
+     "py_from_parens"},
 
     /* deeply nested package */
-    { CBM_LANG_PYTHON, "n.py",
-      "from django.db.models.query import QuerySet\n",
-      {"django.db.models.query", NULL}, 1, "py_deep_nested" },
+    {CBM_LANG_PYTHON,
+     "n.py",
+     "from django.db.models.query import QuerySet\n",
+     {"django.db.models.query", NULL},
+     1,
+     "py_deep_nested"},
 
     /* double-relative import */
-    { CBM_LANG_PYTHON, "o.py",
-      "from ..utils import helper\n",
-      {"utils", NULL}, 1, "py_double_relative" },
+    {CBM_LANG_PYTHON,
+     "o.py",
+     "from ..utils import helper\n",
+     {"utils", NULL},
+     1,
+     "py_double_relative"},
     /* type-only imports are still required by the static resolver */
-    { CBM_LANG_PYTHON, "p.py",
-      "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from contracts import Contract\n",
-      {"typing", "contracts", NULL}, 2, "py_type_checking_guard" },
+    {CBM_LANG_PYTHON,
+     "p.py",
+     "from typing import TYPE_CHECKING\nif TYPE_CHECKING:\n    from contracts import Contract\n",
+     {"typing", "contracts", NULL},
+     2,
+     "py_type_checking_guard"},
 
-    { CBM_LANG_PYTHON, "q.py",
-      "import typing\nif typing.TYPE_CHECKING:\n    from contracts import Contract\n",
-      {"typing", "contracts", NULL}, 2, "py_qualified_type_checking_guard" },
+    {CBM_LANG_PYTHON,
+     "q.py",
+     "import typing\nif typing.TYPE_CHECKING:\n    from contracts import Contract\n",
+     {"typing", "contracts", NULL},
+     2,
+     "py_qualified_type_checking_guard"},
 };
 
 TEST(python_import_table) {
