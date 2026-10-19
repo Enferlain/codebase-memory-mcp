@@ -8857,23 +8857,29 @@ static bool trace_root_contains(const trace_edge_context_t *ctx, int64_t node_id
 }
 
 static const cbm_node_t *trace_topology_node(const trace_edge_context_t *ctx, int64_t id) {
-    for (int i = 0; i < ctx->root_count; i++)
-        if (ctx->roots[i].id == id)
+    for (int i = 0; i < ctx->root_count; i++) {
+        if (ctx->roots[i].id == id) {
             return &ctx->roots[i];
-    for (int i = 0; i < ctx->full->visited_count; i++)
-        if (ctx->full->visited[i].node.id == id)
+        }
+    }
+    for (int i = 0; i < ctx->full->visited_count; i++) {
+        if (ctx->full->visited[i].node.id == id) {
             return &ctx->full->visited[i].node;
+        }
+    }
     return NULL;
 }
 
 static bool trace_topology_edge(const trace_edge_context_t *ctx, const cbm_traverse_result_t *page,
                                 const cbm_edge_info_t *edge) {
-    if (!trace_topology_node(ctx, edge->source_id) || !trace_topology_node(ctx, edge->target_id))
+    if (!trace_topology_node(ctx, edge->source_id) || !trace_topology_node(ctx, edge->target_id)) {
         return false; /* includes test-file filtering */
+    }
     for (int i = 0; i < page->visited_count; i++) {
         int64_t id = page->visited[i].node.id;
-        if (edge->source_id == id || edge->target_id == id)
+        if (edge->source_id == id || edge->target_id == id) {
             return true;
+        }
     }
     return false;
 }
@@ -8883,8 +8889,9 @@ static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge
     yyjson_mut_val *out = yyjson_mut_arr(doc);
     for (int i = 0; i < ctx->full->edge_count; i++) {
         const cbm_edge_info_t *edge = &ctx->full->edges[i];
-        if (!trace_topology_edge(ctx, page, edge))
+        if (!trace_topology_edge(ctx, page, edge)) {
             continue;
+        }
         const cbm_node_t *source = trace_topology_node(ctx, edge->source_id);
         const cbm_node_t *target = trace_topology_node(ctx, edge->target_id);
         yyjson_mut_val *item = yyjson_mut_obj(doc);
@@ -8898,14 +8905,16 @@ static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge
         yyjson_val *props = properties ? yyjson_doc_get_root(properties) : NULL;
         yyjson_val *recorded = yyjson_obj_get(props, "confidence");
         double confidence = yyjson_get_num(recorded);
-        if (yyjson_is_num(recorded) && confidence >= 0.0 && confidence <= 1.0)
+        if (yyjson_is_num(recorded) && confidence >= 0.0 && confidence <= 1.0) {
             yyjson_mut_obj_add_real(doc, item, "confidence", confidence);
-        else
+        } else {
             yyjson_mut_obj_add_null(doc, item, "confidence");
-        if (props)
+        }
+        if (props) {
             yyjson_mut_obj_add_val(doc, item, "properties", yyjson_val_mut_copy(doc, props));
-        else if (edge->properties_json)
+        } else if (edge->properties_json) {
             yyjson_mut_obj_add_str(doc, item, "properties", edge->properties_json);
+        }
         yyjson_doc_free(properties);
         yyjson_mut_arr_add_val(out, item);
     }
@@ -8915,14 +8924,16 @@ static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge
 static void trace_topology_tree(cbm_sb_t *sb, const char *key, const trace_edge_context_t *ctx,
                                 const cbm_traverse_result_t *page) {
     int count = 0;
-    for (int i = 0; i < ctx->full->edge_count; i++)
+    for (int i = 0; i < ctx->full->edge_count; i++) {
         count += trace_topology_edge(ctx, page, &ctx->full->edges[i]);
+    }
     const char *cols[] = {"source", "target", "type", "properties"};
     cbm_tree_table_header(sb, key, count, cols, 4);
     for (int i = 0; i < ctx->full->edge_count; i++) {
         const cbm_edge_info_t *edge = &ctx->full->edges[i];
-        if (!trace_topology_edge(ctx, page, edge))
+        if (!trace_topology_edge(ctx, page, edge)) {
             continue;
+        }
         cbm_tree_row_begin(sb);
         cbm_tree_cell_str(sb, trace_topology_node(ctx, edge->source_id)->qualified_name, true);
         cbm_tree_cell_str(sb, trace_topology_node(ctx, edge->target_id)->qualified_name, false);
@@ -9805,8 +9816,9 @@ static void trace_emit_omitted_optional_fields_json(yyjson_mut_doc *doc, yyjson_
         yyjson_mut_arr_add_str(doc, names, "strategy");
         yyjson_mut_arr_add_str(doc, names, "confidence");
     }
-    if (topology)
+    if (topology) {
         yyjson_mut_arr_add_str(doc, names, "topology");
+    }
     yyjson_mut_obj_add_val(doc, root, "omitted_optional_fields", names);
 }
 
@@ -10278,10 +10290,12 @@ render_trace_output:;
             }
         }
         if (topology && emit_optional_fields) {
-            if (do_outbound)
+            if (do_outbound) {
                 trace_topology_tree(&sb, "callees_edges", &out_edge_ctx, &view_out);
-            if (do_inbound)
+            }
+            if (do_inbound) {
                 trace_topology_tree(&sb, "callers_edges", &in_edge_ctx, &view_in);
+            }
         }
         if (trace_truncated) {
             cbm_tree_scalar_bool(&sb, "truncated", true);
@@ -10359,12 +10373,14 @@ render_trace_output:;
                                  include_evidence && emit_optional_fields, &in_edge_ctx));
         }
         if (topology && emit_optional_fields) {
-            if (do_outbound)
+            if (do_outbound) {
                 yyjson_mut_obj_add_val(doc, root, "callees_edges",
                                        trace_topology_json(doc, &out_edge_ctx, &view_out));
-            if (do_inbound)
+            }
+            if (do_inbound) {
                 yyjson_mut_obj_add_val(doc, root, "callers_edges",
                                        trace_topology_json(doc, &in_edge_ctx, &view_in));
+            }
         }
         if (trace_truncated) {
             yyjson_mut_obj_add_bool(doc, root, "truncated", true);

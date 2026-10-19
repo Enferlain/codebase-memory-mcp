@@ -3849,8 +3849,9 @@ static void resolve_def_inherits(resolve_ctx_t *rc, resolve_worker_state_t *ws,
              * hardcoding INHERITS here demoted every explicit `implements`
              * on large (parallel-path) corpora. */
             char base_props[64] = "{}";
-            if (fs->lang == CBM_LANG_PYTHON)
+            if (fs->lang == CBM_LANG_PYTHON) {
                 snprintf(base_props, sizeof(base_props), "{\"base_index\":%d}", b);
+            }
             cbm_gbuf_insert_edge(ws->local_edge_buf, node->id, bn->id,
                                  cbm_semantic_base_edge_type(bn), base_props);
             ws->semantic_resolved++;

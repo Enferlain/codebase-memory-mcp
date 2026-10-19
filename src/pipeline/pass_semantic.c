@@ -661,8 +661,9 @@ static void sem_process_def_edges(cbm_pipeline_ctx_t *ctx, const CBMDefinition *
                  * path once hardcoded INHERITS and demoted every explicit
                  * implements at scale). */
                 char base_props[64] = "{}";
-                if (fi->language == CBM_LANG_PYTHON)
+                if (fi->language == CBM_LANG_PYTHON) {
                     snprintf(base_props, sizeof(base_props), "{\"base_index\":%d}", b);
+                }
                 cbm_gbuf_insert_edge(ctx->gbuf, node->id, base_node->id,
                                      cbm_semantic_base_edge_type(base_node), base_props);
                 (*inherits_count)++;
@@ -1046,19 +1047,22 @@ typedef struct {
 static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
     cbm_gbuf_t *gb, int64_t id, py_assembly_cache_t *cache) {
     for (int i = 0; i < cache->count; i++) {
-        if (cache->entries[i].id == id)
+        if (cache->entries[i].id == id) {
             return cache->entries[i].state == 2 ? &cache->entries[i] : NULL;
+        }
     }
-    if (cache->count == PY_ASSEMBLY_LIMIT)
+    if (cache->count == PY_ASSEMBLY_LIMIT) {
         return NULL;
+    }
     py_assembly_mro_t *mro = &cache->entries[cache->count++];
     mro->id = id;
     mro->state = 1;
     const cbm_gbuf_edge_t **edges = NULL;
     int n = 0;
     cbm_gbuf_find_edges_by_source_type(gb, id, "INHERITS", &edges, &n);
-    if (n >= PY_ASSEMBLY_LIMIT)
+    if (n >= PY_ASSEMBLY_LIMIT) {
         goto unprovable;
+    }
     int64_t bases[PY_ASSEMBLY_LIMIT];
     int ranks[PY_ASSEMBLY_LIMIT];
     for (int i = 0; i < n; i++) {
@@ -1067,8 +1071,9 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
         const char *props = edges[i]->properties_json ? edges[i]->properties_json : "{}";
         yyjson_doc *doc = yyjson_read(props, strlen(props), 0);
         yyjson_val *rank = doc ? yyjson_obj_get(yyjson_doc_get_root(doc), "base_index") : NULL;
-        if (yyjson_is_int(rank))
+        if (yyjson_is_int(rank)) {
             ranks[i] = yyjson_get_int(rank);
+        }
         yyjson_doc_free(doc);
     }
     for (int i = 1; i < n; i++) {
@@ -1086,8 +1091,9 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
     py_assembly_mro_t *parents[PY_ASSEMBLY_LIMIT] = {0};
     for (int i = 0; i < n; i++) {
         parents[i] = py_assembly_mro(gb, bases[i], cache);
-        if (!parents[i])
+        if (!parents[i]) {
             goto unprovable;
+        }
     }
     int positions[PY_ASSEMBLY_LIMIT + 1] = {0};
     mro->order[mro->count++] = id;
@@ -1098,8 +1104,9 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
         for (int i = 0; i <= n && !selected; i++) {
             int len = i == n ? n : parents[i]->count;
             const int64_t *seq = i == n ? bases : parents[i]->order;
-            if (positions[i] == len)
+            if (positions[i] == len) {
                 continue;
+            }
             pending = true;
             candidate = seq[positions[i]];
             selected = true;
@@ -1118,14 +1125,16 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
             mro->state = 2;
             return mro;
         }
-        if (!selected || mro->count == PY_ASSEMBLY_LIMIT)
+        if (!selected || mro->count == PY_ASSEMBLY_LIMIT) {
             goto unprovable;
+        }
         mro->order[mro->count++] = candidate;
         for (int i = 0; i <= n; i++) {
             int len = i == n ? n : parents[i]->count;
             const int64_t *seq = i == n ? bases : parents[i]->order;
-            if (positions[i] < len && seq[positions[i]] == candidate)
+            if (positions[i] < len && seq[positions[i]] == candidate) {
                 positions[i]++;
+            }
         }
     }
 unprovable:
@@ -1134,8 +1143,9 @@ unprovable:
 }
 
 static bool py_assembly_abstract(const cbm_gbuf_node_t *method) {
-    if (!method || !method->properties_json)
+    if (!method || !method->properties_json) {
         return false;
+    }
     yyjson_doc *doc = yyjson_read(method->properties_json, strlen(method->properties_json), 0);
     yyjson_val *root = doc ? yyjson_doc_get_root(doc) : NULL;
     bool abstract = yyjson_is_true(yyjson_obj_get(root, "is_abstract"));
@@ -1145,8 +1155,9 @@ static bool py_assembly_abstract(const cbm_gbuf_node_t *method) {
     yyjson_arr_foreach(decorators, index, max, value) {
         const char *name = yyjson_get_str(value);
         if (name &&
-            (strcmp(name, "abstractmethod") == 0 || strcmp(name, "abc.abstractmethod") == 0))
+            (strcmp(name, "abstractmethod") == 0 || strcmp(name, "abc.abstractmethod") == 0)) {
             abstract = true;
+        }
     }
     yyjson_doc_free(doc);
     return abstract;
@@ -1158,8 +1169,9 @@ static const cbm_gbuf_node_t *py_assembly_method(cbm_gbuf_t *gb, int64_t owner, 
     cbm_gbuf_find_edges_by_source_type(gb, owner, "DEFINES_METHOD", &methods, &count);
     for (int i = 0; i < count; i++) {
         const cbm_gbuf_node_t *method = cbm_gbuf_find_by_id(gb, methods[i]->target_id);
-        if (method && method->name && strcmp(method->name, name) == 0)
+        if (method && method->name && strcmp(method->name, name) == 0) {
             return method;
+        }
     }
     return NULL;
 }
@@ -1182,20 +1194,24 @@ static void assembly_json_free(void *ctx, void *ptr) {
 
 static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
                                           const cbm_gbuf_node_t *assembly) {
-    if (!assembly->file_path || !fp_ends_with(assembly->file_path, ".py"))
+    if (!assembly->file_path || !fp_ends_with(assembly->file_path, ".py")) {
         return 0;
+    }
     const cbm_gbuf_edge_t **bases = NULL;
     int base_count = 0;
     cbm_gbuf_find_edges_by_source_type(ctx->gbuf, assembly->id, "INHERITS", &bases, &base_count);
-    if (base_count < 2)
+    if (base_count < 2) {
         return 0;
+    }
     py_assembly_cache_t *cache = cbm_calloc(CBM_MEM_CLASS_SEMANTIC, sizeof(*cache));
-    if (!cache)
+    if (!cache) {
         return 0;
+    }
     py_assembly_mro_t *mro = py_assembly_mro(ctx->gbuf, assembly->id, cache);
     int created = 0;
-    if (!mro)
+    if (!mro) {
         goto done;
+    }
     for (int i = 1; i < mro->count; i++) {
         const cbm_gbuf_edge_t **methods = NULL;
         int count = 0;
@@ -1203,23 +1219,27 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
                                            &count);
         for (int j = 0; j < count; j++) {
             const cbm_gbuf_node_t *contract = cbm_gbuf_find_by_id(ctx->gbuf, methods[j]->target_id);
-            if (!py_assembly_abstract(contract))
+            if (!py_assembly_abstract(contract)) {
                 continue;
+            }
             const cbm_gbuf_node_t *winner = NULL;
             int winner_index = 0;
             for (; winner_index < i; winner_index++) {
                 winner = py_assembly_method(ctx->gbuf, mro->order[winner_index], contract->name);
-                if (winner)
+                if (winner) {
                     break;
+                }
             }
-            if (!winner || winner_index == 0 || py_assembly_abstract(winner))
+            if (!winner || winner_index == 0 || py_assembly_abstract(winner)) {
                 continue;
+            }
             bool implementation_branch = false, contract_branch = false;
             for (int b = 0; b < base_count; b++) {
                 py_assembly_mro_t *branch = py_assembly_mro(ctx->gbuf, bases[b]->target_id, cache);
                 bool has_impl = false, has_contract = false;
-                if (!branch)
+                if (!branch) {
                     continue;
+                }
                 for (int k = 0; k < branch->count; k++) {
                     has_impl |= branch->order[k] == mro->order[winner_index];
                     has_contract |= branch->order[k] == mro->order[i];
@@ -1227,8 +1247,9 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
                 implementation_branch |= has_impl && !has_contract;
                 contract_branch |= has_contract && !has_impl;
             }
-            if (!implementation_branch || !contract_branch)
+            if (!implementation_branch || !contract_branch) {
                 continue;
+            }
             yyjson_mut_doc *doc = yyjson_mut_doc_new(NULL);
             yyjson_mut_val *props = yyjson_mut_obj(doc);
             yyjson_mut_doc_set_root(doc, props);

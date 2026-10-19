@@ -700,8 +700,9 @@ static void py_bind_dotted_prefixes(PyLSPContext *ctx, const char *qn) {
 }
 
 static bool py_is_type_checking_if(PyLSPContext *ctx, TSNode stmt) {
-    if (!ctx || ts_node_is_null(stmt) || strcmp(ts_node_type(stmt), "if_statement") != 0)
+    if (!ctx || ts_node_is_null(stmt) || strcmp(ts_node_type(stmt), "if_statement") != 0) {
         return false;
+    }
     TSNode condition = ts_node_child_by_field_name(stmt, "condition", 9);
     char *text =
         ts_node_is_null(condition) ? NULL : cbm_node_text(ctx->arena, condition, ctx->source);
@@ -726,20 +727,23 @@ static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
             TSNode c = py_kid(&rk, i);
             if (py_is_type_checking_if(ctx, c)) {
                 TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-                if (!ts_node_is_null(body))
+                if (!ts_node_is_null(body)) {
                     capacity += ts_node_named_child_count(body);
+                }
             }
         }
         if (capacity > 0) {
             stmts = (TSNode *)cbm_arena_alloc(ctx->arena, capacity * sizeof(TSNode));
-            if (!stmts)
+            if (!stmts) {
                 have_root = false;
+            }
         }
         for (uint32_t i = 0; stmts && i < rk.n; i++) {
             TSNode c = py_kid(&rk, i);
             const char *ck = ts_node_type(c);
-            if (strcmp(ck, "import_statement") == 0 || strcmp(ck, "import_from_statement") == 0)
+            if (strcmp(ck, "import_statement") == 0 || strcmp(ck, "import_from_statement") == 0) {
                 stmts[stmt_count++] = c;
+            }
             if (py_is_type_checking_if(ctx, c)) {
                 TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
                 uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
@@ -747,8 +751,9 @@ static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
                     TSNode stmt = ts_node_named_child(body, j);
                     const char *kind = ts_node_type(stmt);
                     if (strcmp(kind, "import_statement") == 0 ||
-                        strcmp(kind, "import_from_statement") == 0)
+                        strcmp(kind, "import_from_statement") == 0) {
                         stmts[stmt_count++] = stmt;
+                    }
                 }
             }
         }
@@ -5342,10 +5347,11 @@ void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
                 TSNode stmt = ts_node_named_child(body, j);
                 const char *kind = ts_node_type(stmt);
                 if (strcmp(kind, "import_statement") == 0 ||
-                    strcmp(kind, "import_from_statement") == 0)
+                    strcmp(kind, "import_from_statement") == 0) {
                     py_replay_import_statement(ctx, stmt, consumed_imports);
-                else
+                } else {
                     py_invalidate_possible_bindings(ctx, stmt, 0);
+                }
             }
         } else if (strcmp(ck, "expression_statement") == 0) {
             /* An expression statement is resolved for calls, not scanned as a

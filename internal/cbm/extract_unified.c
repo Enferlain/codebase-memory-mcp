@@ -292,8 +292,9 @@ static const char *py_parameter_name(CBMExtractCtx *ctx, TSNode param) {
  * Collect each lexical body once, skipping nested bodies, and reuse the
  * parameter binding table's frame lifetime and O(1) call-site lookup. */
 static void py_bind_local_definitions(CBMExtractCtx *ctx, TSNode body, WalkState *state) {
-    if (ts_node_is_null(body))
+    if (ts_node_is_null(body)) {
         return;
+    }
     TSTreeCursor cursor = ts_tree_cursor_new(body);
     bool more = ts_tree_cursor_goto_first_child(&cursor);
     while (more) {
@@ -303,11 +304,13 @@ static void py_bind_local_definitions(CBMExtractCtx *ctx, TSNode body, WalkState
                         strcmp(kind, "class_definition") == 0 || strcmp(kind, "lambda") == 0;
         if (boundary) {
             TSNode name = ts_node_child_by_field_name(node, TS_FIELD("name"));
-            if (!ts_node_is_null(name))
+            if (!ts_node_is_null(name)) {
                 py_param_bind(state, cbm_node_text(ctx->arena, name, ctx->source));
+            }
         }
-        if (!boundary && ts_tree_cursor_goto_first_child(&cursor))
+        if (!boundary && ts_tree_cursor_goto_first_child(&cursor)) {
             continue;
+        }
         while (!ts_tree_cursor_goto_next_sibling(&cursor)) {
             if (!ts_tree_cursor_goto_parent(&cursor) ||
                 ts_node_eq(ts_tree_cursor_current_node(&cursor), body)) {
@@ -335,8 +338,9 @@ static void py_bind_scope_parameters(CBMExtractCtx *ctx, TSNode node, WalkState 
     for (uint32_t i = 0; i < count; i++) {
         py_param_bind(state, py_parameter_name(ctx, ts_node_named_child(params, i)));
     }
-    if (strcmp(kind, "function_definition") == 0)
+    if (strcmp(kind, "function_definition") == 0) {
         py_bind_local_definitions(ctx, ts_node_child_by_field_name(node, TS_FIELD("body")), state);
+    }
 }
 
 static bool push_scope(WalkState *state, uint8_t kind, uint32_t depth, const char *qn) {
