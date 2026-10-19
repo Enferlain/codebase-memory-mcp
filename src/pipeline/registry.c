@@ -768,7 +768,7 @@ static bool explicit_test_namespace(const char *qn) {
     if (!qn || !qn[0]) {
         return false;
     }
-    return strncmp(qn, "tests.", 6) == 0 || strstr(qn, ".tests.") != NULL;
+    return strncmp(qn, "tests.", sizeof("tests.") - SKIP_ONE) == 0 || strstr(qn, ".tests.") != NULL;
 }
 
 bool cbm_suppress_weak_test_target(bool enabled, const char *source_qn, const char *target_qn,

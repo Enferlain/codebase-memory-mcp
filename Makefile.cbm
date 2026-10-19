@@ -989,7 +989,7 @@ PP_OBJ_TSAN = $(BUILD_DIR)/tsan_preprocessor.o
 
 # ── Targets ──────────────────────────────────────────────────────
 
-.PHONY: test-coverage-flush test test-par test-repro test-foundation test-tsan test-daemon-smoke test-runner-cov cbm-cov cbm cbm-with-ui frontend embed clean-c lint lint-tidy lint-tidy-diff lint-cppcheck lint-format security fuzz
+.PHONY: test-coverage-flush test test-par test-repro test-foundation test-tsan test-daemon-smoke test-runner-cov cbm-cov cbm cbm-with-ui frontend embed clean-c lint lint-tidy lint-tidy-diff lint-cppcheck lint-cppcheck-canaries lint-format security fuzz
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -1375,6 +1375,10 @@ LLVM_BIN := $(shell brew --prefix llvm 2>/dev/null)/bin
 CLANG_TIDY ?= $(shell [ -x "$(LLVM_BIN)/clang-tidy" ] && echo "$(LLVM_BIN)/clang-tidy" || echo clang-tidy)
 CLANG_FORMAT ?= $(shell [ -x "$(LLVM_BIN)/clang-format" ] && echo "$(LLVM_BIN)/clang-format" || echo clang-format)
 CPPCHECK ?= cppcheck
+# Native parallel checking needs a build directory to retain whole-program
+# analysis. Keep the default bounded; CI/local callers can override it.
+CPPCHECK_JOBS ?= 4
+CPPCHECK_BUILD_DIR ?= $(BUILD_DIR)/cppcheck
 
 # macOS SDK sysroot (needed for Homebrew LLVM to find system headers)
 SYSROOT = $(shell xcrun --show-sdk-path 2>/dev/null)
@@ -1399,10 +1403,16 @@ lint-tidy:
 lint-tidy-diff:
 	@scripts/lint-tidy-diff.sh "$(CLANG_TIDY)" $(LINT_SRCS) -- $(CFLAGS_COMMON) $(SYSROOT_FLAG)
 
+# Keep the parallel/cache/failure canaries in every canonical lint invocation.
+lint-cppcheck-canaries:
+	@bash scripts/test-lint-cppcheck.sh $(CPPCHECK)
+
 # cppcheck: complementary analysis (config in .cppcheck)
-lint-cppcheck:
+lint-cppcheck: lint-cppcheck-canaries
 	@echo "=== cppcheck ==="
-	@$(CPPCHECK) --enable=warning,style,performance,portability \
+	@scripts/lint-cppcheck.sh "$(CPPCHECK_BUILD_DIR)" $(CPPCHECK) \
+		-j$(CPPCHECK_JOBS) --cppcheck-build-dir="$(CPPCHECK_BUILD_DIR)" \
+		--showtime=file-total --enable=warning,style,performance,portability \
 		--std=c11 --language=c \
 		--suppressions-list=.cppcheck \
 		--error-exitcode=1 \

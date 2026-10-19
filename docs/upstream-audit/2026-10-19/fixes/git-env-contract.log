@@ -1,0 +1,1 @@
+PASS: test runner ignores an inherited git repository environment (#2003).

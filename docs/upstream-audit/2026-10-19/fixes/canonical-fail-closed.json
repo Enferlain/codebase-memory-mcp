@@ -1,0 +1,14 @@
+{
+  "command": [
+    "make",
+    "-f",
+    "Makefile.cbm",
+    "lint-cppcheck",
+    "CPPCHECK=/bin/true",
+    "BUILD_DIR=build/audit",
+    "LINT_SRCS=src/store/graph_mem.c"
+  ],
+  "exit_code": 2,
+  "rejected_silent_checker": true,
+  "source_scan_started": false
+}

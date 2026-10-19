@@ -1,0 +1,18 @@
+{
+  "new_over_threshold_functions": [],
+  "changed_existing_functions": [
+    {
+      "file": "ipc.c",
+      "function": "posix_stale_generation_cleanup_locked",
+      "upstream": 86,
+      "candidate": 91
+    },
+    {
+      "file": "mcp.c",
+      "function": "handle_trace_call_path",
+      "upstream": 278,
+      "candidate": 302
+    }
+  ],
+  "threshold": 25
+}

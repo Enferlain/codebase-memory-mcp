@@ -1,0 +1,19 @@
+{
+  "fixes_complete": true,
+  "compatibility_probes": 22,
+  "affected_test_suites": 7,
+  "affected_tests_passed": 1031,
+  "affected_platform_skips": 6,
+  "subprocess_passed": 57,
+  "subprocess_platform_skips": 2,
+  "process_artifact_checks_passed": 9,
+  "cppcheck_source_completions": 241,
+  "ci_lint_exit": 0,
+  "ci_lint_elapsed_seconds": 14.508145798004989,
+  "required_reviews": "returned; main findings and minor follow-ups addressed",
+  "new_over_threshold_functions": 0,
+  "upstream_tidy_findings_remain": true,
+  "fresh_calls_override_equal": true,
+  "fresh_calls_override_edges": 12964,
+  "global_installation_changed": false
+}

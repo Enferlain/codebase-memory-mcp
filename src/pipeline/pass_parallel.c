@@ -3820,6 +3820,15 @@ typedef struct {
 } pp_file_scope_t;
 
 /* Resolve base_classes → INHERITS edges for one definition. */
+/* Caller initializes non-Python properties to an empty object. */
+static bool parallel_base_properties(CBMLanguage language, int index, char *properties) {
+    if (language != CBM_LANG_PYTHON) {
+        return true;
+    }
+    int written = snprintf(properties, CBM_SZ_64, "{\"base_index\":%d}", index);
+    return written >= 0 && (size_t)written < CBM_SZ_64;
+}
+
 static void resolve_def_inherits(resolve_ctx_t *rc, resolve_worker_state_t *ws,
                                  const CBMDefinition *def, const cbm_gbuf_node_t *node,
                                  const pp_file_scope_t *fs, const char *mq, const char **ik,
@@ -3848,9 +3857,9 @@ static void resolve_def_inherits(resolve_ctx_t *rc, resolve_worker_state_t *ws,
             /* Same Interface-label split as the sequential semantic pass —
              * hardcoding INHERITS here demoted every explicit `implements`
              * on large (parallel-path) corpora. */
-            char base_props[64] = "{}";
-            if (fs->lang == CBM_LANG_PYTHON) {
-                snprintf(base_props, sizeof(base_props), "{\"base_index\":%d}", b);
+            char base_props[CBM_SZ_64] = "{}";
+            if (!parallel_base_properties(fs->lang, b, base_props)) {
+                continue;
             }
             cbm_gbuf_insert_edge(ws->local_edge_buf, node->id, bn->id,
                                  cbm_semantic_base_edge_type(bn), base_props);

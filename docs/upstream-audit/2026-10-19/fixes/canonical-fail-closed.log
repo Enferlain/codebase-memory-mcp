@@ -1,0 +1,9 @@
+--- cache/run.VyGMNK/expected.txt	2026-10-19 10:10:53.837175741 +0200
++++ cache/run.VyGMNK/completed.txt	2026-10-19 10:10:53.841175995 +0200
+@@ -1,2 +0,0 @@
+-a.c
+-b.c
+cppcheck: incomplete or duplicate file results; evidence: cache/run.VyGMNK
+cppcheck: expected CI-pinned 2.20.0 --showtime=file-total completion output
+cppcheck: 2 source files, exit 1; evidence: cache/run.VyGMNK
+make: *** [Makefile.cbm:1408: lint-cppcheck-canaries] Error 1

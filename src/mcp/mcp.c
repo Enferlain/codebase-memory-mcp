@@ -8884,6 +8884,8 @@ static bool trace_topology_edge(const trace_edge_context_t *ctx, const cbm_trave
     return false;
 }
 
+enum { TRACE_CONFIDENCE_MAX = 1 };
+
 static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge_context_t *ctx,
                                            const cbm_traverse_result_t *page) {
     yyjson_mut_val *out = yyjson_mut_arr(doc);
@@ -8905,7 +8907,7 @@ static yyjson_mut_val *trace_topology_json(yyjson_mut_doc *doc, const trace_edge
         yyjson_val *props = properties ? yyjson_doc_get_root(properties) : NULL;
         yyjson_val *recorded = yyjson_obj_get(props, "confidence");
         double confidence = yyjson_get_num(recorded);
-        if (yyjson_is_num(recorded) && confidence >= 0.0 && confidence <= 1.0) {
+        if (yyjson_is_num(recorded) && confidence >= 0.0 && confidence <= TRACE_CONFIDENCE_MAX) {
             yyjson_mut_obj_add_real(doc, item, "confidence", confidence);
         } else {
             yyjson_mut_obj_add_null(doc, item, "confidence");
@@ -8928,7 +8930,7 @@ static void trace_topology_tree(cbm_sb_t *sb, const char *key, const trace_edge_
         count += trace_topology_edge(ctx, page, &ctx->full->edges[i]);
     }
     const char *cols[] = {"source", "target", "type", "properties"};
-    cbm_tree_table_header(sb, key, count, cols, 4);
+    cbm_tree_table_header(sb, key, count, cols, sizeof(cols) / sizeof(cols[0]));
     for (int i = 0; i < ctx->full->edge_count; i++) {
         const cbm_edge_info_t *edge = &ctx->full->edges[i];
         if (!trace_topology_edge(ctx, page, edge)) {

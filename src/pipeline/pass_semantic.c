@@ -623,6 +623,15 @@ static void resolve_decorator(cbm_pipeline_ctx_t *ctx, const cbm_gbuf_node_t *no
     }
 }
 
+/* Caller initializes non-Python properties to an empty object. */
+static bool sem_base_properties(CBMLanguage language, int index, char *properties) {
+    if (language != CBM_LANG_PYTHON) {
+        return true;
+    }
+    int written = snprintf(properties, CBM_SZ_64, "{\"base_index\":%d}", index);
+    return written >= 0 && (size_t)written < CBM_SZ_64;
+}
+
 static void sem_process_def_edges(cbm_pipeline_ctx_t *ctx, const CBMDefinition *def,
                                   const cbm_file_info_t *fi, const CBMFileResult *result,
                                   const char *module_qn, const char **imp_keys,
@@ -660,9 +669,9 @@ static void sem_process_def_edges(cbm_pipeline_ctx_t *ctx, const CBMDefinition *
                  * sequential and parallel venues cannot diverge (the parallel
                  * path once hardcoded INHERITS and demoted every explicit
                  * implements at scale). */
-                char base_props[64] = "{}";
-                if (fi->language == CBM_LANG_PYTHON) {
-                    snprintf(base_props, sizeof(base_props), "{\"base_index\":%d}", b);
+                char base_props[CBM_SZ_64] = "{}";
+                if (!sem_base_properties(fi->language, b, base_props)) {
+                    continue;
                 }
                 cbm_gbuf_insert_edge(ctx->gbuf, node->id, base_node->id,
                                      cbm_semantic_base_edge_type(base_node), base_props);
@@ -1035,23 +1044,106 @@ static int ovr_class_overrides(cbm_gbuf_t *gb, int64_t cls_id, ovr_walk_t *w) {
  * matching: an abstract declaration earlier in the MRO still masks a later
  * concrete one. Bound the proof and omit an edge if C3 is inconsistent,
  * cyclic, or exceeds the bound; never use a truncated method set as proof. */
-enum { PY_ASSEMBLY_LIMIT = 128 };
+enum { PY_ASSEMBLY_LIMIT = 128, PY_ASSEMBLY_MIN_BASES = 2 };
+typedef enum { PY_MRO_VISITING, PY_MRO_COMPLETE, PY_MRO_UNPROVABLE } py_assembly_state_t;
 typedef struct {
     int64_t id;
     int64_t order[PY_ASSEMBLY_LIMIT];
     int count;
-    int state; /* 1 visiting, 2 complete, 3 unprovable */
+    py_assembly_state_t state;
 } py_assembly_mro_t;
 typedef struct {
     py_assembly_mro_t entries[PY_ASSEMBLY_LIMIT];
     int count;
 } py_assembly_cache_t;
+typedef struct {
+    const int64_t *ids;
+    int count;
+    int position;
+} py_assembly_sequence_t;
+
+/* Stable ordering preserves legacy insertion order when base_index is absent. */
+static int py_assembly_bases(cbm_gbuf_t *gb, int64_t id, int64_t *bases) {
+    const cbm_gbuf_edge_t **edges = NULL;
+    int count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, id, "INHERITS", &edges, &count);
+    if (count >= PY_ASSEMBLY_LIMIT) {
+        return CBM_NOT_FOUND;
+    }
+    int ranks[PY_ASSEMBLY_LIMIT];
+    for (int i = 0; i < count; i++) {
+        int rank = i;
+        const char *props = edges[i]->properties_json ? edges[i]->properties_json : "{}";
+        yyjson_doc *doc = yyjson_read(props, strlen(props), 0);
+        yyjson_val *value = doc ? yyjson_obj_get(yyjson_doc_get_root(doc), "base_index") : NULL;
+        if (yyjson_is_int(value)) {
+            rank = yyjson_get_int(value);
+        }
+        yyjson_doc_free(doc);
+        int j = i;
+        while (j > 0 && ranks[j - SKIP_ONE] > rank) {
+            ranks[j] = ranks[j - SKIP_ONE];
+            bases[j] = bases[j - SKIP_ONE];
+            j--;
+        }
+        ranks[j] = rank;
+        bases[j] = edges[i]->target_id;
+    }
+    return count;
+}
+
+static bool py_assembly_in_tail(const py_assembly_sequence_t *sequences, int count,
+                                int64_t candidate) {
+    for (int i = 0; i < count; i++) {
+        const py_assembly_sequence_t *seq = &sequences[i];
+        for (int j = seq->position + SKIP_ONE; j < seq->count; j++) {
+            if (seq->ids[j] == candidate) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool py_assembly_merge(py_assembly_mro_t *mro, py_assembly_sequence_t *sequences,
+                              int count) {
+    for (;;) {
+        bool pending = false;
+        bool selected = false;
+        int64_t candidate = 0;
+        for (int i = 0; i < count; i++) {
+            const py_assembly_sequence_t *seq = &sequences[i];
+            if (seq->position == seq->count) {
+                continue;
+            }
+            pending = true;
+            candidate = seq->ids[seq->position];
+            if (!py_assembly_in_tail(sequences, count, candidate)) {
+                selected = true;
+                break;
+            }
+        }
+        if (!pending) {
+            return true;
+        }
+        if (!selected || mro->count == PY_ASSEMBLY_LIMIT) {
+            return false;
+        }
+        mro->order[mro->count++] = candidate;
+        for (int i = 0; i < count; i++) {
+            py_assembly_sequence_t *seq = &sequences[i];
+            if (seq->position < seq->count && seq->ids[seq->position] == candidate) {
+                seq->position++;
+            }
+        }
+    }
+}
 
 static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
     cbm_gbuf_t *gb, int64_t id, py_assembly_cache_t *cache) {
     for (int i = 0; i < cache->count; i++) {
         if (cache->entries[i].id == id) {
-            return cache->entries[i].state == 2 ? &cache->entries[i] : NULL;
+            return cache->entries[i].state == PY_MRO_COMPLETE ? &cache->entries[i] : NULL;
         }
     }
     if (cache->count == PY_ASSEMBLY_LIMIT) {
@@ -1059,89 +1151,29 @@ static py_assembly_mro_t *py_assembly_mro( // NOLINT(misc-no-recursion)
     }
     py_assembly_mro_t *mro = &cache->entries[cache->count++];
     mro->id = id;
-    mro->state = 1;
-    const cbm_gbuf_edge_t **edges = NULL;
-    int n = 0;
-    cbm_gbuf_find_edges_by_source_type(gb, id, "INHERITS", &edges, &n);
-    if (n >= PY_ASSEMBLY_LIMIT) {
+    mro->state = PY_MRO_VISITING;
+    int64_t bases[PY_ASSEMBLY_LIMIT];
+    int count = py_assembly_bases(gb, id, bases);
+    if (count < 0) {
         goto unprovable;
     }
-    int64_t bases[PY_ASSEMBLY_LIMIT];
-    int ranks[PY_ASSEMBLY_LIMIT];
-    for (int i = 0; i < n; i++) {
-        bases[i] = edges[i]->target_id;
-        ranks[i] = i; /* legacy/manually constructed buffers retain insertion order */
-        const char *props = edges[i]->properties_json ? edges[i]->properties_json : "{}";
-        yyjson_doc *doc = yyjson_read(props, strlen(props), 0);
-        yyjson_val *rank = doc ? yyjson_obj_get(yyjson_doc_get_root(doc), "base_index") : NULL;
-        if (yyjson_is_int(rank)) {
-            ranks[i] = yyjson_get_int(rank);
-        }
-        yyjson_doc_free(doc);
-    }
-    for (int i = 1; i < n; i++) {
-        int rank = ranks[i];
-        int64_t base = bases[i];
-        int j = i;
-        while (j > 0 && ranks[j - 1] > rank) {
-            ranks[j] = ranks[j - 1];
-            bases[j] = bases[j - 1];
-            j--;
-        }
-        ranks[j] = rank;
-        bases[j] = base;
-    }
-    py_assembly_mro_t *parents[PY_ASSEMBLY_LIMIT] = {0};
-    for (int i = 0; i < n; i++) {
-        parents[i] = py_assembly_mro(gb, bases[i], cache);
-        if (!parents[i]) {
+    py_assembly_sequence_t sequences[PY_ASSEMBLY_LIMIT + SKIP_ONE] = {0};
+    for (int i = 0; i < count; i++) {
+        py_assembly_mro_t *parent = py_assembly_mro(gb, bases[i], cache);
+        if (!parent) {
             goto unprovable;
         }
+        sequences[i] = (py_assembly_sequence_t){.ids = parent->order, .count = parent->count};
     }
-    int positions[PY_ASSEMBLY_LIMIT + 1] = {0};
+    sequences[count] = (py_assembly_sequence_t){.ids = bases, .count = count};
     mro->order[mro->count++] = id;
-    for (;;) {
-        bool pending = false;
-        int64_t candidate = 0;
-        bool selected = false;
-        for (int i = 0; i <= n && !selected; i++) {
-            int len = i == n ? n : parents[i]->count;
-            const int64_t *seq = i == n ? bases : parents[i]->order;
-            if (positions[i] == len) {
-                continue;
-            }
-            pending = true;
-            candidate = seq[positions[i]];
-            selected = true;
-            for (int j = 0; j <= n && selected; j++) {
-                int other_len = j == n ? n : parents[j]->count;
-                const int64_t *other = j == n ? bases : parents[j]->order;
-                for (int k = positions[j] + 1; k < other_len; k++) {
-                    if (other[k] == candidate) {
-                        selected = false;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!pending) {
-            mro->state = 2;
-            return mro;
-        }
-        if (!selected || mro->count == PY_ASSEMBLY_LIMIT) {
-            goto unprovable;
-        }
-        mro->order[mro->count++] = candidate;
-        for (int i = 0; i <= n; i++) {
-            int len = i == n ? n : parents[i]->count;
-            const int64_t *seq = i == n ? bases : parents[i]->order;
-            if (positions[i] < len && seq[positions[i]] == candidate) {
-                positions[i]++;
-            }
-        }
+    if (!py_assembly_merge(mro, sequences, count + SKIP_ONE)) {
+        goto unprovable;
     }
+    mro->state = PY_MRO_COMPLETE;
+    return mro;
 unprovable:
-    mro->state = 3;
+    mro->state = PY_MRO_UNPROVABLE;
     return NULL;
 }
 
@@ -1153,7 +1185,8 @@ static bool py_assembly_abstract(const cbm_gbuf_node_t *method) {
     yyjson_val *root = doc ? yyjson_doc_get_root(doc) : NULL;
     bool abstract = yyjson_is_true(yyjson_obj_get(root, "is_abstract"));
     yyjson_val *decorators = yyjson_obj_get(root, "decorators");
-    size_t index, max;
+    size_t index;
+    size_t max;
     yyjson_val *value;
     yyjson_arr_foreach(decorators, index, max, value) {
         const char *name = yyjson_get_str(value);
@@ -1195,6 +1228,81 @@ static void assembly_json_free(void *ctx, void *ptr) {
     cbm_free(CBM_MEM_CLASS_SEMANTIC, ptr);
 }
 
+static bool py_assembly_contains(const py_assembly_mro_t *mro, int64_t id) {
+    for (int i = 0; i < mro->count; i++) {
+        if (mro->order[i] == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool py_assembly_distinct_branches(cbm_gbuf_t *gb, const cbm_gbuf_node_t *assembly,
+                                          py_assembly_cache_t *cache, int64_t implementation,
+                                          int64_t contract) {
+    const cbm_gbuf_edge_t **bases = NULL;
+    int count = 0;
+    cbm_gbuf_find_edges_by_source_type(gb, assembly->id, "INHERITS", &bases, &count);
+    bool implementation_branch = false;
+    bool contract_branch = false;
+    for (int i = 0; i < count; i++) {
+        const py_assembly_mro_t *branch = py_assembly_mro(gb, bases[i]->target_id, cache);
+        if (!branch) {
+            continue;
+        }
+        bool has_impl = py_assembly_contains(branch, implementation);
+        bool has_contract = py_assembly_contains(branch, contract);
+        implementation_branch |= has_impl && !has_contract;
+        contract_branch |= has_contract && !has_impl;
+    }
+    return implementation_branch && contract_branch;
+}
+
+static int py_assembly_emit(cbm_gbuf_t *gb, const cbm_gbuf_node_t *assembly,
+                            const cbm_gbuf_node_t *winner, const cbm_gbuf_node_t *contract) {
+    yyjson_mut_doc *doc = yyjson_mut_doc_new(NULL);
+    yyjson_mut_val *props = yyjson_mut_obj(doc);
+    yyjson_mut_doc_set_root(doc, props);
+    yyjson_mut_obj_add_str(doc, props, "dispatch", "python_mro_sibling");
+    yyjson_mut_obj_add_str(doc, props, "assembly", assembly->qualified_name);
+    const yyjson_alc allocator = {.malloc = assembly_json_alloc,
+                                  .realloc = assembly_json_realloc,
+                                  .free = assembly_json_free,
+                                  .ctx = NULL};
+    char *json = yyjson_mut_write_opts(doc, 0, &allocator, NULL, NULL);
+    int created = 0;
+    if (json) {
+        cbm_gbuf_insert_edge(gb, winner->id, contract->id, "OVERRIDE", json);
+        created++;
+    }
+    cbm_free(CBM_MEM_CLASS_SEMANTIC, json);
+    yyjson_mut_doc_free(doc);
+    return created;
+}
+
+static int py_assembly_match_contract(cbm_gbuf_t *gb, const cbm_gbuf_node_t *assembly,
+                                      py_assembly_cache_t *cache, const py_assembly_mro_t *mro,
+                                      int contract_index, const cbm_gbuf_node_t *contract) {
+    if (!py_assembly_abstract(contract)) {
+        return 0;
+    }
+    for (int i = 0; i < contract_index; i++) {
+        const cbm_gbuf_node_t *winner = py_assembly_method(gb, mro->order[i], contract->name);
+        if (!winner) {
+            continue;
+        }
+        /* The first declaration wins, including an abstract mask. Assembly-owned
+         * methods are already covered by the upstream ancestor pass. */
+        if (i == 0 || py_assembly_abstract(winner) ||
+            !py_assembly_distinct_branches(gb, assembly, cache, mro->order[i],
+                                           mro->order[contract_index])) {
+            return 0;
+        }
+        return py_assembly_emit(gb, assembly, winner, contract);
+    }
+    return 0;
+}
+
 static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
                                           const cbm_gbuf_node_t *assembly) {
     if (!assembly->file_path || !fp_ends_with(assembly->file_path, ".py")) {
@@ -1203,7 +1311,7 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
     const cbm_gbuf_edge_t **bases = NULL;
     int base_count = 0;
     cbm_gbuf_find_edges_by_source_type(ctx->gbuf, assembly->id, "INHERITS", &bases, &base_count);
-    if (base_count < 2) {
+    if (base_count < PY_ASSEMBLY_MIN_BASES) {
         return 0;
     }
     py_assembly_cache_t *cache = cbm_calloc(CBM_MEM_CLASS_SEMANTIC, sizeof(*cache));
@@ -1215,60 +1323,14 @@ static int override_python_sibling_mixins(cbm_pipeline_ctx_t *ctx,
     if (!mro) {
         goto done;
     }
-    for (int i = 1; i < mro->count; i++) {
+    for (int i = SKIP_ONE; i < mro->count; i++) {
         const cbm_gbuf_edge_t **methods = NULL;
         int count = 0;
         cbm_gbuf_find_edges_by_source_type(ctx->gbuf, mro->order[i], "DEFINES_METHOD", &methods,
                                            &count);
         for (int j = 0; j < count; j++) {
             const cbm_gbuf_node_t *contract = cbm_gbuf_find_by_id(ctx->gbuf, methods[j]->target_id);
-            if (!py_assembly_abstract(contract)) {
-                continue;
-            }
-            const cbm_gbuf_node_t *winner = NULL;
-            int winner_index = 0;
-            for (; winner_index < i; winner_index++) {
-                winner = py_assembly_method(ctx->gbuf, mro->order[winner_index], contract->name);
-                if (winner) {
-                    break;
-                }
-            }
-            if (!winner || winner_index == 0 || py_assembly_abstract(winner)) {
-                continue;
-            }
-            bool implementation_branch = false, contract_branch = false;
-            for (int b = 0; b < base_count; b++) {
-                py_assembly_mro_t *branch = py_assembly_mro(ctx->gbuf, bases[b]->target_id, cache);
-                bool has_impl = false, has_contract = false;
-                if (!branch) {
-                    continue;
-                }
-                for (int k = 0; k < branch->count; k++) {
-                    has_impl |= branch->order[k] == mro->order[winner_index];
-                    has_contract |= branch->order[k] == mro->order[i];
-                }
-                implementation_branch |= has_impl && !has_contract;
-                contract_branch |= has_contract && !has_impl;
-            }
-            if (!implementation_branch || !contract_branch) {
-                continue;
-            }
-            yyjson_mut_doc *doc = yyjson_mut_doc_new(NULL);
-            yyjson_mut_val *props = yyjson_mut_obj(doc);
-            yyjson_mut_doc_set_root(doc, props);
-            yyjson_mut_obj_add_str(doc, props, "dispatch", "python_mro_sibling");
-            yyjson_mut_obj_add_str(doc, props, "assembly", assembly->qualified_name);
-            const yyjson_alc allocator = {.malloc = assembly_json_alloc,
-                                          .realloc = assembly_json_realloc,
-                                          .free = assembly_json_free,
-                                          .ctx = NULL};
-            char *json = yyjson_mut_write_opts(doc, 0, &allocator, NULL, NULL);
-            if (json) {
-                cbm_gbuf_insert_edge(ctx->gbuf, winner->id, contract->id, "OVERRIDE", json);
-                created++;
-            }
-            cbm_free(CBM_MEM_CLASS_SEMANTIC, json);
-            yyjson_mut_doc_free(doc);
+            created += py_assembly_match_contract(ctx->gbuf, assembly, cache, mro, i, contract);
         }
     }
 done:

@@ -67,111 +67,97 @@ dedicated fixture, not inferred from this snapshot.
 
 ## Validation
 
-The isolated behavior trial passes its compatibility and real-project checks.
-The installed fork remains unchanged: this is **not an unqualified release
-approval**, because whole-tree cppcheck did not finish and strict clang-tidy
-findings remain. Completed checks:
+The three recorded follow-ups have been implemented in the isolated candidate.
+The installed binary, client configuration, and live indexes remain unchanged.
+The current validation record is in [fixes/](upstream-audit/2026-10-19/fixes/).
 
-- 22 focused regressions and all 464 extraction tests pass under ASan/UBSan,
-  with no sanitizer report.
-- Every `scripts/test.sh --contracts-only` step passes.
-- The full 190-suite run completes: 9,726 passed, 2 failed, 10 platform skips.
-  The CLI fixture rerun is green (all 362 tests), giving 189 passing suites
-  and one recorded upstream/host failure across the combined evidence.
-  This is not an unqualified clean full-suite command.
-- Nine process/artifact scripts pass, including parent-death cleanup, worker
-  error transport, watcher disabling, request scope, TLS size, and 17 binary
-  composition assertions. The release contains no test-only seams.
-- The canonical clang-analyzer memory gate passes with the LLVM 21 analyzer.
-- CLI: all 362 tests pass with the standalone native fixture.
-- Required code review returned; both actionable findings were corrected.
-  See [review and dispositions](upstream-audit/2026-10-19/review.md).
+- All 22 compatibility probes pass after the C3 and Python import refactors.
+- The portable subprocess suite passes: 57 passed and two Windows-only skips.
+  A native runner probe checks the child's exact PATH. Shell fixtures retain
+  distinct lookup markers for both shebang and ENOEXEC execution, unchanged
+  caller environment, and exit 127 when only the child PATH contains a tool.
+- Seven affected suites pass under ASan/UBSan: **1,031 passed, six platform
+  skips**, no sanitizer findings. Both test and release unity objects were
+  rebuilt after changing the Python resolver. The passing run uses a separate
+  stable runner path after rebuilding.
+- Every `scripts/test.sh --contracts-only` step passes. Nine process/artifact
+  scripts pass, including 17 binary-composition assertions; production has no
+  test-only seams. The git-environment contract uses the explicit audit runner.
+- The configured LLVM 21 memory gate passes on the modified production files,
+  including the real Python unity compilation unit. The allocation ratchet,
+  no-skips policy, NOLINT whitelist, and whole-tree format checks pass.
+- The canonical `scripts/lint.sh --ci` passes with cppcheck 2.20.0: all 241
+  intended source files return one completion each. The initial cold parallel
+  scan finished in about ten minutes, within the 45-minute CI bound. Per-run
+  timings are retained in [CI evidence](upstream-audit/2026-10-19/fixes/ci-lint-result.json).
+  Native `-j4` uses a persistent build directory to retain whole-program analysis. Check categories, suppressions,
+  default configuration search, and source inventory are unchanged. The gate
+  rejects missing/duplicate completions, nonzero exits, worker crashes and
+  whole-program internal errors. Canaries prove CTU, conditional configurations,
+  source/header cache invalidation and failure propagation.
+- Main follow-up review returned no product-code correctness bug. Its gate
+  wiring and confidence-bound suggestions were addressed; the libc PATH claim
+  was checked against primary sources. The bounded follow-up review approves
+  the Python extraction and gate scripts; minor assertion/documentation notes
+  were addressed and affected checks rerun. See [review dispositions](upstream-audit/2026-10-19/fixes/review-dispositions.md).
+  The earlier port review and its two corrected findings remain in
+  [review.md](upstream-audit/2026-10-19/review.md).
 
-The original broad run is preserved as failed evidence. Its long PATH broke
-Git fixture discovery; the rerun uses a compact PATH. One upstream extraction
-test expected nested definitions to be unbound; its expectation now matches
-the intentional P4 safeguard. On this Nix host, `/bin/true` is a multicall
-executable that fails after staging renames it; the CLI test harness now
-accepts a standalone native fixture through `CBM_TEST_NATIVE_FIXTURE`, with
-all update/lease/staging checks retained. No product behavior was changed for
-that fixture correction.
+The introduced C3, BFS, and guarded-import helpers are below the configured
+complexity threshold of 25. Strict checks on the actual Python unity unit
+have no introduced findings. There are no newly over-threshold functions
+relative to v0.12.1. An unfiltered full clang-tidy sweep is still not green:
+existing large upstream functions remain oversized. In particular, the
+trace handler is 302 versus upstream's 278, and stale cleanup is 91 versus
+86 after the ports; these are existing warnings in functions extended by
+P3/P5, not unchanged complexity scores. The large Python file processor is
+back to upstream's 60. The unchanged publication helper also reproduces its
+errno diagnostic on pristine v0.12.1. Raw diagnostics and baseline comparison
+are retained; no suppressions or thresholds were changed to hide them.
 
-One subprocess regression still fails on this host: its script assumes
-`/bin/sh` preserves PATH exactly, but the Nix `wrapped-sh` executable changes
-it. The same selected test fails on unmodified upstream `9dba7fe1`; that test
-body is identical in v0.12.1. A direct `/bin/sh` probe also reproduces the
-PATH rewrite independently of CBM. This is a recorded host qualification
-limit, not a passing test, and it has not been skipped or weakened.
+Historical results remain historical: the initial 190-suite command returned
+9,726 passed, two failed, and ten platform skips. Its CLI fixture issue was
+resolved with a standalone native fixture (`CBM_TEST_NATIVE_FIXTURE`), and all
+362 CLI tests passed. The old shell/PATH failure is now resolved by the split
+native/shell fixture above. The previous 45-minute single-process cppcheck
+attempt remains failed evidence; the completed parallel gate supersedes it.
+All 464 extraction tests and 13 fault-injection convention tests passed in
+the earlier trial. This does not claim a new full 190-suite command was run.
 
-The host cppcheck 2.18.3 produced parser errors and other diagnostics, so the
-final lint run uses the CI-pinned cppcheck 2.20.0 and clang-format 20.1.8.
-The memory analyzer uses clang-tidy 21.1.8 with `CC=clang` for Makefile flag
-selection; the GCC-only warning flags otherwise prevent analysis. The initial
-empty analyzer result with GCC flags is not counted as valid evidence.
+One intermediate broad run was invalidated by relinking its own executable
+while tests were running. A self-spawn then returned ENOENT through the
+`/proc/self/exe` deleted path, and its early assertion leaked a test allocation.
+That raw failure is preserved. The replacement run uses a separate stable
+executable after rebuilding; no test was skipped to hide it.
 
-The CI-version whole-tree cppcheck scan was stopped at the repository's
-45-minute CI limit (2,703 seconds). It reported one existing upstream
-production-disabled test-hook condition before timing out. That condition
-was reproduced on unchanged upstream, corrected with a compile-time guard,
-and the affected file passed a fresh CI-lint and memory-analyzer run. All
-13 fault-injection convention tests and the 22 compatibility probes pass
-afterward. The release binary remains byte-for-byte identical. The full
-cppcheck scan is **incomplete**, not green; a successful file recheck does
-not establish that every remaining translation unit was checked.
+## Recorded fix checklist
 
-An additional, noncanonical clang-tidy sweep is **not clean**: the touched
-functions include existing complexity warnings, and the new C3 helpers also
-exceed the configured complexity threshold and retain style/magic-number
-findings. Missing braces in the added code were corrected. Directly analyzing
-`py_lsp.c` alone is invalid because it is a unity member; its standalone
-diagnostics are not counted as confirmed runtime defects. The canonical
-memory gate and sanitizer integration checks are the applicable evidence.
-This trial does not claim a clean full clang-tidy sweep.
+- [x] **Portable subprocess environment test.** Native exact-environment
+  inspection and shell executable-lookup checks are separate; both shebang
+  and ENOEXEC fallback paths, caller isolation, and missing-tool behavior pass.
+- [x] **Introduced-helper strict lint cleanup.** C3 ordering/merge/matching,
+  guarded-import collection/replay, and BFS direction selection are split into
+  bounded helpers. MRO states and buffer/link sizes are named. Fail-closed
+  cycles, ordering/shadowing, SQL/CSR parity and topology controls retain their
+  compatibility probes. Existing upstream diagnostics are recorded separately.
+- [x] **Whole-tree cppcheck gate.** Native parallel execution with persistent
+  analysis data completes the unchanged inventory/check policy within the CI
+  bound. Per-file completion evidence and failure canaries prevent a missing
+  or crashed worker from producing a passing aggregate.
 
-Raw cold-index responses, selected tests, focused results, process results,
-and checksums are under [the trial evidence](upstream-audit/2026-10-19/).
-
-## Open issues and fix plan
-
-These are recorded follow-ups, not completed fixes.
-
-- [ ] **Portable subprocess environment test.** The current fixture uses a
-  shell to check the child's exact PATH, but this host's shell wrapper changes
-  that value after CBM supplies it. Separate the assertions: use a native
-  test-runner probe to inspect the exact child environment, and retain shell
-  fixtures with distinct exit markers to prove caller-side executable lookup
-  for both shebang and ENOEXEC fallback paths. Keep the missing-caller-tool
-  case even when a matching executable exists in the child's PATH. Acceptance:
-  the subprocess suite passes here while still checking exact environment
-  overrides, unchanged parent environment, both lookup paths, and exit 127 for
-  the missing caller-side executable. Do not skip the failing test or change
-  the host's global `/bin/sh`.
-
-- [ ] **Strict lint cleanup in the ports.** Split C3 base ordering, candidate
-  selection, and sibling winner/contract matching into smaller helpers. Name
-  the MRO states and meaningful buffer limits; address remaining declaration
-  and style diagnostics in added code. Apply the same focused cleanup to new
-  dispatch/topology helpers where needed. Preserve bounded fail-closed MRO
-  handling and avoid a general rewrite of large upstream functions. Acceptance:
-  no remaining introduced diagnostics under the configured clang-tidy checks
-  on valid translation units, plus passing MRO order/shadowing, SQL/CSR parity,
-  topology pagination/filter/budget, and all 22 compatibility checks. Record
-  unchanged upstream findings separately; do not suppress checks to pass.
-
-- [ ] **Complete the whole-tree cppcheck gate.** Measure which translation
-  units/configurations dominate the scan, then evaluate parallel checking with
-  a persistent build directory. Verify that this retains whole-program
-  analysis and the existing enabled checks/configurations before adopting it.
-  Keep per-file completion and exit results so a crashed or missing job cannot
-  produce a green aggregate. Acceptance: every intended source/configuration
-  completes within the CI bound, failures propagate, and the complete scan is
-  clean. The already-corrected upstream test-hook condition is covered by
-  `corrected-semantic-lint.log`; that file-level pass does not close this item.
+The final rebuilt release also passed a fresh private index of the same
+943-file source snapshot. All 12,964 normalized CALLS/OVERRIDE edges match
+the previous candidate exactly, both training-loop contract calls resolve,
+and the production-library-to-tests query remains empty. The source manifest
+is identical. Only SEMANTICALLY_RELATED edges differ (109 removed, 127 added);
+no deterministic similarity-graph claim is made. Snapshot:
+`/tmp/cbm-v0121-validation-kufyz1dy`.
 
 ## Moving the trial into service
 
-Continue using the isolated candidate while resolving the static-lint
-qualification gaps. For the eventual default switch, quiesce the MCP clients,
+The candidate is qualified for the tested Linux/glibc environment. macOS runtime
+CI was not run here; the primary-source portability review is recorded in the
+review dispositions. For the eventual default switch, quiesce the MCP clients,
 back up both the installed binary and its consistent cache state, use the
 repository's guarded installer, and restart all MCP clients so the daemon and
 clients run identical bytes. Retain the old fork

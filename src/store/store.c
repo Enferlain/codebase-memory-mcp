@@ -7808,7 +7808,9 @@ static int bfs_visit_mem(cbm_store_t *s, const cbm_graph_mem_t *gm, const bfs_qu
     int hop_count = 0;
     static const char *const override_type[] = {"OVERRIDE"};
     cbm_graph_mem_types_t reverse_mask =
-        q->override_bidir ? cbm_graph_mem_type_mask(gm, override_type, 1) : 0;
+        q->override_bidir ? cbm_graph_mem_type_mask(
+                                gm, override_type, sizeof(override_type) / sizeof(override_type[0]))
+                          : 0;
     if (!cbm_graph_mem_bfs_dispatch(gm, q->start_id, q->inbound, mask, reverse_mask, q->max_depth,
                                     &hops, &hop_count)) {
         store_set_error(s, "bfs: adjacency walk out of memory");

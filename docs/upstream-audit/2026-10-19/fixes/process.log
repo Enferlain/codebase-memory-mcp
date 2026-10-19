@@ -1,0 +1,101 @@
+
+tests/test_git_env_isolation_contract.sh
+FAIL: test runner not found at '/home/imi/Projects/codebase-memory-mcp-v0121/build/c/test-runner'; build it first (make -f Makefile.cbm build/c/test-runner).
+
+tests/test_parent_watchdog.sh
+ok: child 2484554 exited after parent death
+
+tests/test_thread_stack_tls_contract.sh
+static TLS 73801 bytes; smallest requested thread stack 262144 bytes; budget 196608
+Thread-stack TLS contract passed
+
+tests/test_worker_error_response.sh
+ok: worker MCP errors remain tool errors, not process crashes
+
+tests/test_watcher_disabled.sh
+ok: disabled — watcher.disabled emitted, no watcher.start/watch, manual index_repository served
+ok: disabled+auto_index — auto-index still ran, no watcher.start, no registration
+ok: enabled — watcher.start emitted and session project registered
+PASS: watcher_enabled kill-switch process regression (#335)
+
+tests/test_worker_session_scope.sh
+ok: index worker is scoped to the admitted request, not the daemon environment
+
+tests/test_security_strings_allowlist.sh
+PASS: MSYS2 toolchain URL https://github.com/msys2/MINGW-packages is allow-listed
+PASS: unauthorized URL https://evil.example.com still blocked
+PASS: .mcpb manifest.json audited as structured text, not as a binary
+PASS: credential audit still runs on structured text
+PASS: reviewed reference https://web.dev/cross-origin-isolation-guide/
+PASS: reference exception has an exact boundary: https://web.dev/cross-origin-isolation-guide/
+PASS: reviewed reference https://code.visualstudio.com/docs/editor/codebasics#_multicursor-modifier).
+PASS: reference exception has an exact boundary: https://code.visualstudio.com/docs/editor/codebasics#_multicursor-modifier).
+PASS: reviewed reference https://developer.mozilla.org/en-US/docs/Web/API/Cache
+PASS: reference exception has an exact boundary: https://developer.mozilla.org/en-US/docs/Web/API/Cache
+PASS: reviewed reference https://github.com/huggingface/transformers.js/issues/new/choose
+PASS: reference exception has an exact boundary: https://github.com/huggingface/transformers.js/issues/new/choose
+PASS: reviewed reference https://github.com/microsoft/vscode/issues/103170
+PASS: reference exception has an exact boundary: https://github.com/microsoft/vscode/issues/103170
+PASS: reviewed reference https://github.com/markedjs/marked.
+PASS: reference exception has an exact boundary: https://github.com/markedjs/marked.
+PASS: reviewed reference https://tinyurl.com/sudb9s96),
+PASS: reference exception has an exact boundary: https://tinyurl.com/sudb9s96),
+PASS: reviewed reference https://ieeexplore.ieee.org/document/1163711
+PASS: reference exception has an exact boundary: https://ieeexplore.ieee.org/document/1163711
+PASS: reviewed reference https://code.visualstudio.com/docs/editor/codebasics#_find-and-replace)
+PASS: reference exception has an exact boundary: https://code.visualstudio.com/docs/editor/codebasics#_find-and-replace)
+PASS: reviewed reference https://microsoft.com)
+PASS: reference exception has an exact boundary: https://microsoft.com)
+PASS: reviewed reference https://github.com/syntax-tree/hast-util-to-jsx-runtime
+PASS: reference exception has an exact boundary: https://github.com/syntax-tree/hast-util-to-jsx-runtime
+PASS: reviewed reference https://github.com/microsoft/vscode/issues/new
+PASS: reference exception has an exact boundary: https://github.com/microsoft/vscode/issues/new
+PASS: reviewed reference https://github.com/microsoft/vscode/blob/main/LICENSE.txt
+PASS: reference exception has an exact boundary: https://github.com/microsoft/vscode/blob/main/LICENSE.txt
+PASS: reviewed reference https://github.com/microsoft/monaco-editor#faq
+PASS: reference exception has an exact boundary: https://github.com/microsoft/monaco-editor#faq
+PASS: reviewed reference https://gist.github.com/hollance/42e32852f24243b748ae6bc1f985b13a
+PASS: reference exception has an exact boundary: https://gist.github.com/hollance/42e32852f24243b748ae6bc1f985b13a
+PASS: reviewed reference https://github.com/remarkjs/react-markdown/blob/main/changelog.md
+PASS: reference exception has an exact boundary: https://github.com/remarkjs/react-markdown/blob/main/changelog.md
+PASS: reviewed reference https://docs.nvidia.com/cuda/cublas/index.html#cublasLtOrder_t
+PASS: reference exception has an exact boundary: https://docs.nvidia.com/cuda/cublas/index.html#cublasLtOrder_t
+PASS: reviewed reference https://arxiv.org/abs/1502.03167.
+PASS: reference exception has an exact boundary: https://arxiv.org/abs/1502.03167.
+PASS: unreviewed host or path remains blocked: https://web.dev.evil.example/cross-origin-isolation-guide/
+PASS: unreviewed host or path remains blocked: https://developer.mozilla.org.evil.example/en-US/docs/Web/API/Cache
+PASS: unreviewed host or path remains blocked: https://tinyurl.com/another-short-link
+PASS: unreviewed host or path remains blocked: https://huggingface.co.evil.example/model
+PASS: unreviewed host or path remains blocked: https://us.aws.cdn.hf.co.evil.example/model
+PASS: unreviewed command keyword array is blocked
+PASS: bare wget token (pass_shell.c program name) is allowed
+PASS: a wget command line remains blocked
+PASS: unreviewed boolean password assignment is blocked
+=== security-strings allow-list test: 49 passed, 0 failed ===
+
+tests/test_destructive_ordering_contract.sh
+PASS: index deletion runs after every step that can still abort the run
+
+scripts/ci/check-binary-composition.sh
+
+── release/codebase-memory-mcp [elf] ──
+PASS A0-canary              release/codebase-memory-mcp: 'codebase-memory-mcp' present (the needle scan can read this file)
+PASS A1-noexec-stack        release/codebase-memory-mcp: GNU_STACK is RW (no execute bit)
+PASS A1b-rodata-noexec      release/codebase-memory-mcp: executable PT_LOAD segments cover 7% of the file (read-only data is outside them)
+PASS A1c-relro              release/codebase-memory-mcp: PT_GNU_RELRO covers 985760 bytes
+PASS A1d-bind-now           release/codebase-memory-mcp: 1 GOT section(s) inside PT_GNU_RELRO and the dynamic section requests BIND_NOW
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_WORKER_DESCENDANT_PID_FILE' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_CRASH_ON' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: 'CBM_TEST_HANG_ON' absent
+PASS A2-no-test-seams       release/codebase-memory-mcp: no CBM_TEST_* seams beyond the smoke allowlist
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'releases/latest/download' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'api.github.com/repos' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'releases/latest' absent
+PASS A3-no-updater-urls     release/codebase-memory-mcp: 'Accept: application/vnd.github+json' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'sqlite3_load_extension' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'sqlite3_enable_load_extension' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'unable to open shared library [' absent
+PASS A4-no-sqlite-loadext   release/codebase-memory-mcp: 'OMIT_LOAD_EXTENSION' present (sqlite reports SQLITE_OMIT_LOAD_EXTENSION)
+n/a  A5-no-ui-http          release/codebase-memory-mcp: UI-capable artifact, HTTP server ships here by design
+
+BINARY COMPOSITION OK: 17 assertion(s) passed over 1 binary/binaries

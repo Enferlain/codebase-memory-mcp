@@ -710,6 +710,59 @@ static bool py_is_type_checking_if(PyLSPContext *ctx, TSNode stmt) {
            (strcmp(text, "TYPE_CHECKING") == 0 || strcmp(text, "typing.TYPE_CHECKING") == 0);
 }
 
+static TSNode py_type_checking_body(PyLSPContext *ctx, TSNode stmt) {
+    if (!py_is_type_checking_if(ctx, stmt)) {
+        return (TSNode){0};
+    }
+    return ts_node_child_by_field_name(stmt, "consequence", 11);
+}
+
+static bool py_is_import_statement(TSNode stmt) {
+    const char *kind = ts_node_type(stmt);
+    return strcmp(kind, "import_statement") == 0 || strcmp(kind, "import_from_statement") == 0;
+}
+
+static void py_collect_guard_imports(PyLSPContext *ctx, TSNode stmt, TSNode *stmts,
+                                     uint32_t *stmt_count) {
+    TSNode body = py_type_checking_body(ctx, stmt);
+    uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
+    for (uint32_t i = 0; i < count; i++) {
+        TSNode child = ts_node_named_child(body, i);
+        if (py_is_import_statement(child)) {
+            stmts[(*stmt_count)++] = child;
+        }
+    }
+}
+
+/* Include annotation-guard imports in the same cached statement list as
+ * direct imports. Failure leaves classification without an AST proof. */
+static bool py_collect_import_statements(PyLSPContext *ctx, TSNode root, TSNode **stmts,
+                                         uint32_t *stmt_count) {
+    PyKids kids = py_kids(ctx->arena, root);
+    size_t capacity = kids.n;
+    for (uint32_t i = 0; i < kids.n; i++) {
+        TSNode body = py_type_checking_body(ctx, py_kid(&kids, i));
+        if (!ts_node_is_null(body)) {
+            capacity += ts_node_named_child_count(body);
+        }
+    }
+    if (capacity == 0) {
+        return true;
+    }
+    *stmts = (TSNode *)cbm_arena_alloc(ctx->arena, capacity * sizeof(TSNode));
+    if (!*stmts) {
+        return false;
+    }
+    for (uint32_t i = 0; i < kids.n; i++) {
+        TSNode child = py_kid(&kids, i);
+        if (py_is_import_statement(child)) {
+            (*stmts)[(*stmt_count)++] = child;
+        }
+        py_collect_guard_imports(ctx, child, *stmts, stmt_count);
+    }
+    return true;
+}
+
 static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
     if (!ctx)
         return;
@@ -719,44 +772,7 @@ static void py_classify_imports_for_root(PyLSPContext *ctx, TSNode root) {
     TSNode *stmts = NULL;
     uint32_t stmt_count = 0;
     if (have_root && ctx->import_count > 0) {
-        PyKids rk = py_kids(ctx->arena, root);
-        /* Include direct imports inside annotation-only guards in the same
-         * cached statement list, preserving upstream's one collection pass. */
-        size_t capacity = rk.n;
-        for (uint32_t i = 0; i < rk.n; i++) {
-            TSNode c = py_kid(&rk, i);
-            if (py_is_type_checking_if(ctx, c)) {
-                TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-                if (!ts_node_is_null(body)) {
-                    capacity += ts_node_named_child_count(body);
-                }
-            }
-        }
-        if (capacity > 0) {
-            stmts = (TSNode *)cbm_arena_alloc(ctx->arena, capacity * sizeof(TSNode));
-            if (!stmts) {
-                have_root = false;
-            }
-        }
-        for (uint32_t i = 0; stmts && i < rk.n; i++) {
-            TSNode c = py_kid(&rk, i);
-            const char *ck = ts_node_type(c);
-            if (strcmp(ck, "import_statement") == 0 || strcmp(ck, "import_from_statement") == 0) {
-                stmts[stmt_count++] = c;
-            }
-            if (py_is_type_checking_if(ctx, c)) {
-                TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-                uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
-                for (uint32_t j = 0; j < count; j++) {
-                    TSNode stmt = ts_node_named_child(body, j);
-                    const char *kind = ts_node_type(stmt);
-                    if (strcmp(kind, "import_statement") == 0 ||
-                        strcmp(kind, "import_from_statement") == 0) {
-                        stmts[stmt_count++] = stmt;
-                    }
-                }
-            }
-        }
+        have_root = py_collect_import_statements(ctx, root, &stmts, &stmt_count);
     }
     for (int i = 0; i < ctx->import_count; i++) {
         const char *local = ctx->import_local_names[i];
@@ -5285,6 +5301,26 @@ static bool py_expression_is_annotation_only_assignment(TSNode statement) {
     return !ts_node_is_null(annotation) && ts_node_is_null(value);
 }
 
+/* Annotation-only guards replay direct import bindings; every other compound
+ * statement keeps upstream's conservative binding invalidation. */
+static void py_replay_guard_or_invalidate(PyLSPContext *ctx, TSNode stmt,
+                                          unsigned char *consumed_imports) {
+    if (!py_is_type_checking_if(ctx, stmt)) {
+        py_invalidate_possible_bindings(ctx, stmt, 0);
+        return;
+    }
+    TSNode body = py_type_checking_body(ctx, stmt);
+    uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
+    for (uint32_t i = 0; i < count; i++) {
+        TSNode child = ts_node_named_child(body, i);
+        if (py_is_import_statement(child)) {
+            py_replay_import_statement(ctx, child, consumed_imports);
+        } else {
+            py_invalidate_possible_bindings(ctx, child, 0);
+        }
+    }
+}
+
 void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
     if (!ctx || ctx->eval_failure || ts_node_is_null(root))
         return;
@@ -5340,19 +5376,6 @@ void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
                         py_bind_module_class(ctx, def);
                 }
             }
-        } else if (py_is_type_checking_if(ctx, c)) {
-            TSNode body = ts_node_child_by_field_name(c, "consequence", 11);
-            uint32_t count = ts_node_is_null(body) ? 0 : ts_node_named_child_count(body);
-            for (uint32_t j = 0; j < count; j++) {
-                TSNode stmt = ts_node_named_child(body, j);
-                const char *kind = ts_node_type(stmt);
-                if (strcmp(kind, "import_statement") == 0 ||
-                    strcmp(kind, "import_from_statement") == 0) {
-                    py_replay_import_statement(ctx, stmt, consumed_imports);
-                } else {
-                    py_invalidate_possible_bindings(ctx, stmt, 0);
-                }
-            }
         } else if (strcmp(ck, "expression_statement") == 0) {
             /* An expression statement is resolved for calls, not scanned as a
              * binder -- but an assignment expression anywhere inside it does
@@ -5370,7 +5393,7 @@ void py_lsp_process_file(PyLSPContext *ctx, TSNode root) {
             /* A compound statement can leave several possible module values.
              * Invalidate only syntactic binding targets at the control-flow
              * join; a later unconditional statement may restore exact proof. */
-            py_invalidate_possible_bindings(ctx, c, 0);
+            py_replay_guard_or_invalidate(ctx, c, consumed_imports);
         }
     }
     // Pass 2: top-level calls (rare) and nested definitions.

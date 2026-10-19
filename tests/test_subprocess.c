@@ -367,6 +367,30 @@ TEST(subprocess_run_resolves_literal_binary_name_from_path) {
 #ifndef _WIN32
 /* Both the native spawn and ENOEXEC shell fallback must select the caller's
  * tool, even when the child receives a different PATH with the same tool name. */
+/* Inspect PATH in the native runner before any shell can rewrite it. */
+TEST(subprocess_environment_native_path_is_exact) {
+    const char *old_path = getenv("PATH");
+    char *saved_path = old_path ? cbm_strdup(old_path) : NULL;
+    ASSERT_TRUE(!old_path || saved_path);
+    const char *child_path = "/cbm-child-path-only";
+    const char *args[] = {cbm_test_program_path, "__cbm_env_values", "PATH", child_path, NULL};
+    const char *overrides[] = {"PATH=/cbm-child-path-only", NULL};
+    cbm_proc_opts_t opts = {.bin = cbm_test_program_path,
+                            .argv = args,
+                            .env_overrides = overrides,
+                            .quiet_timeout_ms = 5000};
+    cbm_proc_result_t result = {0};
+    int rc = cbm_subprocess_run(&opts, &result);
+    const char *after = getenv("PATH");
+    bool unchanged = saved_path ? after && strcmp(after, saved_path) == 0 : !after;
+    free(saved_path);
+    ASSERT_EQ(rc, 0);
+    ASSERT_EQ(result.exit_code, 0);
+    ASSERT_EQ(result.outcome, CBM_PROC_CLEAN);
+    ASSERT_TRUE(unchanged);
+    PASS();
+}
+
 TEST(subprocess_environment_path_preserves_caller_lookup) {
     char parent_dir[] = "/tmp/cbm-env-parent-XXXXXX";
     char child_dir[] = "/tmp/cbm-env-child-XXXXXX";
@@ -406,7 +430,8 @@ TEST(subprocess_environment_path_preserves_caller_lookup) {
             break;
         }
         const char *prefix = i == 0 ? "#!/bin/sh\n" : "";
-        setup = fprintf(parent_file, "%stest \"$PATH\" = \"$1\"\n", prefix) >= 0 &&
+        /* Shell wrappers may rewrite PATH; these markers prove lookup only. */
+        setup = fprintf(parent_file, "%sexit 0\n", prefix) >= 0 &&
                 fprintf(child_file, "%sexit 42\n", prefix) >= 0 &&
                 fchmod(fileno(parent_file), 0700) == 0 && fchmod(fileno(child_file), 0700) == 0;
         if (fclose(parent_file) != 0) {
@@ -2628,6 +2653,7 @@ SUITE(subprocess) {
     RUN_TEST(subprocess_environment_rejects_invalid_override);
     RUN_TEST(subprocess_environment_overrides_preserve_git_isolation);
 #ifndef _WIN32
+    RUN_TEST(subprocess_environment_native_path_is_exact);
     RUN_TEST(subprocess_environment_path_preserves_caller_lookup);
 #endif
     RUN_TEST(subprocess_run_clean);

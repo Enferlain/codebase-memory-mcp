@@ -1,0 +1,183 @@
+=== test.sh: os=linux arch=x86_64 cores=32 cc=cc cxx=g++ ===
+=== Step 0a: build directory safety contract ===
+ERROR: repository build/ ancestor must be absent or a real directory
+Build directory safety contract passed
+=== Step 0b: Windows VM worktree sync contract ===
+Windows VM worktree manifest contract passed
+=== Step 0c: UI development proxy security contract ===
+UI development proxy security contract passed
+=== Step 0d: daemon soak recovery contract ===
+Daemon soak recovery contract passed
+=== Step 0d2: soak harness runtime isolation contract (#1696) ===
+PASS: soak harness isolates its daemon runtime and cache from the caller
+=== Step 0e: Windows launcher bundle contract ===
+Windows single-binary bundle contract passed
+=== Step 0e2: activation refusal diagnostic contract ===
+Activation diagnostic contract passed
+=== Step 0e3: security gate fail-closed contract ===
+Security gate fail-closed contract passed
+=== Step 0f: tree-sitter runtime Makefile dependencies ===
+PASS: all tree-sitter runtime unity objects track included sources and headers
+=== Step 0g: security fuzz harness self-test ===
+PASS: security fuzz harness requires payload progress and isolates HOME/cache/runtime
+=== Step 0g2: memlab harness runtime isolation contract (#1696) ===
+PASS: memlab harness isolates its daemon runtime and cache from the caller
+=== Step 0h: smoke release-fixture contract ===
+smoke fixture contract: OK
+=== Step 0i: parallel suite scheduler contract ===
+  pass_1 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_2 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_3 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_4 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_5 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_6 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_7 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_8 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_9 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_10 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_11 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_12 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_13 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_15 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_16 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_14 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_17 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_18 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_19 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_20 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_21 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_23 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_24 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_22 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_25 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_26 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_27 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_28 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_29 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_30 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_31 rc=0 pass=1 fail=0 skip=0 secs=0
+  pass_32 rc=0 pass=1 fail=0 skip=0 secs=0
+  hang_after_summary rc=124 pass=1 fail=0 skip=0 secs=1
+  no_summary rc=97 pass=0 fail=0 skip=0 secs=0
+  pass_after rc=0 pass=1 fail=0 skip=0 secs=0
+  stubborn_tree rc=124 pass=1 fail=0 skip=0 secs=2
+  pass_after rc=0 pass=1 fail=0 skip=0 secs=0
+  timeout_exit_race rc=124 pass=1 fail=0 skip=0 secs=2
+Parallel harness contract passed
+=== Step 0i2: suite failure-report contract ===
+suite failure-report contract passed (63 checks: sanitizer reports, running test, unchanged FAIL output, kept logs, result line, exit status)
+=== Step 0j: venue parity contract (one harness, every venue) ===
+venue-parity contract OK (24 workflows marker-checked, 11 venue workflows whitelist-walked, 4 deliberate step exemptions)
+interface probes OK (22 --help entries, 12 strict-flag entries)
+sanitizer runtime defaults OK (3 ASAN_OPTIONS cases through scripts/test.sh)
+=== Step 0k: spawn console-window contract (#1427) ===
+OK: all 4 CreateProcessW site(s) set CREATE_NO_WINDOW
+=== Step 0l: release archive extractor contract ===
+release archive extractor contract OK (14-container matrix incl. 6 MCPB bundles, 56 member associations, dedup exact incl. bundle/archive binary collapse, fail-closed on surplus/missing members, short matrices and broken MCPB manifests)
+=== Step 0m: VirusTotal release-notes + evidence contract ===
+append-vt-notes: selection contradicts candidate results: linux-arm64
+append-vt-notes: existing verification markers are reversed
+PASS: release notes report the shipped binary only, disclose selection, and avoid a duplicate scan
+=== Step 0n: VirusTotal gate policy contract ===
+OK: all 3 published evidence markers match what the gate writes
+PASS: VT gate is exact-set and content-bound; tolerates exactly one Microsoft !ml verdict and nothing else; engine count is evidence, not a gate
+=== Step 0o: MCPB bundle contract (#1246) ===
+--- packaging the four target families from one stub build tree
+--- hash mismatch fails before publishing any container
+--- existing release containers are never overwritten
+mcpb bundle contract OK (selected bytes hash-bound and immutable, archive/MCPB members byte-identical, mutation tools unused, no-clobber, darwin/windows/static-linux eligibility exact)
+=== Step 0p: MCPB registry entries contract (#1246) ===
+mcpb registry entries contract OK (entries exact against the live server.json, idempotent, fail-closed on zero bundles and malformed hashes)
+=== Step 0q: release candidate derivation contract ===
+prepare-release-candidates: published linux-amd64 unstripped/debug-stripped/stripped candidates
+PASS: native stripped/unstripped candidates derive from one linker output and publish atomically
+=== Step 0r: VirusTotal candidate-selection contract ===
+PASS: exact candidate staging, exhaustive VT truth table, fail-closed selection, deterministic evidence, dry-run marking, and 14-container reconciliation
+=== Step 0s: release gate-chain ordering contract ===
+PASS: optional phases cannot silently disable the phases after them
+=== Step 0t: test runtime isolation contract (#1691) ===
+PASS: test harness runtimes are private, unique, fail-closed, and wired
+=== Step 0t2: smoke harness runtime isolation contract (#1696) ===
+PASS: smoke harness isolates its daemon runtime and cache from the caller
+=== Step 0u: shell line-ending contract ===
+Shell line-ending contract passed (157 files)
+=== Step 0v: nomic blob generator contract ===
+ok: generator template is byte-identical to the tracked blob wrapper
+=== Step 0w: published language-count contract ===
+Language-count contract passed (7 surfaces, 7 distinct value(s) checked, 162 grammars vendored)
+=== Step 0x: packaging version-metadata contract ===
+Truth: newest stable release tag is v0.12.1
+Version-metadata contract passed (11 surfaces, 9 tracking v0.12.1, 11 value(s) checked)
+=== Step 0y: VM leg verdict contract ===
+VM verdict contract passed (15 cases: lost exit status, false green, partial runs, iteration mode)
+=== Step 0y2: isolated Windows venue contract ===
+powershell <-NoProfile> <-ExecutionPolicy> <Bypass> <-File> <scripts/ci/new-protected-temp-root.ps1> <-Prefix> <vm-cbm-alpha-> <-ProtectDir> <build/vm-alpha>
+icacls <build/vm-alpha> </inheritance:r> </grant:r> <imi:(OI)(CI)F> <*S-1-5-18:(OI)(CI)F> <*S-1-5-32-544:(OI)(CI)F> </Q>
+canonical-test <CC=clang> <CXX=clang++> <BUILD_DIR=build/vm-alpha>
+=== All tests passed ===
+powershell <-NoProfile> <-ExecutionPolicy> <Bypass> <-File> <scripts/ci/new-protected-temp-root.ps1> <-Prefix> <vm-cbm-beta-> <-ProtectDir> <build/vm-beta>
+icacls <build/vm-beta> </inheritance:r> </grant:r> <imi:(OI)(CI)F> <*S-1-5-18:(OI)(CI)F> <*S-1-5-32-544:(OI)(CI)F> </Q>
+canonical-test <CC=clang> <CXX=clang++> <BUILD_DIR=build/vm-beta>
+=== All tests passed ===
+VM isolation dispatch passed: two isolated full entries and invalid identifier rejection
+Native preflight cases require Windows; Bash dispatch verified here.
+VM isolation contract passed
+=== Step 0y3: setup scripts install through the installers' verified path ===
+OK: static contract (setup.sh delegates to install.sh, setup-windows.ps1 to install.ps1)
+OK: correct checksums.txt -> installed through install.sh (file mode)
+OK: correct checksums.txt -> installed through install.sh (curl | bash mode)
+OK: wrong digest -> refused, nothing installed, stub never ran
+OK: missing checksums.txt -> refused, nothing installed, stub never ran
+OK: no hash tool on PATH -> refused, nothing installed, stub never ran
+Setup-script contract passed
+=== Step 0z: PR lane selector contract ===
+lane-selector contract OK (43 cases, determinism, channels, universe of 24 lanes)
+=== Step 0z2: lane selector history replay ===
+selector history replay OK: 767 pushes, tier as expected for all (729 equal to the analysis, 38 documented fail-safe deviations); 22 real failures, every catching lane selected; every push runs the contract steps
+  pushes per tier: T0a-docs 16, T0b-nonproduct 18, T1-tests 33, T2-extract 93, T3-mid 193, T4-platform 232, T5-core 182
+  full runs: 204
+=== Step 0z3: lane-aware aggregate gates (ci-ok, shard union) ===
+lane-gate contract OK (ci-ok lane strictness + shard-union selection)
+=== Step 0z4: lane wiring (PRs select, dry run and release run all) ===
+lane-wiring contract OK (24 lanes served; dry run and release unselected)
+=== Step 0z5: test-impact shadow prediction contract ===
+test-impact prediction contract OK (mapping, fallbacks, run-all triggers)
+=== Step 0z6: per-test coverage map builder contract ===
+test_all_proper_prefixes_and_suffix_rejection (__main__.ProfileTextContract.test_all_proper_prefixes_and_suffix_rejection) ... ok
+test_argument_types_and_limit_validation (__main__.ProfileTextContract.test_argument_types_and_limit_validation) ... ok
+test_cancellation_and_exception_propagation_are_owner_local (__main__.ProfileTextContract.test_cancellation_and_exception_propagation_are_owner_local) ... ok
+test_cancellation_sweep_including_sort_and_final_publication (__main__.ProfileTextContract.test_cancellation_sweep_including_sort_and_final_publication) ... ok
+test_duplicate_identity_and_hash_distinction (__main__.ProfileTextContract.test_duplicate_identity_and_hash_distinction) ... ok
+test_exact_grammar_and_unsigned_decimals (__main__.ProfileTextContract.test_exact_grammar_and_unsigned_decimals) ... ok
+test_full_identity_order_and_all_counters (__main__.ProfileTextContract.test_full_identity_order_and_all_counters) ... ok
+test_held_owner_survives_concurrent_cancellation (__main__.ProfileTextContract.test_held_owner_survives_concurrent_cancellation) ... ok
+test_inclusive_resource_limits_and_claimed_counts (__main__.ProfileTextContract.test_inclusive_resource_limits_and_claimed_counts) ... ok
+test_native_dense_and_sparse_captures (__main__.ProfileTextContract.test_native_dense_and_sparse_captures) ... ok
+test_result_immutability_and_independent_owners (__main__.ProfileTextContract.test_result_immutability_and_independent_owners) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.051s
+
+OK
+test_real_parser_preserves_full_identity_and_zero_records (__main__.DependencyControl.test_real_parser_preserves_full_identity_and_zero_records) ... ok
+test_bounded_cancellation_immutable_results_and_independent_calls (__main__.ProfileMapV2Tests.test_bounded_cancellation_immutable_results_and_independent_calls) ... ok
+test_callback_provenance_invalid_results_and_entry_order (__main__.ProfileMapV2Tests.test_callback_provenance_invalid_results_and_entry_order) ... ok
+test_each_aggregate_cap_at_boundary_and_one_below (__main__.ProfileMapV2Tests.test_each_aggregate_cap_at_boundary_and_one_below) ... ok
+test_enumeration_failure_and_observation_incompatibility_are_fatal (__main__.ProfileMapV2Tests.test_enumeration_failure_and_observation_incompatibility_are_fatal) ... ok
+test_exact_wire_full_identity_zero_ids_and_input_order (__main__.ProfileMapV2Tests.test_exact_wire_full_identity_zero_ids_and_input_order) ... ok
+test_expected_rows_primary_setup_outcomes_and_all_reason_codes (__main__.ProfileMapV2Tests.test_expected_rows_primary_setup_outcomes_and_all_reason_codes) ... ok
+test_malformed_attempt_discard_and_zero_remaining_allowance (__main__.ProfileMapV2Tests.test_malformed_attempt_discard_and_zero_remaining_allowance) ... ok
+test_stream_unions_child_does_not_replace_primary_and_reason_order (__main__.ProfileMapV2Tests.test_stream_unions_child_does_not_replace_primary_and_reason_order) ... ok
+test_strict_schema_membership_roles_names_and_exact_types (__main__.ProfileMapV2Tests.test_strict_schema_membership_roles_names_and_exact_types) ... ok
+test_whole_call_preflight_and_parser_limit_is_not_malformed (__main__.ProfileMapV2Tests.test_whole_call_preflight_and_parser_limit_is_not_malformed) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 16.583s
+
+OK
+coverage map builder: all cases passed
+=== Step 0z7: incremental coverage map merge contract ===
+coverage merge: all cases passed
+=== Step 0z8: test selection (answer -> runner filter) contract ===
+test-impact selection: all cases passed
+=== test.sh: contracts-only — every contract step passed ===

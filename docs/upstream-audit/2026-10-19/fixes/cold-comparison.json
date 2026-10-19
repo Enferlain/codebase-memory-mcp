@@ -1,0 +1,16 @@
+{
+  "same_source_manifest": true,
+  "old_snapshot": "/tmp/cbm-v0121-validation-ogbobjst",
+  "new_snapshot": "/tmp/cbm-v0121-validation-kufyz1dy",
+  "old_nodes": 15164,
+  "new_nodes": 15164,
+  "calls_override_equal": true,
+  "old_calls_override": 12964,
+  "new_calls_override": 12964,
+  "removed_by_type": {
+    "SEMANTICALLY_RELATED": 109
+  },
+  "added_by_type": {
+    "SEMANTICALLY_RELATED": 127
+  }
+}

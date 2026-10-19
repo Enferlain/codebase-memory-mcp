@@ -1,0 +1,1443 @@
+CHECKING 10
+[1/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c.
+8737 warnings generated.
+[2/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c.
+18732 warnings generated.
+[3/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/registry.c.
+33926 warnings generated.
+[4/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/store/store.c.
+54395 warnings generated.
+[5/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/store/graph_mem.c.
+58829 warnings generated.
+[6/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c.
+71143 warnings generated.
+[7/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c.
+81730 warnings generated.
+[8/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c.
+90376 warnings generated.
+[9/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/internal/cbm/extract_imports.c.
+98830 warnings generated.
+[10/10] Processing file /home/imi/Projects/codebase-memory-mcp-v0121/internal/cbm/extract_unified.c.
+106826 warnings generated.
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2687:32: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2687 |         return stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2687:53: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2687 |         return stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2687:84: error: 2 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2687 |         return stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2688:50: error: 2 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2688 |                        anchor_status.st_nlink == 2 &&
+      |                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2795:36: error: An undefined value may be read from 'errno' [clang-analyzer-unix.Errno,-warnings-as-errors]
+ 2795 |         posix_publish_failure_note(errno == 0 ? EEXIST : errno, record_name);
+      |                                    ^
+/nix/store/sr08dm9x0fsa1mrzjrlb3csdcmilsraz-glibc-2.42-100-dev/include/errno.h:38:16: note: expanded from macro 'errno'
+   38 | # define errno (*__errno_location ())
+      |                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2956:9: note: 'reservation_result' is equal to 1
+ 2956 |     if (reservation_result != 1) {
+      |         ^~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2956:5: note: Taking false branch
+ 2956 |     if (reservation_result != 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:9: note: 'pending_publication' is equal to 1
+ 2965 |     if (pending_publication != 1 || marker_publication != 1) {
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:9: note: Left side of '||' is false
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:37: note: Assuming 'marker_publication' is equal to 1
+ 2965 |     if (pending_publication != 1 || marker_publication != 1) {
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:5: note: Taking false branch
+ 2965 |     if (pending_publication != 1 || marker_publication != 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:9: note: Assuming 'marker_state' is not equal to POSIX_RECORD_UNSAFE
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:9: note: Left side of '||' is false
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:48: note: Assuming 'pending_state' is not equal to POSIX_RECORD_UNSAFE
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:9: note: Left side of '||' is false
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2991:9: note: Assuming 'stable_state' is >= 0
+ 2991 |         stable_state < 0 || anchor_state < 0) {
+      |         ^~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:9: note: Left side of '||' is false
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2991:29: note: Assuming 'anchor_state' is >= 0
+ 2991 |         stable_state < 0 || anchor_state < 0) {
+      |                             ^~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:5: note: Taking false branch
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:9: note: Assuming 'marker_state' is not equal to POSIX_RECORD_UNKNOWN
+ 2995 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:9: note: Left side of '||' is false
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:49: note: Assuming 'pending_state' is not equal to POSIX_RECORD_UNKNOWN
+ 2995 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:9: note: Left side of '||' is false
+ 2995 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2996:10: note: Assuming 'marker_state' is not equal to POSIX_RECORD_VALID
+ 2996 |         (marker_state == POSIX_RECORD_VALID && pending_state == POSIX_RECORD_VALID &&
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2996:45: note: Left side of '&&' is false
+ 2996 |         (marker_state == POSIX_RECORD_VALID && pending_state == POSIX_RECORD_VALID &&
+      |                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3002:9: note: Assuming 'anchor_state' is equal to POSIX_SOCKET_PATH_PRESENT
+ 3002 |     if (anchor_state == POSIX_SOCKET_PATH_PRESENT) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3002:5: note: Taking true branch
+ 3002 |     if (anchor_state == POSIX_SOCKET_PATH_PRESENT) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3003:13: note: 'marker_state' is not equal to POSIX_RECORD_VALID
+ 3003 |         if (marker_state == POSIX_RECORD_VALID) {
+      |             ^~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3003:9: note: Taking false branch
+ 3003 |         if (marker_state == POSIX_RECORD_VALID) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3007:13: note: Assuming 'pending_state' is equal to POSIX_RECORD_VALID
+ 3007 |         if (pending_state == POSIX_RECORD_VALID) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3007:9: note: Taking true branch
+ 3007 |         if (pending_state == POSIX_RECORD_VALID) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Assuming 'marker_state' is equal to POSIX_RECORD_ABSENT
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:48: note: 'pending_state' is equal to POSIX_RECORD_VALID
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |                                                ^~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3018:9: note: Assuming 'stable_state' is equal to 1
+ 3018 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |         ^~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3018:30: note: 'anchor_state' is equal to 1
+ 3018 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                              ^~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3018:51: note: Assuming field 'st_nlink' is equal to 2
+ 3018 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3019:9: note: Assuming field 'st_nlink' is equal to 2
+ 3019 |         anchor_status.st_nlink == 2 &&
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:9: note: Left side of '&&' is true
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:5: note: Taking true branch
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3027:14: note: Calling 'posix_socket_record_publish'
+ 3027 |         if (!posix_socket_record_publish(endpoint, endpoint->socket_identity_name,
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 3028 |                                          POSIX_SOCKET_MARKER_MAGIC, &completed,
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 3029 |                                          &marker_status.st_dev, &marker_status.st_ino)) {
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:10: note: 'endpoint' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |          ^~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:22: note: Assuming 'record_name' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                      ^~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:39: note: 'magic' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                       ^~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:49: note: 'source' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                 ^~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:60: note: 'device_out' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                            ^~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:75: note: 'inode_out' is non-null
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                                           ^~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:9: note: Left side of '||' is false
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2787:5: note: Taking false branch
+ 2787 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2793:9: note: Assuming that 'fstatat' is successful; 'errno' becomes undefined after the call
+ 2793 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2793:85: note: Left side of '||' is true
+ 2793 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |                                                                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2795:36: note: An undefined value may be read from 'errno'
+ 2795 |         posix_publish_failure_note(errno == 0 ? EEXIST : errno, record_name);
+      |                                    ^
+/nix/store/sr08dm9x0fsa1mrzjrlb3csdcmilsraz-glibc-2.42-100-dev/include/errno.h:38:16: note: expanded from macro 'errno'
+   38 | # define errno (*__errno_location ())
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2949:12: error: function 'posix_stale_generation_cleanup_locked' has cognitive complexity of 91 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+ 2949 | static int posix_stale_generation_cleanup_locked(const cbm_daemon_ipc_endpoint_t *endpoint) {
+      |            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2956:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2956 |     if (reservation_result != 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2957:40: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2957 |         return reservation_result == 0 ? 0 : -1;
+      |                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2965 |     if (pending_publication != 1 || marker_publication != 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2965:34: note: +1
+ 2965 |     if (pending_publication != 1 || marker_publication != 1) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2966:68: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2966 |         result = pending_publication < 0 || marker_publication < 0 ? -1 : 0;
+      |                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2966:42: note: +1
+ 2966 |         result = pending_publication < 0 || marker_publication < 0 ? -1 : 0;
+      |                                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2990:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2990 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2991:26: note: +1
+ 2991 |         stable_state < 0 || anchor_state < 0) {
+      |                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2993:9: note: +1
+ 2993 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2995 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2995:87: note: +1
+ 2995 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |                                                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2996:84: note: +1
+ 2996 |         (marker_state == POSIX_RECORD_VALID && pending_state == POSIX_RECORD_VALID &&
+      |                                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:2999:9: note: +1
+ 2999 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3002:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3002 |     if (anchor_state == POSIX_SOCKET_PATH_PRESENT) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3003:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3003 |         if (marker_state == POSIX_RECORD_VALID) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3007:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3007 |         if (pending_state == POSIX_RECORD_VALID) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3017:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3017 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3020:70: note: +1
+ 3020 |         posix_socket_inode_equal(&stable_identity, &anchor_identity) &&
+      |                                                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3027:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3027 |         if (!posix_socket_record_publish(endpoint, endpoint->socket_identity_name,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3031:13: note: +1
+ 3031 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3037:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3037 |     if (marker_state == POSIX_RECORD_VALID) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3039:31: note: +1
+ 3039 |             anchor_state == 1 && posix_socket_inode_equal(&marker.identity, &anchor_identity);
+      |                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3040:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3040 |         if (stable_state == 1 && anchor_owned &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3040:47: note: +1
+ 3040 |         if (stable_state == 1 && anchor_owned &&
+      |                                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3042:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3042 |             if (stable_status.st_nlink != 2 || anchor_status.st_nlink != 2 ||
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3043:82: note: +1
+ 3043 |                 !posix_socket_identity_equal(&marker.identity, &stable_identity) ||
+      |                                                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3046:17: note: +1
+ 3046 |                 goto cleanup_done;
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3048:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3048 |             if (!posix_socket_link_pair_unlink_if_matches(endpoint, &marker.identity)) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3050:17: note: +1
+ 3050 |                 goto cleanup_done;
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3054:11: note: +1, nesting level increased to 2
+ 3054 |         } else {
+      |           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3058:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3058 |             if (anchor_state == 1) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3059:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3059 |                 if (!anchor_owned || anchor_status.st_nlink != 1 ||
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3059:66: note: +1
+ 3059 |                 if (!anchor_owned || anchor_status.st_nlink != 1 ||
+      |                                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3063:21: note: +1
+ 3063 |                     goto cleanup_done;
+      |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3069:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3069 |         if (!posix_path_unlink_regular_if_matches(endpoint->dir_fd, endpoint->socket_identity_name,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3074:56: note: +1
+ 3074 |                                                    1)) ||
+      |                                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3071:50: note: +1
+ 3071 |             (pending_state == POSIX_RECORD_VALID &&
+      |                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3077:13: note: +1
+ 3077 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3079:36: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3079 |         result = stable_state == 0 ? 1 : 0;
+      |                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3080:9: note: +1
+ 3080 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3083:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3083 |     if (pending_state == POSIX_RECORD_VALID) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3085:31: note: +1
+ 3085 |             anchor_state == 1 && posix_socket_inode_equal(&pending.identity, &anchor_identity);
+      |                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3086:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3086 |         if (anchor_state == 1 && (!anchor_owned || anchor_status.st_nlink != 1)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3086:31: note: +1
+ 3086 |         if (anchor_state == 1 && (!anchor_owned || anchor_status.st_nlink != 1)) {
+      |                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3086:49: note: +1
+ 3086 |         if (anchor_state == 1 && (!anchor_owned || anchor_status.st_nlink != 1)) {
+      |                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3088:13: note: +1
+ 3088 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3090:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3090 |         if (anchor_owned && !posix_socket_path_unlink_inode_if_matches(endpoint->dir_fd,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3090:26: note: +1
+ 3090 |         if (anchor_owned && !posix_socket_path_unlink_inode_if_matches(endpoint->dir_fd,
+      |                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3094:13: note: +1
+ 3094 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3096:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3096 |         if (!posix_path_unlink_regular_if_matches(endpoint->dir_fd, endpoint->socket_pending_name,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3098:54: note: +1
+ 3098 |                                                   1) ||
+      |                                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3101:13: note: +1
+ 3101 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3103:36: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3103 |         result = stable_state == 0 ? 1 : 0;
+      |                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3104:9: note: +1
+ 3104 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3114:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3114 |     if (stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3115:37: note: +1
+ 3115 |         anchor_status.st_nlink == 2 &&
+      |                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3117:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3117 |         if (!posix_socket_link_pair_unlink_if_matches(endpoint, &stable_identity) ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3117:83: note: +1
+ 3117 |         if (!posix_socket_link_pair_unlink_if_matches(endpoint, &stable_identity) ||
+      |                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3120:13: note: +1
+ 3120 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3123:9: note: +1
+ 3123 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3130:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3130 |     if (anchor_state == 1 && stable_state == 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3130:27: note: +1
+ 3130 |     if (anchor_state == 1 && stable_state == 1) {
+      |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3132:9: note: +1
+ 3132 |         goto cleanup_done;
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3134:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3134 |     if (anchor_state == 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3135:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3135 |         if (anchor_status.st_nlink != 1 ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3137:86: note: +1
+ 3137 |                 endpoint->dir_fd, endpoint->socket_anchor_name, &anchor_identity, 1) ||
+      |                                                                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3140:13: note: +1
+ 3140 |             goto cleanup_done;
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/daemon/ipc.c:3143:32: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3143 |     result = stable_state == 0 ? 1 : 0;
+      |                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9841:14: error: function 'handle_trace_call_path' has cognitive complexity of 302 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+ 9841 | static char *handle_trace_call_path(cbm_mcp_server_t *srv, const char *args) {
+      |              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9856:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9856 |     if (trace_limit < 1) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9859:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9859 |     if (trace_limit > MCP_BFS_LIMIT_MAX) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9863:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9863 |     if (max_output_tokens < 128) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9865:12: note: +1, nesting level increased to 1
+ 9865 |     } else if (max_output_tokens > 1000000) {
+      |            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9878:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9878 |     if (!func_name) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9885:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9885 |     if (!store) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9898:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9898 |     if (not_indexed) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9920:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9920 |     if (gen_legacy && cursor_arg && cursor_arg[0]) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9920:34: note: +1
+ 9920 |     if (gen_legacy && cursor_arg && cursor_arg[0]) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9933:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9933 |     if (cursor_arg && cursor_arg[0]) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9933:20: note: +1
+ 9933 |     if (cursor_arg && cursor_arg[0]) {
+      |                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9934:71: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 9934 |         uint64_t qh = trace_params_hash(project, func_name, direction ? direction : "both", mode,
+      |                                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9938:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 9938 |         if (cerr) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9950:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9950 |     if (!direction) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9956:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9956 |     if (strcmp(direction, "inbound") != 0 && strcmp(direction, "outbound") != 0 &&
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9956:81: note: +1
+ 9956 |     if (strcmp(direction, "inbound") != 0 && strcmp(direction, "outbound") != 0 &&
+      |                                                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9970:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 9970 |     if (have_cursor && ((cur.leg == 'o' && strcmp(direction, "inbound") == 0) ||
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9970:21: note: +1
+ 9970 |     if (have_cursor && ((cur.leg == 'o' && strcmp(direction, "inbound") == 0) ||
+      |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9970:79: note: +1
+ 9970 |     if (have_cursor && ((cur.leg == 'o' && strcmp(direction, "inbound") == 0) ||
+      |                                                                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9970:41: note: +1
+ 9970 |     if (have_cursor && ((cur.leg == 'o' && strcmp(direction, "inbound") == 0) ||
+      |                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9971:41: note: +1
+ 9971 |                         (cur.leg == 'i' && strcmp(direction, "outbound") == 0))) {
+      |                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9993:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  9993 |     if (node_count == 0) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:9995:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  9995 |         if (cbm_store_find_node_by_qn(store, project, func_name, &qn_node) == CBM_STORE_OK) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10000:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10000 |             if (nodes) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10003:15: note: +1, nesting level increased to 3
+ 10003 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10008:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10008 |     if (node_count == 0) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10016:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10016 |     if (node_count == 0) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10033:55: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10033 |         char *result = cbm_mcp_text_result(error_json ? error_json : "function not found", true);
+       |                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10043:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10043 |     if (trace_ambiguous) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10057:43: note: +1
+ 10057 |     bool trace_legacy_json = trace_format && strcmp(trace_format, "json") == 0;
+       |                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10068:59: note: +1
+ 10068 |     bool do_outbound = strcmp(direction, "outbound") == 0 || strcmp(direction, "both") == 0;
+       |                                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10069:57: note: +1
+ 10069 |     bool do_inbound = strcmp(direction, "inbound") == 0 || strcmp(direction, "both") == 0;
+       |                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10074:27: note: +1
+ 10074 |     bool data_flow = mode && strcmp(mode, "data_flow") == 0;
+       |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10076:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10076 |     for (int i = 0; i < edge_type_count; i++) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10080:43: note: +1
+ 10080 |     bool dispatch_composition = has_calls && has_override;
+       |                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10081:57: note: +1
+ 10081 |     bool need_edge_data = data_flow || include_evidence || topology;
+       |                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10082:42: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10082 |     int edge_data_limit = need_edge_data ? MCP_BFS_LIMIT_MAX : 0;
+       |                                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10092:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10092 |     if (do_outbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10094:60: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10094 |             store, nodes, node_count, dispatch_composition ? "outbound_override_bidir" : "outbound",
+       |                                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10097:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10097 |     if (traversal_rc == CBM_STORE_OK && do_inbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10097:38: note: +1
+ 10097 |     if (traversal_rc == CBM_STORE_OK && do_inbound) {
+       |                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10099:60: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10099 |             store, nodes, node_count, dispatch_composition ? "inbound_override_bidir" : "inbound",
+       |                                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10102:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10102 |     if (traversal_rc != CBM_STORE_OK) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10111:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10111 |         if (et_doc_keep) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10116:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10116 |     if (!include_tests) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10127:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10127 |     if (have_cursor) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10129:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10129 |         if (cur.leg == 'o') {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10132:11: note: +1, nesting level increased to 2
+ 10132 |         } else {
+       |           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10137:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10137 |         if (watermark_next == CBM_NOT_FOUND) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10146:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10146 |             if (et_doc_keep) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10158:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10158 |     if (do_outbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10160:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10160 |         if (out_len > budget) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10165:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10165 |     if (do_inbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10167:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10167 |         if (in_len > budget) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10180:78: note: +1
+ 10180 |     bool emit_optional_fields = risk_labels || data_flow || include_evidence || topology;
+       |                                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10186:45: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10186 |     out_len = requested_out_len < rows_left ? requested_out_len : rows_left;
+       |                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10188:43: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10188 |     in_len = requested_in_len < rows_left ? requested_in_len : rows_left;
+       |                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10189:33: note: +1
+ 10189 |     bool out_more = do_outbound && out_start + out_len < tr_out.visited_count;
+       |                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10190:31: note: +1
+ 10190 |     bool in_more = do_inbound && in_start + in_len < tr_in.visited_count;
+       |                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10191:31: note: +1
+ 10191 |     bool more_rows = out_more || in_more;
+       |                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10192:46: note: +1
+ 10192 |     bool engine_saturated = tr_out.truncated || tr_in.truncated;
+       |                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10193:55: note: +1
+ 10193 |     bool edge_data_saturated = tr_out.edges_truncated || tr_in.edges_truncated;
+       |                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10195:62: note: +1
+ 10195 |         more_rows || engine_saturated || edge_data_saturated || output_budget_hit;
+       |                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10199:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10199 |     if (more_rows && !gen_legacy) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10199:19: note: +1
+ 10199 |     if (more_rows && !gen_legacy) {
+       |                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10208:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10208 |         if (in_len > 0) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10212:16: note: +1, nesting level increased to 2
+ 10212 |         } else if (out_len > 0) {
+       |                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10217:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10217 |         if (in_len > 0 || out_len > 0) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10217:24: note: +1
+ 10217 |         if (in_len > 0 || out_len > 0) {
+       |                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10226:39: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10226 |     view_out.visited = tr_out.visited ? tr_out.visited + out_start : NULL;
+       |                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10229:37: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10229 |     view_in.visited = tr_in.visited ? tr_in.visited + in_start : NULL;
+       |                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10242:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10242 |     for (int i = 0; i < tr_out.visited_count; i++) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10243:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10243 |         if (include_tests || !is_test_file(tr_out.visited[i].node.file_path)) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10243:27: note: +1
+ 10243 |         if (include_tests || !is_test_file(tr_out.visited[i].node.file_path)) {
+       |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10248:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10248 |     for (int i = 0; i < tr_in.visited_count; i++) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10249:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10249 |         if (include_tests || !is_test_file(tr_in.visited[i].node.file_path)) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10249:27: note: +1
+ 10249 |         if (include_tests || !is_test_file(tr_in.visited[i].node.file_path)) {
+       |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10256:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10256 |     if (!trace_legacy_json) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10261:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10261 |         if (mode) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10266:40: note: +1
+ 10266 |         bool render_risk = risk_labels && emit_optional_fields;
+       |                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10267:43: note: +1
+ 10267 |         bool render_data_flow = data_flow && emit_optional_fields;
+       |                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10268:49: note: +1
+ 10268 |         bool render_evidence = include_evidence && emit_optional_fields;
+       |                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10269:39: note: +1
+ 10269 |         bool flat_trace = render_risk || render_data_flow;
+       |                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10270:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10270 |         if (do_outbound) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10272:81: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10272 |             cbm_tree_scalar_str(&sb, "callees_total_relation", tr_out.truncated ? "gte" : "eq");
+       |                                                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10273:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10273 |             if (flat_trace) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10276:15: note: +1, nesting level increased to 3
+ 10276 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10281:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10281 |         if (do_inbound) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10283:80: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10283 |             cbm_tree_scalar_str(&sb, "callers_total_relation", tr_in.truncated ? "gte" : "eq");
+       |                                                                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10284:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10284 |             if (flat_trace) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10287:15: note: +1, nesting level increased to 3
+ 10287 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10292:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10292 |         if (topology && emit_optional_fields) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10292:22: note: +1
+ 10292 |         if (topology && emit_optional_fields) {
+       |                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10293:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10293 |             if (do_outbound) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10296:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10296 |             if (do_inbound) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10300:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10300 |         if (trace_truncated) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10306:21: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10306 |                     ? "output_budget"
+       |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10307:34: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10307 |                     : (more_rows ? "page_limit"
+       |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10308:54: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10308 |                                  : (engine_saturated ? "engine_limit" : "edge_data_limit")));
+       |                                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10309:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10309 |             if (output_budget_hit) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10312:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10312 |             if (optional_fields_omitted) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10317:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10317 |             if (engine_saturated) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10320:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10320 |             if (edge_data_saturated) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10323:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10323 |             if (next_tok[0]) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10329:20: note: +1, nesting level increased to 3
+ 10329 |             } else if (more_rows) {
+       |                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10333:20: note: +1, nesting level increased to 3
+ 10333 |             } else if (engine_saturated) {
+       |                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10338:15: note: +1, nesting level increased to 3
+ 10338 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10345:7: note: +1, nesting level increased to 1
+ 10345 |     } else {
+       |       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10352:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10352 |         if (mode) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10355:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10355 |         if (do_outbound) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10358:53: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10358 |                                    tr_out.truncated ? "gte" : "eq");
+       |                                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10361:62: note: +1
+ 10361 |                 bfs_to_tree_json(doc, &view_out, risk_labels && emit_optional_fields, include_tests,
+       |                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10362:44: note: +1
+ 10362 |                                  data_flow && emit_optional_fields,
+       |                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10363:51: note: +1
+ 10363 |                                  include_evidence && emit_optional_fields, &out_edge_ctx));
+       |                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10365:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10365 |         if (do_inbound) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10368:52: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10368 |                                    tr_in.truncated ? "gte" : "eq");
+       |                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10371:61: note: +1
+ 10371 |                 bfs_to_tree_json(doc, &view_in, risk_labels && emit_optional_fields, include_tests,
+       |                                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10372:44: note: +1
+ 10372 |                                  data_flow && emit_optional_fields,
+       |                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10373:51: note: +1
+ 10373 |                                  include_evidence && emit_optional_fields, &in_edge_ctx));
+       |                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10375:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10375 |         if (topology && emit_optional_fields) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10375:22: note: +1
+ 10375 |         if (topology && emit_optional_fields) {
+       |                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10376:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10376 |             if (do_outbound) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10380:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10380 |             if (do_inbound) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10385:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10385 |         if (trace_truncated) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10391:21: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10391 |                     ? "output_budget"
+       |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10392:34: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10392 |                     : (more_rows ? "page_limit"
+       |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10393:54: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10393 |                                  : (engine_saturated ? "engine_limit" : "edge_data_limit")));
+       |                                                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10394:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10394 |             if (output_budget_hit) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10397:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10397 |             if (optional_fields_omitted) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10402:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10402 |             if (engine_saturated) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10405:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10405 |             if (edge_data_saturated) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10408:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10408 |             if (next_tok[0]) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10421:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10421 |     if (json && strlen(json) > output_budget_bytes) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10421:14: note: +1
+ 10421 |     if (json && strlen(json) > output_budget_bytes) {
+       |              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10423:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10423 |         if (emit_optional_fields) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10426:13: note: +1
+ 10426 |             goto render_trace_output;
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10428:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10428 |         if (row_target <= 1 || requested_page_rows == 0) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10428:29: note: +1
+ 10428 |         if (row_target <= 1 || requested_page_rows == 0) {
+       |                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10431:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10431 |             if (!trace_legacy_json) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10434:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10434 |                 if (do_outbound) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10437:58: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10437 |                                         tr_out.truncated ? "gte" : "eq");
+       |                                                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10439:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10439 |                 if (do_inbound) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10442:57: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10442 |                                         tr_in.truncated ? "gte" : "eq");
+       |                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10445:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10445 |                 if (floor_has_more) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10452:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10452 |                 if (optional_fields_omitted) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10460:15: note: +1, nesting level increased to 3
+ 10460 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10464:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10464 |                 if (do_outbound) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10467:61: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10467 |                                            tr_out.truncated ? "gte" : "eq");
+       |                                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10469:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10469 |                 if (do_inbound) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10472:60: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 10472 |                                            tr_in.truncated ? "gte" : "eq");
+       |                                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10475:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10475 |                 if (floor_has_more) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10483:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 10483 |                 if (optional_fields_omitted) {
+       |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10493:13: note: +1
+ 10493 |             goto trace_output_ready;
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10495:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10495 |         if (!budget_search_active) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10499:11: note: +1, nesting level increased to 2
+ 10499 |         } else {
+       |           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10502:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10502 |         if (budget_search_low > budget_search_high) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10503:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 10503 |             if (budget_search_best < 1) {
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10505:15: note: +1, nesting level increased to 3
+ 10505 |             } else {
+       |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10509:13: note: +1
+ 10509 |             goto render_trace_output;
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10512:9: note: +1
+ 10512 |         goto render_trace_output;
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10514:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10514 |     if (budget_search_active) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10517:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 10517 |         if (budget_search_low <= budget_search_high) {
+       |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10519:13: note: +1
+ 10519 |             goto render_trace_output;
+       |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10526:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10526 |     if (do_outbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10529:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10529 |     if (do_inbound) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/mcp/mcp.c:10539:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 10539 |     if (et_doc_keep) {
+       |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:850:12: error: function 'resolve_single_call' has cognitive complexity of 73 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+  850 | static int resolve_single_call(cbm_pipeline_ctx_t *ctx, CBMCall *call, const CBMFileResult *result,
+      |            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:858:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  858 |     if (!source_node) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:871:83: note: +1
+  871 |     bool php_vendor_call = cbm_pipeline_php_vendor_call(php_vendor, result, call) ||
+      |                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:873:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  873 |     if (lsp) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:874:68: note: +1
+  874 |         bool exact_external_target = call->requires_lsp_resolution &&
+      |                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:877:35: note: +2, including nesting penalty of 1, nesting level increased to 2
+  877 |             exact_external_target ? cbm_pipeline_lsp_target_node_strict(
+      |                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:881:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  881 |         if (target_node && source_node->id != target_node->id) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:881:25: note: +1
+  881 |         if (target_node && source_node->id != target_node->id) {
+      |                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:894:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  894 |             if (cbm_pipeline_spawn_site(ctx->gbuf, lang, call, imports, &res, &spawn)) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:909:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  909 |     if (call->requires_lsp_resolution) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:928:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  928 |     if (cbm_pipeline_http_client_call_url(ctx->gbuf, ctx->project_name, rel, result, imp_keys,
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:946:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  946 |     if (csvc == CBM_SVC_HTTP || csvc == CBM_SVC_ASYNC) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:946:30: note: +1
+  946 |     if (csvc == CBM_SVC_HTTP || csvc == CBM_SVC_ASYNC) {
+      |                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:948:45: note: +1
+  948 |         bool chas_url = cu && cu[0] != '\0' &&
+      |                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:949:68: note: +1
+  949 |                         (cu[0] == '/' || strstr(cu, "://") != NULL ||
+      |                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:950:49: note: +1
+  950 |                          (csvc == CBM_SVC_ASYNC && strlen(cu) > PAIR_LEN));
+      |                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:951:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  951 |         if (chas_url) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:966:30: note: +1
+  966 |     bool rust_external = lsp && cbm_pipeline_rust_external_target(
+      |                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:969:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  969 |     if (!rust_external && !php_vendor_call) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:969:24: note: +1
+  969 |     if (!rust_external && !php_vendor_call) {
+      |                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:977:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  977 |         if (cbm_registry_name_guess_vetoed(ctx->registry, lang, &res)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:986:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  986 |     if ((!res.qualified_name || res.qualified_name[0] == '\0') &&
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:986:64: note: +1
+  986 |     if ((!res.qualified_name || res.qualified_name[0] == '\0') &&
+      |                                                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:986:30: note: +1
+  986 |     if ((!res.qualified_name || res.qualified_name[0] == '\0') &&
+      |                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:997:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  997 |     if (cbm_pipeline_spawn_site(ctx->gbuf, lang, call, imports, &res, &spawn)) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1001:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1001 |     if (!res.qualified_name || res.qualified_name[0] == '\0') {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1001:29: note: +1
+ 1001 |     if (!res.qualified_name || res.qualified_name[0] == '\0') {
+      |                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1021:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1021 |         if (cbm_service_pattern_route_method(call->callee_name) != NULL && call->first_string_arg &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1021:99: note: +1
+ 1021 |         if (cbm_service_pattern_route_method(call->callee_name) != NULL && call->first_string_arg &&
+      |                                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1028:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1028 |         if (esvc == CBM_SVC_NONE && cbm_service_pattern_is_global_fetch(call->callee_name)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1028:34: note: +1
+ 1028 |         if (esvc == CBM_SVC_NONE && cbm_service_pattern_is_global_fetch(call->callee_name)) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1031:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1031 |         if (esvc == CBM_SVC_HTTP || esvc == CBM_SVC_ASYNC) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1031:34: note: +1
+ 1031 |         if (esvc == CBM_SVC_HTTP || esvc == CBM_SVC_ASYNC) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1033:55: note: +1
+ 1033 |             bool has_url_or_topic = u && u[0] != '\0' &&
+      |                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1034:78: note: +1
+ 1034 |                                     (u[0] == '/' || strstr(u, "://") != NULL ||
+      |                                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1035:61: note: +1
+ 1035 |                                      (esvc == CBM_SVC_ASYNC && strlen(u) > PAIR_LEN));
+      |                                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1036:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 1036 |             if (has_url_or_topic) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1052:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1052 |         if (isvc != CBM_SVC_NONE) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1073:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1073 |     if (cbm_perl_suppress_generic_match(lang == CBM_LANG_PERL, call->is_method, call->callee_name,
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1106:57: note: +1
+ 1106 |                                 lang == CBM_LANG_SVELTE || lang == CBM_LANG_ASTRO;
+      |                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1129:84: note: +1
+ 1129 |                                                ctx->gbuf, ctx->project_name, rel)) ||
+      |                                                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1117:94: note: +1
+ 1117 |         (cbm_suppress_weak_member_match(suppress_weak_member, call->is_method, res.strategy) &&
+      |                                                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1127:99: note: +1
+ 1127 |         (lang == CBM_LANG_PYTHON && cbm_suppress_weak_import_bound_call(true, true, res.strategy) &&
+      |                                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1142:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1142 |     if (svc == CBM_SVC_HTTP || svc == CBM_SVC_ASYNC) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1142:29: note: +1
+ 1142 |     if (svc == CBM_SVC_HTTP || svc == CBM_SVC_ASYNC) {
+      |                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1144:51: note: +1
+ 1144 |         bool has_url_or_topic = u && u[0] != '\0' &&
+      |                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1145:74: note: +1
+ 1145 |                                 (u[0] == '/' || strstr(u, "://") != NULL ||
+      |                                                                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1146:56: note: +1
+ 1146 |                                  (svc == CBM_SVC_ASYNC && strlen(u) > PAIR_LEN));
+      |                                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1147:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1147 |         if (has_url_or_topic) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1154:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1154 |     if (!target_node || source_node->id == target_node->id) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1154:22: note: +1
+ 1154 |     if (!target_node || source_node->id == target_node->id) {
+      |                      ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1160:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1160 |     switch (cbm_call_onto_field_policy(lang, call->callee_name, target_node->label,
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1166:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1166 |         if (!arrow_bound) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1172:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1172 |         if (!target_node || source_node->id == target_node->id) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1172:26: note: +1
+ 1172 |         if (!target_node || source_node->id == target_node->id) {
+      |                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1182:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 1182 |     if (cbm_suppress_cross_language_suffix_match(lang, target_node->file_path, res.strategy)) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1190:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 1190 |         if (cbm_service_pattern_route_method(call->callee_name) != NULL && call->first_string_arg &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_calls.c:1190:99: note: +1
+ 1190 |         if (cbm_service_pattern_route_method(call->callee_name) != NULL && call->first_string_arg &&
+      |                                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3089:13: error: function 'resolve_file_calls' has cognitive complexity of 197 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+ 3089 | static void resolve_file_calls(resolve_ctx_t *rc, resolve_worker_state_t *ws, CBMFileResult *result,
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3110:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3110 |     if (result->calls.count > 0 && result->resolved_calls.count > 0) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3110:33: note: +1
+ 3110 |     if (result->calls.count > 0 && result->resolved_calls.count > 0) {
+      |                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3114:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3114 |         if (!lsp_exact_idx) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3117:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3117 |         if (!lsp_legacy_idx) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3120:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3120 |         if (lsp_exact_idx || lsp_legacy_idx) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3120:27: note: +1
+ 3120 |         if (lsp_exact_idx || lsp_legacy_idx) {
+      |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3121:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3121 |             for (int i = 0; i < result->resolved_calls.count; i++) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3123:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3123 |                 if (rc_e->kind != CBM_RESOLVED_INVOCATION || !rc_e->caller_qn || !rc_e->callee_qn ||
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3123:99: note: +1
+ 3123 |                 if (rc_e->kind != CBM_RESOLVED_INVOCATION || !rc_e->caller_qn || !rc_e->callee_qn ||
+      |                                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3131:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3131 |                 if (!exact_site && !legacy_site) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3131:33: note: +1
+ 3131 |                 if (!exact_site && !legacy_site) {
+      |                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3134:50: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3134 |                 CBMHashTable *index = exact_site ? lsp_exact_idx : lsp_legacy_idx;
+      |                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3138:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3138 |                 if (!inserted) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3139:21: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 3139 |                     if (exact_site) {
+      |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3141:23: note: +1, nesting level increased to 5
+ 3141 |                     } else {
+      |                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3145:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3145 |                 if (rc_e->reason && cbm_pipeline_invocation_reason_join_strategy(rc_e->strategy)) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3145:34: note: +1
+ 3145 |                 if (rc_e->reason && cbm_pipeline_invocation_reason_join_strategy(rc_e->strategy)) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3149:21: note: +5, including nesting penalty of 4, nesting level increased to 5
+ 3149 |                     if (!inserted) {
+      |                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3150:25: note: +6, including nesting penalty of 5, nesting level increased to 6
+ 3150 |                         if (exact_site) {
+      |                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3152:27: note: +1, nesting level increased to 6
+ 3152 |                         } else {
+      |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3157:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3157 |                 if (exact_site && rc_e->strategy && strcmp(rc_e->strategy, "lsp_destructor") == 0 &&
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3157:99: note: +1
+ 3157 |                 if (exact_site && rc_e->strategy && strcmp(rc_e->strategy, "lsp_destructor") == 0 &&
+      |                                                                                                   ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3170:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3170 |     for (int c = 0; c < result->calls.count; c++) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3172:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3172 |         if (!call->callee_name) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3180:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3180 |         if (!source_node) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3196:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3196 |         if (cbm_pipeline_source_site_present(call->site_start_byte, call->site_end_byte)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3199:65: note: +1
+ 3199 |         bool exact_index_authoritative = lsp_exact_idx_complete && exact_key_built;
+      |                                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3200:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3200 |         if (!lsp && !exact_index_authoritative) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3200:18: note: +1
+ 3200 |         if (!lsp && !exact_index_authoritative) {
+      |                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3208:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3208 |         if (!lsp && !call->requires_lsp_resolution && exact_index_authoritative &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3208:81: note: +1
+ 3208 |         if (!lsp && !call->requires_lsp_resolution && exact_index_authoritative &&
+      |                                                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3212:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3212 |         if (!lsp && (!lsp_legacy_idx_complete || !legacy_key_built || allow_tail ||
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3212:18: note: +1
+ 3212 |         if (!lsp && (!lsp_legacy_idx_complete || !legacy_key_built || allow_tail ||
+      |                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3212:82: note: +1
+ 3212 |         if (!lsp && (!lsp_legacy_idx_complete || !legacy_key_built || allow_tail ||
+      |                                                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3226:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3226 |         if (lsp) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3230:72: note: +1
+ 3230 |             bool exact_external_target = call->requires_lsp_resolution &&
+      |                                                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3233:30: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3233 |                              ? cbm_pipeline_lsp_target_node_strict(rc->main_gbuf, rc->project_name,
+      |                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3237:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3237 |             if (lsp_target) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3239:46: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3239 |                 res.strategy = lsp->strategy ? lsp->strategy : "lsp_override";
+      |                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3264:87: note: +1
+ 3264 |         bool php_vendor_call = cbm_pipeline_php_vendor_call(php_vendor, result, call) ||
+      |                                                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3265:52: note: +1
+ 3265 |                                (lsp && !lsp_target && cbm_pipeline_lsp_external_receiver(lsp));
+      |                                                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3266:34: note: +1
+ 3266 |         bool rust_external = lsp && cbm_pipeline_rust_external_target(
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3268:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3268 |         if ((!res.qualified_name || !res.qualified_name[0]) && !call->requires_lsp_resolution &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3269:28: note: +1
+ 3269 |             !rust_external && !php_vendor_call) {
+      |                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3268:34: note: +1
+ 3268 |         if ((!res.qualified_name || !res.qualified_name[0]) && !call->requires_lsp_resolution &&
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3277:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3277 |         if ((!res.qualified_name || !res.qualified_name[0]) && !call->requires_lsp_resolution &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3277:95: note: +1
+ 3277 |         if ((!res.qualified_name || !res.qualified_name[0]) && !call->requires_lsp_resolution &&
+      |                                                                                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3277:34: note: +1
+ 3277 |         if ((!res.qualified_name || !res.qualified_name[0]) && !call->requires_lsp_resolution &&
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3279:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3279 |             if (!field_index_built) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3286:64: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3286 |                     &result->resolved_calls, field_index_ready ? &field_index : NULL, rc->main_gbuf,
+      |                                                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3296:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3296 |         if (call->requires_lsp_resolution && !lsp_target) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3296:43: note: +1
+ 3296 |         if (call->requires_lsp_resolution && !lsp_target) {
+      |                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3306:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3306 |         if (cbm_registry_name_guess_vetoed(rc->registry, lang, &res)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3320:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3320 |         if (cbm_perl_suppress_generic_match(lang == CBM_LANG_PERL, call->is_method,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3344:61: note: +1
+ 3344 |                                     lang == CBM_LANG_SVELTE || lang == CBM_LANG_ASTRO;
+      |                                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3362:76: note: +1
+ 3362 |                                                    rc->project_name, rel)) ||
+      |                                                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3350:98: note: +1
+ 3350 |             (cbm_suppress_weak_member_match(suppress_weak_member, call->is_method, res.strategy) &&
+      |                                                                                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3359:76: note: +1
+ 3359 |              cbm_suppress_weak_import_bound_call(true, true, res.strategy) &&
+      |                                                                            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3379:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3379 |         if (cbm_pipeline_http_client_call_url(rc->main_gbuf, rc->project_name, rel, result,
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3394:75: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3394 |         const char *svc_name = cbm_pipeline_service_name(call, lsp_target ? NULL : lsp, &csvc);
+      |                                                                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3395:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3395 |         if (csvc == CBM_SVC_HTTP || csvc == CBM_SVC_ASYNC) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3395:34: note: +1
+ 3395 |         if (csvc == CBM_SVC_HTTP || csvc == CBM_SVC_ASYNC) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3397:49: note: +1
+ 3397 |             bool chas_url = cu && cu[0] != '\0' &&
+      |                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3398:72: note: +1
+ 3398 |                             (cu[0] == '/' || strstr(cu, "://") != NULL ||
+      |                                                                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3399:53: note: +1
+ 3399 |                              (csvc == CBM_SVC_ASYNC && strlen(cu) > PP_ESC_SPACE));
+      |                                                     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3400:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3400 |             if (chas_url) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3416:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3416 |         if (cbm_pipeline_spawn_site(rc->main_gbuf, lang, call, &result->imports, &res, &spawn)) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3421:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3421 |         if (!res.qualified_name || res.qualified_name[0] == '\0') {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3421:33: note: +1
+ 3421 |         if (!res.qualified_name || res.qualified_name[0] == '\0') {
+      |                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3422:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3422 |             if (cbm_service_pattern_route_method(call->callee_name) != NULL) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3434:20: note: +1, nesting level increased to 3
+ 3434 |             } else if (cbm_service_pattern_is_global_fetch(call->callee_name)) {
+      |                    ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3441:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3441 |                 if (u && u[0] != '\0' && (u[0] == '/' || strstr(u, "://") != NULL)) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3441:39: note: +1
+ 3441 |                 if (u && u[0] != '\0' && (u[0] == '/' || strstr(u, "://") != NULL)) {
+      |                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3441:55: note: +1
+ 3441 |                 if (u && u[0] != '\0' && (u[0] == '/' || strstr(u, "://") != NULL)) {
+      |                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3448:15: note: +1, nesting level increased to 3
+ 3448 |             } else {
+      |               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3457:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3457 |                 if (isvc != CBM_SVC_NONE) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3475:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3475 |         if (lsp_target && res.qualified_name == lsp_target->qualified_name) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3475:24: note: +1
+ 3475 |         if (lsp_target && res.qualified_name == lsp_target->qualified_name) {
+      |                        ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3477:11: note: +1, nesting level increased to 2
+ 3477 |         } else {
+      |           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3485:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3485 |         if (target_node && source_node->id != target_node->id) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3485:25: note: +1
+ 3485 |         if (target_node && source_node->id != target_node->id) {
+      |                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3488:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3488 |             if (field_policy == CBM_FIELD_CALL_DROP) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3491:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3491 |             if (field_policy == CBM_FIELD_CALL_BY_OWNER && !arrow_bound) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3491:57: note: +1
+ 3491 |             if (field_policy == CBM_FIELD_CALL_BY_OWNER && !arrow_bound) {
+      |                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3492:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3492 |                 if (!field_index_built) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3498:64: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3498 |                     &result->resolved_calls, field_index_ready ? &field_index : NULL, rc->main_gbuf,
+      |                                                                ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3501:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3501 |                 if (!target_node || source_node->id == target_node->id) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3501:34: note: +1
+ 3501 |                 if (!target_node || source_node->id == target_node->id) {
+      |                                  ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3506:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3506 |         if (target_node && source_node->id != target_node->id &&
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3506:63: note: +1
+ 3506 |         if (target_node && source_node->id != target_node->id &&
+      |                                                               ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3516:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 3516 |         if (!target_node || source_node->id == target_node->id) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3516:26: note: +1
+ 3516 |         if (!target_node || source_node->id == target_node->id) {
+      |                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3523:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 3523 |             if ((psvc == CBM_SVC_HTTP || psvc == CBM_SVC_ASYNC) && !target_node) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3523:65: note: +1
+ 3523 |             if ((psvc == CBM_SVC_HTTP || psvc == CBM_SVC_ASYNC) && !target_node) {
+      |                                                                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3523:39: note: +1
+ 3523 |             if ((psvc == CBM_SVC_HTTP || psvc == CBM_SVC_ASYNC) && !target_node) {
+      |                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3525:55: note: +1
+ 3525 |                 bool url_or_topic = u && u[0] != '\0' &&
+      |                                                       ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3526:78: note: +1
+ 3526 |                                     (u[0] == '/' || strstr(u, "://") != NULL ||
+      |                                                                              ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3527:61: note: +1
+ 3527 |                                      (psvc == CBM_SVC_ASYNC && strlen(u) > PP_ESC_SPACE));
+      |                                                             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3528:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+ 3528 |                 if (url_or_topic) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3545:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3545 |     if (lsp_exact_idx) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_parallel.c:3549:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 3549 |     if (lsp_legacy_idx) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:626:13: error: function 'sem_process_def_edges' has cognitive complexity of 29 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+  626 | static void sem_process_def_edges(cbm_pipeline_ctx_t *ctx, const CBMDefinition *def,
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:632:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  632 |     if (!def->qualified_name) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:636:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  636 |     if (!node) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:639:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  639 |     if (def->base_classes) {
+      |     ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:640:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  640 |         for (int b = 0; def->base_classes[b]; b++) {
+      |         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:644:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  644 |             if (cbm_pipeline_php_vendor_bound(php_vendor, def->base_classes[b])) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:649:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  649 |             if (!base_qn || cbm_python_external_base_contradicts(
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:649:26: note: +1
+  649 |             if (!base_qn || cbm_python_external_base_contradicts(
+      |                          ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:655:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  655 |             if (base_node && node->id != base_node->id) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:655:27: note: +1
+  655 |             if (base_node && node->id != base_node->id) {
+      |                           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:664:17: note: +4, including nesting penalty of 3, nesting level increased to 4
+  664 |                 if (fi->language == CBM_LANG_PYTHON) {
+      |                 ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:666:89: note: +5, including nesting penalty of 4, nesting level increased to 5
+  666 |                         snprintf(base_props, sizeof(base_props), "{\"base_index\":%d}", b);
+      |                                                                                         ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:667:13: note: +1
+  667 |                     if (written < 0 || (size_t)written >= sizeof(base_props)) {
+      |             ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:674:11: note: +1, including nesting penalty of 0, nesting level increased to 1
+  674 |             }
+      |           ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:677:12: note: +2, including nesting penalty of 1, nesting level increased to 2
+  677 |     if (def->decorators) {
+      |            ^
+/home/imi/Projects/codebase-memory-mcp-v0121/src/pipeline/pass_semantic.c:1066:5: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1066 |         return -1;
+      |     ^

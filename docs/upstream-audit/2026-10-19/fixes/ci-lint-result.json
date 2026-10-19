@@ -1,0 +1,13 @@
+{
+  "command": [
+    "bash",
+    "scripts/lint.sh",
+    "--ci",
+    "CPPCHECK=/tmp/cbm-cppcheck-2.20.0/build/bin/cppcheck",
+    "CLANG_FORMAT=/nix/store/vr3fvwphdmrfl288as91smrfj0qbw7qf-clang-tools-20.1.8/bin/clang-format",
+    "BUILD_DIR=build/audit",
+    "CPPCHECK_BUILD_DIR=build/audit/cppcheck-profile"
+  ],
+  "elapsed_seconds": 14.508145798004989,
+  "exit_code": 0
+}

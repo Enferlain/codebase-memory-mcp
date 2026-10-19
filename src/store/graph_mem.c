@@ -742,6 +742,14 @@ static bool gm_expand_level(gm_walk_t *w, const gm_list_t *frontier, gm_list_t *
     return true;
 }
 
+static void gm_walk_direction(gm_walk_t *walk, const cbm_graph_mem_t *graph, bool inbound,
+                              cbm_graph_mem_types_t mask) {
+    walk->off = inbound ? graph->in_off : graph->out_off;
+    walk->nbr = inbound ? graph->in_nbr : graph->out_nbr;
+    walk->type = inbound ? graph->in_type : graph->out_type;
+    walk->mask = mask;
+}
+
 bool cbm_graph_mem_bfs_dispatch(const cbm_graph_mem_t *g, int64_t start, bool inbound,
                                 cbm_graph_mem_types_t mask, cbm_graph_mem_types_t reverse_mask,
                                 int max_depth, cbm_graph_mem_hop_t **out, int *count) {
@@ -763,16 +771,10 @@ bool cbm_graph_mem_bfs_dispatch(const cbm_graph_mem_t *g, int64_t start, bool in
     for (int hop = 1; ok && hop <= max_depth && frontier.count > 0; hop++) {
         size_t level_begin = w.out.count;
         next.count = 0;
-        w.off = inbound ? g->in_off : g->out_off;
-        w.nbr = inbound ? g->in_nbr : g->out_nbr;
-        w.type = inbound ? g->in_type : g->out_type;
-        w.mask = mask;
+        gm_walk_direction(&w, g, inbound, mask);
         ok = gm_expand_level(&w, &frontier, &next, hop);
         if (ok && (reverse_mask & mask) != 0) {
-            w.off = inbound ? g->out_off : g->in_off;
-            w.nbr = inbound ? g->out_nbr : g->in_nbr;
-            w.type = inbound ? g->out_type : g->in_type;
-            w.mask = reverse_mask & mask;
+            gm_walk_direction(&w, g, !inbound, reverse_mask & mask);
             ok = gm_expand_level(&w, &frontier, &next, hop);
         }
         if (ok && w.out.count - level_begin > 1) {

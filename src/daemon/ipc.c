@@ -2639,6 +2639,8 @@ static int posix_record_artifact_status(const cbm_daemon_ipc_endpoint_t *endpoin
     return 1;
 }
 
+enum { POSIX_SOCKET_PATH_PRESENT = 1, POSIX_SOCKET_SINGLE_LINK = 1, POSIX_SOCKET_PAIRED_LINKS = 2 };
+
 /* st_dev can change across a remount (for example, a WSL restart). Rebase
  * only a decoded persisted identity onto its record's current filesystem and
  * a retained anchor with the same inode. Callers must still corroborate the
@@ -2671,23 +2673,22 @@ static int posix_socket_record_identity_corroborated(
     }
 
     posix_socket_identity_t identity = record->identity;
-    if (anchor_state == 1) {
+    if (anchor_state == POSIX_SOCKET_PATH_PRESENT) {
         posix_socket_record_rebase_device(&identity, record_device, &anchor);
     }
 
     if (memcmp(magic, POSIX_SOCKET_PENDING_MAGIC, POSIX_SOCKET_RECORD_MAGIC_SIZE) == 0) {
-        return stable_state == 0 && anchor_state == 1 && anchor_status.st_nlink == 1 &&
-                       posix_socket_identity_equal(&identity, &anchor)
-                   ? 1
-                   : 0;
+        return stable_state == 0 && anchor_state == POSIX_SOCKET_PATH_PRESENT &&
+               anchor_status.st_nlink == POSIX_SOCKET_SINGLE_LINK &&
+               posix_socket_identity_equal(&identity, &anchor);
     }
     if (memcmp(magic, POSIX_SOCKET_MARKER_MAGIC, POSIX_SOCKET_RECORD_MAGIC_SIZE) == 0) {
-        return stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
-                       anchor_status.st_nlink == 2 &&
-                       posix_socket_identity_equal(&identity, &stable) &&
-                       posix_socket_identity_equal(&identity, &anchor)
-                   ? 1
-                   : 0;
+        return stable_state == POSIX_SOCKET_PATH_PRESENT &&
+               anchor_state == POSIX_SOCKET_PATH_PRESENT &&
+               stable_status.st_nlink == POSIX_SOCKET_PAIRED_LINKS &&
+               anchor_status.st_nlink == POSIX_SOCKET_PAIRED_LINKS &&
+               posix_socket_identity_equal(&identity, &stable) &&
+               posix_socket_identity_equal(&identity, &anchor);
     }
     return -1;
 }
@@ -2997,7 +2998,7 @@ static int posix_stale_generation_cleanup_locked(const cbm_daemon_ipc_endpoint_t
         goto cleanup_done;
     }
 
-    if (anchor_state == 1) {
+    if (anchor_state == POSIX_SOCKET_PATH_PRESENT) {
         if (marker_state == POSIX_RECORD_VALID) {
             posix_socket_record_rebase_device(&marker.identity, marker_status.st_dev,
                                               &anchor_identity);

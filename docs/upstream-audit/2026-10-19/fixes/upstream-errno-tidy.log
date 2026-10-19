@@ -1,0 +1,265 @@
+10587 warnings generated.
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2761:13: error: function 'posix_socket_record_publish' has cognitive complexity of 35 (threshold 25) [readability-function-cognitive-complexity,-warnings-as-errors]
+ 2761 | static bool posix_socket_record_publish(const cbm_daemon_ipc_endpoint_t *endpoint,
+      |             ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:85: note: +1
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                                                     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2772:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2772 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2772:85: note: +1
+ 2772 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |                                                                                     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2774:47: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2774 |         posix_publish_failure_note(errno == 0 ? EEXIST : errno, record_name);
+      |                                               ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2778:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2778 |     if (!posix_socket_record_encode(magic, source, record)) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2784:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2784 |     if (!posix_socket_record_temp_name(record_name, temp_name)) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2790:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2790 |     if (fd < 0) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2803:66: note: +1
+ 2803 |               created.st_size == (off_t)POSIX_SOCKET_RECORD_SIZE &&
+      |                                                                  ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2805:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2805 |     if (!ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2808:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2808 |     if (ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2814:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2814 |         if (!ok) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2818:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2818 |     if (ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2824:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2824 |         if (!ok) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2828:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2828 |     if (ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2831:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2831 |         if (!ok) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2836:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2836 |     if (close(fd) != 0) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2837:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2837 |         if (ok) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2845:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2845 |     if (ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2850:56: note: +1
+ 2850 |              published_status.st_dev == created.st_dev && published_status.st_ino == created.st_ino;
+      |                                                        ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2851:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2851 |         if (!ok) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2855:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+ 2855 |     if (!ok) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2856:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2856 |         if (stable_linked) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2858:92: note: +3, including nesting penalty of 2, nesting level increased to 3
+ 2858 |                 endpoint->dir_fd, record_name, created.st_dev, created.st_ino, temp_exists ? 2 : 1);
+      |                                                                                            ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2860:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+ 2860 |         if (temp_exists) {
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2774:36: error: An undefined value may be read from 'errno' [clang-analyzer-unix.Errno,-warnings-as-errors]
+ 2774 |         posix_publish_failure_note(errno == 0 ? EEXIST : errno, record_name);
+      |                                    ^
+/nix/store/sr08dm9x0fsa1mrzjrlb3csdcmilsraz-glibc-2.42-100-dev/include/errno.h:38:16: note: expanded from macro 'errno'
+   38 | # define errno (*__errno_location ())
+      |                ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2935:9: note: 'reservation_result' is equal to 1
+ 2935 |     if (reservation_result != 1) {
+      |         ^~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2935:5: note: Taking false branch
+ 2935 |     if (reservation_result != 1) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2944:9: note: 'pending_publication' is equal to 1
+ 2944 |     if (pending_publication != 1 || marker_publication != 1) {
+      |         ^~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2944:9: note: Left side of '||' is false
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2944:37: note: Assuming 'marker_publication' is equal to 1
+ 2944 |     if (pending_publication != 1 || marker_publication != 1) {
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2944:5: note: Taking false branch
+ 2944 |     if (pending_publication != 1 || marker_publication != 1) {
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:9: note: Assuming 'marker_state' is not equal to POSIX_RECORD_UNSAFE
+ 2969 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:9: note: Left side of '||' is false
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:48: note: Assuming 'pending_state' is not equal to POSIX_RECORD_UNSAFE
+ 2969 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:9: note: Left side of '||' is false
+ 2969 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2970:9: note: Assuming 'stable_state' is >= 0
+ 2970 |         stable_state < 0 || anchor_state < 0) {
+      |         ^~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:9: note: Left side of '||' is false
+ 2969 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2970:29: note: Assuming 'anchor_state' is >= 0
+ 2970 |         stable_state < 0 || anchor_state < 0) {
+      |                             ^~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2969:5: note: Taking false branch
+ 2969 |     if (marker_state == POSIX_RECORD_UNSAFE || pending_state == POSIX_RECORD_UNSAFE ||
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2974:9: note: Assuming 'marker_state' is not equal to POSIX_RECORD_UNKNOWN
+ 2974 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2974:9: note: Left side of '||' is false
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2974:49: note: Assuming 'pending_state' is not equal to POSIX_RECORD_UNKNOWN
+ 2974 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2974:9: note: Left side of '||' is false
+ 2974 |     if (marker_state == POSIX_RECORD_UNKNOWN || pending_state == POSIX_RECORD_UNKNOWN ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2975:10: note: Assuming 'marker_state' is not equal to POSIX_RECORD_VALID
+ 2975 |         (marker_state == POSIX_RECORD_VALID && pending_state == POSIX_RECORD_VALID &&
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2975:45: note: Left side of '&&' is false
+ 2975 |         (marker_state == POSIX_RECORD_VALID && pending_state == POSIX_RECORD_VALID &&
+      |                                             ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Assuming 'marker_state' is equal to POSIX_RECORD_ABSENT
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:48: note: Assuming 'pending_state' is equal to POSIX_RECORD_VALID
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2986:9: note: Assuming 'stable_state' is equal to 1
+ 2986 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |         ^~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2986:30: note: Assuming 'anchor_state' is equal to 1
+ 2986 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                              ^~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2986:51: note: Assuming field 'st_nlink' is equal to 2
+ 2986 |         stable_state == 1 && anchor_state == 1 && stable_status.st_nlink == 2 &&
+      |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2987:9: note: Assuming field 'st_nlink' is equal to 2
+ 2987 |         anchor_status.st_nlink == 2 &&
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:9: note: Left side of '&&' is true
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2985:5: note: Taking true branch
+ 2985 |     if (marker_state == POSIX_RECORD_ABSENT && pending_state == POSIX_RECORD_VALID &&
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2995:14: note: Calling 'posix_socket_record_publish'
+ 2995 |         if (!posix_socket_record_publish(endpoint, endpoint->socket_identity_name,
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 2996 |                                          POSIX_SOCKET_MARKER_MAGIC, &completed,
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 2997 |                                          &marker_status.st_dev, &marker_status.st_ino)) {
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:10: note: 'endpoint' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |          ^~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:22: note: Assuming 'record_name' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                      ^~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:39: note: 'magic' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                       ^~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:49: note: 'source' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                 ^~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:60: note: 'device_out' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                            ^~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:75: note: 'inode_out' is non-null
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |                                                                           ^~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:9: note: Left side of '||' is false
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |         ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2766:5: note: Taking false branch
+ 2766 |     if (!endpoint || !record_name || !magic || !source || !device_out || !inode_out ||
+      |     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2772:9: note: Assuming that 'fstatat' is successful; 'errno' becomes undefined after the call
+ 2772 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2772:85: note: Left side of '||' is true
+ 2772 |     if (fstatat(endpoint->dir_fd, record_name, &existing, AT_SYMLINK_NOFOLLOW) == 0 ||
+      |                                                                                     ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2774:36: note: An undefined value may be read from 'errno'
+ 2774 |         posix_publish_failure_note(errno == 0 ? EEXIST : errno, record_name);
+      |                                    ^
+/nix/store/sr08dm9x0fsa1mrzjrlb3csdcmilsraz-glibc-2.42-100-dev/include/errno.h:38:16: note: expanded from macro 'errno'
+   38 | # define errno (*__errno_location ())
+      |                ^~~~~~~~~~~~~~~~~~~~~~
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2783:31: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2783 |     char temp_name[NAME_MAX + 1];
+      |                               ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2785:36: error: no header providing "ENAMETOOLONG" is directly included [misc-include-cleaner,-warnings-as-errors]
+ 2785 |         posix_publish_failure_note(ENAMETOOLONG, record_name);
+      |                                    ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2789:88: error: 0600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2789 |                     O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC | O_NOFOLLOW | O_NONBLOCK, 0600);
+      |                                                                                        ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2799:48: error: 0600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2799 |     bool ok = fd_set_cloexec(fd) && fchmod(fd, 0600) == 0 &&
+      |                                                ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2800:78: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2800 |               private_regular_file_snapshot(endpoint->dir_fd, temp_name, fd, 1, &created) &&
+      |                                                                              ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2802:78: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2802 |               private_regular_file_snapshot(endpoint->dir_fd, temp_name, fd, 1, &created) &&
+      |                                                                              ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2822:67: error: 2 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2822 |                                                   created.st_ino, 2);
+      |                                                                   ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2858:94: error: 2 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2858 |                 endpoint->dir_fd, record_name, created.st_dev, created.st_ino, temp_exists ? 2 : 1);
+      |                                                                                              ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2858:98: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2858 |                 endpoint->dir_fd, record_name, created.st_dev, created.st_ino, temp_exists ? 2 : 1);
+      |                                                                                                  ^
+/tmp/cbm-v0121-lint-baseline/src/daemon/ipc.c:2862:72: error: 1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2862 |                                                        created.st_ino, 1);
+      |                                                                        ^
