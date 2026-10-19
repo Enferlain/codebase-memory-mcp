@@ -10,6 +10,7 @@
   "installed_binary_sha256": "41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5",
   "installed_binary_changed": false,
   "live_indexes_changed": false,
-  "candidate_source": "e11da93305373b7913f44266068d8629d2addf04",
-  "production_source_commit": "e11da93305373b7913f44266068d8629d2addf04"
+  "candidate_source": "15629b09d3de79ce05f48576e8b21c1378b9e83b",
+  "production_source_commit": "15629b09d3de79ce05f48576e8b21c1378b9e83b",
+  "production_binary_unchanged_after_lint_correction": true
 }

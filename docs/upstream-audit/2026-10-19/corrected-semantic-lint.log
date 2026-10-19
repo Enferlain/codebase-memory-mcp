@@ -1,0 +1,13 @@
+=== lint.sh: os=linux arch=x86_64 cores=32 cc=gcc cxx=g++ ===
+=== no-skips policy (tests pass or fail) ===
+[no-skips] OK — no forbidden skips in tests/*.c (SKIP_PLATFORM allowed for platform-only tests)
+=== CI mode: cppcheck + clang-format ===
+=== clang-format ===
+=== cppcheck ===
+=== NOLINT check ===
+  Checking NOLINT(misc-no-recursion) against whitelist...
+=== memory-core linter ===
+memory-core linter passed: 3708 raw sites across 82 files, none grew
+=== CI linters passed ===
+=== CI linters passed ===
+=== All linters passed ===

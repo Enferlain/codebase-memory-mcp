@@ -1,0 +1,16 @@
+{
+  "version": "0.12.1-fork.1",
+  "behavior_trial": "passed",
+  "compatibility_probes_passed": 22,
+  "extraction_tests_passed": 464,
+  "cli_fixture_tests_passed": 362,
+  "fault_convention_tests_passed": 13,
+  "suite_qualification": "189 passing suites; one upstream/host PATH test failure; 10 platform skips",
+  "contracts": "passed",
+  "memory_analyzer": "passed; corrected source rechecked",
+  "required_review": "returned; both actionable findings corrected",
+  "whole_tree_cppcheck": "incomplete at repository CI limit of 45 minutes",
+  "reported_cppcheck_finding": "upstream condition; corrected and affected-file lint passed",
+  "strict_clang_tidy": "not clean; see exploratory log and report",
+  "global_installation_changed": false
+}

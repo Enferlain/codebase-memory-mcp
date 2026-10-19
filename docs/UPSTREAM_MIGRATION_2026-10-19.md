@@ -29,6 +29,10 @@ workaround was ported. The dotted `os.write` workaround was also omitted.
 path-instance multiplicity are not implemented by these ports. Typed incident
 edge output is not a complete list of path instances.
 
+An upstream test-fault stub also triggered cppcheck in production builds.
+Its caller now compiles the conditional only with test seams enabled;
+production behavior and the release binary checksum are unchanged.
+
 The official tag's package metadata still said 0.12.0. The branch also carries
 upstream's subsequent metadata-only 0.12.1 corrections from `9dba7fe1`.
 The semantic index version is `1000009`, deliberately outside upstream's
@@ -63,11 +67,18 @@ dedicated fixture, not inferred from this snapshot.
 
 ## Validation
 
-Final validation is in progress. Completed checks:
+The isolated behavior trial passes its compatibility and real-project checks.
+The installed fork remains unchanged: this is **not an unqualified release
+approval**, because whole-tree cppcheck did not finish and strict clang-tidy
+findings remain. Completed checks:
 
 - 22 focused regressions and all 464 extraction tests pass under ASan/UBSan,
   with no sanitizer report.
 - Every `scripts/test.sh --contracts-only` step passes.
+- The full 190-suite run completes: 9,726 passed, 2 failed, 10 platform skips.
+  The CLI fixture rerun is green (all 362 tests), giving 189 passing suites
+  and one recorded upstream/host failure across the combined evidence.
+  This is not an unqualified clean full-suite command.
 - Nine process/artifact scripts pass, including parent-death cleanup, worker
   error transport, watcher disabling, request scope, TLS size, and 17 binary
   composition assertions. The release contains no test-only seams.
@@ -98,6 +109,16 @@ The memory analyzer uses clang-tidy 21.1.8 with `CC=clang` for Makefile flag
 selection; the GCC-only warning flags otherwise prevent analysis. The initial
 empty analyzer result with GCC flags is not counted as valid evidence.
 
+The CI-version whole-tree cppcheck scan was stopped at the repository's
+45-minute CI limit (2,703 seconds). It reported one existing upstream
+production-disabled test-hook condition before timing out. That condition
+was reproduced on unchanged upstream, corrected with a compile-time guard,
+and the affected file passed a fresh CI-lint and memory-analyzer run. All
+13 fault-injection convention tests and the 22 compatibility probes pass
+afterward. The release binary remains byte-for-byte identical. The full
+cppcheck scan is **incomplete**, not green; a successful file recheck does
+not establish that every remaining translation unit was checked.
+
 An additional, noncanonical clang-tidy sweep is **not clean**: the touched
 functions include existing complexity warnings, and the new C3 helpers also
 exceed the configured complexity threshold and retain style/magic-number
@@ -112,9 +133,11 @@ and checksums are under [the trial evidence](upstream-audit/2026-10-19/).
 
 ## Moving the trial into service
 
-After the remaining validation passes, keep a backup of the installed binary,
-use the repository's guarded installer, and coordinate a restart of all MCP
-clients so the daemon and clients run identical bytes. Retain the old fork
+Continue using the isolated candidate while resolving the static-lint
+qualification gaps. For the eventual default switch, quiesce the MCP clients,
+back up both the installed binary and its consistent cache state, use the
+repository's guarded installer, and restart all MCP clients so the daemon and
+clients run identical bytes. Retain the old fork
 branch for rollback. The new semantic version requires a fresh index; an old
 graph must not be reused as evidence of the port's behavior.
 

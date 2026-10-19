@@ -1,3 +1,5 @@
+Final disposition: both actionable findings in this snapshot review are corrected and regression-checked. The critical P4 section below describes earlier code; see the commit-linked dispositions at the end.
+
 I have a complete picture now. Here's my review.
 
 ---

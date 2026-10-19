@@ -1,0 +1,1541 @@
+{
+  "full_run": {
+    "passed": 9726,
+    "failed": 2,
+    "skipped": 10,
+    "suites": 190,
+    "exit": 1
+  },
+  "with_corrected_cli_fixture": {
+    "passed": 9727,
+    "failed": 1,
+    "skipped": 10,
+    "suites": 190,
+    "passing_suites": 189,
+    "remaining_failure": "subprocess_environment_path_preserves_caller_lookup; reproduces on unmodified upstream and the wrapped /bin/sh independently"
+  },
+  "suite_results": [
+    {
+      "suite": "grammar_regression",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "py_lsp_stress",
+      "exit": 0,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "runner_isolation",
+      "exit": 0,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "arena",
+      "exit": 0,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "hash_table",
+      "exit": 0,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "dyn_array",
+      "exit": 0,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "str_intern",
+      "exit": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "log",
+      "exit": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "str_util",
+      "exit": 0,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "workspace",
+      "exit": 0,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "index_policy",
+      "exit": 0,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "diagnostics",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_arch",
+      "exit": 0,
+      "passed": 67,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 15
+    },
+    {
+      "suite": "private_file_lock",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 0
+    },
+    {
+      "suite": "lock_registry",
+      "exit": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "dump_verify",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "ac",
+      "exit": 0,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "callable_sig",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_conventions",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "platform",
+      "exit": 0,
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 12
+    },
+    {
+      "suite": "extraction_inheritance",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "extraction_imports",
+      "exit": 0,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "grammar_labels",
+      "exit": 0,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "grammar_imports",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_nodes",
+      "exit": 0,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_edges",
+      "exit": 0,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_impact",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_scope",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "parse_coverage",
+      "exit": 0,
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4
+    },
+    {
+      "suite": "store_graph_digest",
+      "exit": 0,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "test_impact",
+      "exit": 0,
+      "passed": 86,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_profiles",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_changes",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_origins",
+      "exit": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "graph_mem",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 10
+    },
+    {
+      "suite": "complexity",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 36
+    },
+    {
+      "suite": "test_impact_tree_read",
+      "exit": 0,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 19
+    },
+    {
+      "suite": "test_impact_tree",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 41
+    },
+    {
+      "suite": "test_impact_inventory",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 13
+    },
+    {
+      "suite": "test_impact_source",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_seed",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_classify",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 22
+    },
+    {
+      "suite": "test_impact_artifact",
+      "exit": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "test_impact_runner_filter",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "test_impact_engine",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 33
+    },
+    {
+      "suite": "store_bulk",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "store_pragmas",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "store_checkpoint",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "dump_verify_io",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "store_search",
+      "exit": 0,
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 16
+    },
+    {
+      "suite": "mcp_mutation_guard",
+      "exit": 0,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "daemon",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "project_lock",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "version_cohort",
+      "exit": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "daemon_version",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "language",
+      "exit": 0,
+      "passed": 249,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "userconfig",
+      "exit": 0,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "gitignore",
+      "exit": 0,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "gitignore_checked",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "inventory_filter",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "git_context",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "discover",
+      "exit": 0,
+      "passed": 131,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "graph_buffer",
+      "exit": 0,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "registry",
+      "exit": 0,
+      "passed": 92,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "pipeline_objectscript_timeout",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "pipeline_conventions",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 9
+    },
+    {
+      "suite": "pipeline",
+      "exit": 0,
+      "passed": 372,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 146
+    },
+    {
+      "suite": "cypher",
+      "exit": 0,
+      "passed": 232,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 38
+    },
+    {
+      "suite": "importance",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 5
+    },
+    {
+      "suite": "index_format",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "pipeline_frozen",
+      "exit": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 14
+    },
+    {
+      "suite": "call_reference_contract",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 9
+    },
+    {
+      "suite": "call_reference_language_complex_contract",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8
+    },
+    {
+      "suite": "repro_call_scope_usages",
+      "exit": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_call_argument_usages",
+      "exit": 0,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 13
+    },
+    {
+      "suite": "repro_call_argument_matrix_a",
+      "exit": 0,
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_call_argument_matrix_b",
+      "exit": 0,
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_call_node_behaviors",
+      "exit": 0,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_language_registry",
+      "exit": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_call_node_manifest",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_lsp_ordered_signatures",
+      "exit": 0,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_lsp_ordered_local",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_ts_overload_return_chains",
+      "exit": 0,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_harness_cleanup",
+      "exit": 0,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_runner_filter",
+      "exit": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "cross_repo",
+      "exit": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8
+    },
+    {
+      "suite": "fqn",
+      "exit": 0,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "route_canon",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "path_alias",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "lz4",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "zstd",
+      "exit": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "sqlite_writer",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4
+    },
+    {
+      "suite": "test_impact_git",
+      "exit": 0,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 169
+    },
+    {
+      "suite": "scope",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "type_rep",
+      "exit": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "go_lsp",
+      "exit": 0,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "artifact",
+      "exit": 0,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 12
+    },
+    {
+      "suite": "php_lsp",
+      "exit": 0,
+      "passed": 288,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "cs_lsp",
+      "exit": 0,
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "cs_lsp_bench",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "perl_lsp",
+      "exit": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_reference_precision",
+      "exit": 0,
+      "passed": 85,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 45
+    },
+    {
+      "suite": "kotlin_lsp",
+      "exit": 0,
+      "passed": 85,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "rust_lsp",
+      "exit": 0,
+      "passed": 522,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "py_lsp_bench",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "py_lsp_scale",
+      "exit": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 7
+    },
+    {
+      "suite": "ts_lsp",
+      "exit": 0,
+      "passed": 310,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "java_lsp",
+      "exit": 0,
+      "passed": 95,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "pipeline_semantic_manifest_repro",
+      "exit": 0,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 72
+    },
+    {
+      "suite": "java_lsp_coverage",
+      "exit": 0,
+      "passed": 284,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "traces",
+      "exit": 0,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "configlink",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "architecture_projection",
+      "exit": 0,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "doclinks",
+      "exit": 0,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "py_lsp",
+      "exit": 0,
+      "passed": 121,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 25
+    },
+    {
+      "suite": "doc_mentions_msbuild",
+      "exit": 0,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 15
+    },
+    {
+      "suite": "doc_mentions_cost",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 24
+    },
+    {
+      "suite": "doc_links_pdf",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 7
+    },
+    {
+      "suite": "doc_links_md",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 11
+    },
+    {
+      "suite": "doc_links_adoc",
+      "exit": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "doc_links_rst",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 7
+    },
+    {
+      "suite": "doc_mentions_go",
+      "exit": 0,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 28
+    },
+    {
+      "suite": "doc_mentions_rs",
+      "exit": 0,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 31
+    },
+    {
+      "suite": "doc_mentions_jvm",
+      "exit": 0,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 63
+    },
+    {
+      "suite": "doc_mentions_perl",
+      "exit": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 7
+    },
+    {
+      "suite": "doc_mentions_ts",
+      "exit": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 6
+    },
+    {
+      "suite": "doc_mentions_php",
+      "exit": 0,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 6
+    },
+    {
+      "suite": "diagrams",
+      "exit": 0,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 5
+    },
+    {
+      "suite": "doc_mentions_c",
+      "exit": 0,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 7
+    },
+    {
+      "suite": "infrascan",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "openapi",
+      "exit": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "agent_clients",
+      "exit": 0,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "agent_profiles",
+      "exit": 0,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "runtime_settings",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "config_json_like",
+      "exit": 0,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "config_toml_edit",
+      "exit": 0,
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "config_yaml_edit",
+      "exit": 0,
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 1
+    },
+    {
+      "suite": "config_text_edit",
+      "exit": 0,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "system_info",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "activation_transaction",
+      "exit": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "worker_pool",
+      "exit": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "repro_lexical_binding_precision",
+      "exit": 0,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "slab_alloc",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "mem",
+      "exit": 0,
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "mem_events",
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "security",
+      "exit": 0,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "parallel",
+      "exit": 0,
+      "passed": 82,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "yaml",
+      "exit": 0,
+      "passed": 73,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "ast_profile",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "semantic",
+      "exit": 0,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "doc_mentions",
+      "exit": 0,
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 125
+    },
+    {
+      "suite": "integration",
+      "exit": 0,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "simhash",
+      "exit": 0,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4
+    },
+    {
+      "suite": "spawns",
+      "exit": 0,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2
+    },
+    {
+      "suite": "conditional_variants",
+      "exit": 0,
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 23
+    },
+    {
+      "suite": "edge_structural",
+      "exit": 0,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 21
+    },
+    {
+      "suite": "edge_imports",
+      "exit": 0,
+      "passed": 82,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 48
+    },
+    {
+      "suite": "lang_contract",
+      "exit": 0,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 57
+    },
+    {
+      "suite": "node_creation_probe",
+      "exit": 0,
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 46
+    },
+    {
+      "suite": "lsp_resolution_probe",
+      "exit": 0,
+      "passed": 88,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 53
+    },
+    {
+      "suite": "c_lsp",
+      "exit": 0,
+      "passed": 777,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 259
+    },
+    {
+      "suite": "edge_types_probe",
+      "exit": 0,
+      "passed": 86,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 57
+    },
+    {
+      "suite": "matrix_known_classes",
+      "exit": 0,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 26
+    },
+    {
+      "suite": "convergence_probe",
+      "exit": 0,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 29
+    },
+    {
+      "suite": "grammar_probe_c",
+      "exit": 0,
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8
+    },
+    {
+      "suite": "grammar_probe_a",
+      "exit": 0,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 24
+    },
+    {
+      "suite": "matrix_new_constructs",
+      "exit": 0,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 38
+    },
+    {
+      "suite": "grammar_probe_b",
+      "exit": 0,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 17
+    },
+    {
+      "suite": "grammar_probe_e",
+      "exit": 0,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 21
+    },
+    {
+      "suite": "grammar_probe_g",
+      "exit": 0,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 15
+    },
+    {
+      "suite": "grammar_probe_d",
+      "exit": 0,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 34
+    },
+    {
+      "suite": "grammar_probe_f",
+      "exit": 0,
+      "passed": 164,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 75
+    },
+    {
+      "suite": "watcher",
+      "exit": 0,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 25
+    },
+    {
+      "suite": "subprocess",
+      "exit": 1,
+      "passed": 55,
+      "failed": 1,
+      "skipped": 2,
+      "seconds": 16
+    },
+    {
+      "suite": "httpd",
+      "exit": 0,
+      "passed": 95,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 41
+    },
+    {
+      "suite": "index_resilience",
+      "exit": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 6
+    },
+    {
+      "suite": "ui",
+      "exit": 0,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 6
+    },
+    {
+      "suite": "incremental",
+      "exit": 0,
+      "passed": 164,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 122
+    },
+    {
+      "suite": "stack_overflow_a",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 39
+    },
+    {
+      "suite": "stack_overflow_c",
+      "exit": 0,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0
+    },
+    {
+      "suite": "stack_overflow_b",
+      "exit": 0,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 94
+    },
+    {
+      "suite": "daemon_runtime",
+      "exit": 0,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 125
+    },
+    {
+      "suite": "cli",
+      "exit": 0,
+      "passed": 362,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 223,
+      "evidence": "cli-results.log",
+      "reason": "standalone native fixture; all staging and lease assertions retained"
+    },
+    {
+      "suite": "extraction",
+      "exit": 0,
+      "passed": 464,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 36
+    },
+    {
+      "suite": "daemon_ipc",
+      "exit": 0,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 2
+    },
+    {
+      "suite": "mcp",
+      "exit": 0,
+      "passed": 378,
+      "failed": 0,
+      "skipped": 4,
+      "seconds": 86
+    },
+    {
+      "suite": "daemon_frontend",
+      "exit": 0,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 61
+    },
+    {
+      "suite": "index_supervisor",
+      "exit": 0,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4
+    },
+    {
+      "suite": "daemon_application",
+      "exit": 0,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 3
+    },
+    {
+      "suite": "daemon_bootstrap",
+      "exit": 0,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4
+    }
+  ]
+}
