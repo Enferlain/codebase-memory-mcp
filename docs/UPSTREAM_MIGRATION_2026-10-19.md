@@ -153,6 +153,21 @@ is identical. Only SEMANTICALLY_RELATED edges differ (109 removed, 127 added);
 no deterministic similarity-graph claim is made. Snapshot:
 `/tmp/cbm-v0121-validation-kufyz1dy`.
 
+## In-action MCP acceptance
+
+A real MCP stdio client ran the release candidate side by side with the installed
+server, using a fresh private cache/runtime and a Git-backed copy of the same
+943-file source snapshot. All **15 live checks passed**: tool discovery, cold
+indexing, searches/snippets, training and caching contract calls, three-family
+SD/SDXL/SD3 dispatch topology, executable identity, saved-graph reload after a
+daemon restart, and automatic file creation/edit/deletion updates. The edited
+file produced its expected CALLS edge without a manual reindex.
+
+The running frontend and daemon matched the candidate SHA-256; the installed
+binary hash remained unchanged. Both private daemons stopped cleanly. A plain
+folder copy needs `watch_non_git=true` for automatic updates; the successful
+run used the normal Git watcher. See [live results and raw sessions](upstream-audit/2026-10-19/in-action/README.md).
+
 ## Moving the trial into service
 
 The candidate is qualified for the tested Linux/glibc environment. macOS runtime

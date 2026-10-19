@@ -1,0 +1,125 @@
+{
+  "base": "/tmp/cbm-mcp-in-action-nnd9_wtu",
+  "repo": "/tmp/cbm-mcp-in-action-nnd9_wtu/sd-scripts",
+  "source_head": "9c4d7addc7fcac2bdd194a3d7cbadb7ce8603df9",
+  "candidate_sha256": "4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026",
+  "installed_sha256_before": "41bf9d6983401bb5af5256ab840f37475f05f92ef04b2a33923f5742206739d5",
+  "checks": [
+    {
+      "name": "manual initialize",
+      "passed": true,
+      "detail": {
+        "name": "codebase-memory-mcp",
+        "version": "0.12.1-fork.1"
+      }
+    },
+    {
+      "name": "tool discovery",
+      "passed": true,
+      "detail": 17
+    },
+    {
+      "name": "cold index via MCP",
+      "passed": true,
+      "detail": {
+        "nodes": 15157,
+        "edges": 64721,
+        "skipped": 0,
+        "partial": 2
+      }
+    },
+    {
+      "name": "symbol search",
+      "passed": true,
+      "detail": 7
+    },
+    {
+      "name": "training contract",
+      "passed": true,
+      "detail": [
+        [
+          "tmp-cbm-mcp-in-action-nnd9_wtu-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+          "tmp-cbm-mcp-in-action-nnd9_wtu-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+          "lsp_method",
+          "0.90"
+        ]
+      ]
+    },
+    {
+      "name": "cache contract",
+      "passed": true,
+      "detail": [
+        [
+          "tmp-cbm-mcp-in-action-nnd9_wtu-sd-scripts.library.training.phases.training_loop._maybe_cache_epoch_tokens",
+          "tmp-cbm-mcp-in-action-nnd9_wtu-sd-scripts.library.strategies.base.contracts.CachingStrategy.get_token_cache_encoder_names",
+          "lsp_method",
+          "0.90"
+        ]
+      ]
+    },
+    {
+      "name": "dispatch topology",
+      "passed": true,
+      "detail": {
+        "families": [
+          "SD",
+          "SDXL",
+          "SD3"
+        ],
+        "topology_keys": [
+          "function",
+          "direction",
+          "callees_total",
+          "callees_total_relation",
+          "callees",
+          "callees_edges"
+        ]
+      }
+    },
+    {
+      "name": "weak production-to-test targets",
+      "passed": true,
+      "detail": 0
+    },
+    {
+      "name": "source snippet and coverage",
+      "passed": true,
+      "detail": "library/training/phases/training_loop.py"
+    },
+    {
+      "name": "running executable identity",
+      "passed": true,
+      "detail": [
+        {
+          "pid": 2654841,
+          "executable": "/home/imi/Projects/codebase-memory-mcp-v0121/build/release/codebase-memory-mcp",
+          "sha256": "4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026"
+        },
+        {
+          "pid": 2654844,
+          "executable": "/home/imi/Projects/codebase-memory-mcp-v0121/build/release/codebase-memory-mcp",
+          "sha256": "4962cf320c2345cf47b7871fd5f1a14107aecf13e77a86b1ffd35689888ea026"
+        }
+      ]
+    },
+    {
+      "name": "watcher initialize",
+      "passed": true,
+      "detail": {
+        "name": "codebase-memory-mcp",
+        "version": "0.12.1-fork.1"
+      }
+    },
+    {
+      "name": "saved graph after daemon restart",
+      "passed": true,
+      "detail": {
+        "status": "ready",
+        "nodes": 15157
+      }
+    }
+  ],
+  "project": "tmp-cbm-mcp-in-action-nnd9_wtu-sd-scripts",
+  "passed": false,
+  "error": "RuntimeError(('^cbm_action_before$', 0, 1, 'watch timeout'))"
+}

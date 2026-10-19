@@ -1,0 +1,950 @@
+{
+  "function": "_run_epoch_steps",
+  "direction": "outbound",
+  "callees_total": 26,
+  "callees_total_relation": "eq",
+  "callees": {
+    "qn_rule": "qn = qn_prefix == \"\" ? name : qn_prefix + \".\" + name",
+    "cols": [
+      "name",
+      "hop",
+      "strategy",
+      "confidence"
+    ],
+    "groups": [
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop",
+        "rows": [
+          [
+            "EpochRunResult",
+            1,
+            "lsp",
+            0.85
+          ],
+          [
+            "_run_step_side_effects",
+            1,
+            "lsp",
+            0.95
+          ],
+          [
+            "_update_live_timestep_outputs",
+            1,
+            "lsp",
+            0.95
+          ],
+          [
+            "_emit_step_tracking_logs",
+            1,
+            "lsp",
+            0.95
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.losses.loss",
+        "rows": [
+          [
+            "EMARecorder",
+            1,
+            "heuristic",
+            0.38
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.trainer_utils",
+        "rows": [
+          [
+            "all_reduce_trainable",
+            1,
+            "lsp",
+            0.97
+          ],
+          [
+            "determine_grad_sync_context",
+            1,
+            "lsp",
+            0.97
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.orchestration_helpers",
+        "rows": [
+          [
+            "get_resource_monitor",
+            1,
+            "lsp",
+            0.97
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy",
+        "rows": [
+          [
+            "process_batch",
+            1,
+            "lsp",
+            0.9
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.modes.base.TrainingMode",
+        "rows": [
+          [
+            "on_step_start",
+            1,
+            "lsp",
+            0.9
+          ],
+          [
+            "on_step_end",
+            1,
+            "lsp",
+            0.9
+          ],
+          [
+            "get_trainable_params",
+            1,
+            "lsp",
+            0.9
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.objectives.base.ObjectiveRuntime",
+        "rows": [
+          [
+            "advance_to_step",
+            1,
+            "lsp",
+            0.9
+          ],
+          [
+            "update_from_batch",
+            1,
+            "lsp",
+            0.9
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.triggers",
+        "rows": [
+          [
+            "StepTriggerContext",
+            2,
+            "lsp",
+            0.85
+          ],
+          [
+            "compute_step_actions",
+            2,
+            "lsp",
+            0.97
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop",
+        "rows": [
+          [
+            "_save_step_checkpoint_artifacts",
+            2,
+            "lsp",
+            0.95
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.logging.metrics",
+        "rows": [
+          [
+            "generate_step_logs",
+            2,
+            "lsp",
+            0.97
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sdxl.diffusion.SdxlDiffusionTrainingStrategy",
+        "rows": [
+          [
+            "process_batch",
+            2,
+            null,
+            null
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sd3.diffusion.Sd3DiffusionTrainingStrategy",
+        "rows": [
+          [
+            "process_batch",
+            2,
+            null,
+            null
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sd.diffusion.SdDiffusionTrainingStrategy",
+        "rows": [
+          [
+            "process_batch",
+            2,
+            null,
+            null
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.orchestration_helpers",
+        "rows": [
+          [
+            "temporarily_in_eval_mode",
+            2,
+            "heuristic",
+            0.95
+          ],
+          [
+            "run_sampling_and_validation",
+            2,
+            "lsp",
+            0.97
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.timesteps.runtime.TimestepRuntime",
+        "rows": [
+          [
+            "advance_to_step",
+            2,
+            "lsp",
+            0.85
+          ],
+          [
+            "update_from_batch",
+            2,
+            "lsp",
+            0.85
+          ]
+        ]
+      },
+      {
+        "qn_prefix": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.logging.training_plots",
+        "rows": [
+          [
+            "save_timestep_distribution_plot",
+            2,
+            "lsp",
+            0.97
+          ]
+        ]
+      }
+    ]
+  },
+  "callees_edges": [
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.triggers.StepTriggerContext",
+      "type": "CALLS",
+      "confidence": 0.85,
+      "properties": {
+        "callee": "StepTriggerContext",
+        "confidence": 0.85,
+        "strategy": "lsp_constructor",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "k": "global_step",
+            "e": "trainer.global_step"
+          },
+          {
+            "i": 1,
+            "k": "epoch_step",
+            "e": "step"
+          },
+          {
+            "i": 2,
+            "k": "current_epoch",
+            "e": "trainer._current_epoch_state.value"
+          },
+          {
+            "i": 3,
+            "k": "num_steps_in_epoch",
+            "e": "num_steps_in_epoch"
+          },
+          {
+            "i": 4,
+            "k": "max_train_steps",
+            "e": "cfg.training.max_train_steps"
+          },
+          {
+            "i": 5,
+            "k": "has_validation_data",
+            "e": "trainer._val_dataloader is not None"
+          }
+        ],
+        "line": 148
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.triggers.compute_step_actions",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "compute_step_actions",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "k": "validation_scheduler",
+            "e": "trainer._validation_scheduler"
+          },
+          {
+            "i": 1,
+            "k": "sampling_config",
+            "e": "cfg.output.sampling"
+          },
+          {
+            "i": 2,
+            "k": "saving_config",
+            "e": "cfg.output.saving"
+          },
+          {
+            "i": 3,
+            "k": "ctx",
+            "e": "StepTriggerContext(             global_step=trainer.global_step,             epoch_step=step,             current_epoch="
+          },
+          {
+            "i": 4,
+            "k": "sample_images_check_fn",
+            "e": "sample_images_check"
+          }
+        ],
+        "line": 144
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._save_step_checkpoint_artifacts",
+      "type": "CALLS",
+      "confidence": 0.95,
+      "properties": {
+        "callee": "_save_step_checkpoint_artifacts",
+        "confidence": 0.95,
+        "strategy": "lsp_direct",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 176
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.orchestration_helpers.temporarily_in_eval_mode",
+      "type": "CALLS",
+      "confidence": 0.95,
+      "properties": {
+        "callee": "temporarily_in_eval_mode",
+        "confidence": 0.95,
+        "strategy": "import_map",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 162
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.orchestration_helpers.run_sampling_and_validation",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "run_sampling_and_validation",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          },
+          {
+            "i": 1,
+            "k": "should_sample",
+            "e": "step_actions.should_sample"
+          },
+          {
+            "i": 2,
+            "k": "should_validate",
+            "e": "step_actions.should_validate"
+          },
+          {
+            "i": 3,
+            "k": "sample_epoch",
+            "e": "None"
+          },
+          {
+            "i": 4,
+            "k": "validation_step",
+            "e": "step"
+          },
+          {
+            "i": 5,
+            "k": "validation_epoch",
+            "e": "trainer._current_epoch_state.value"
+          },
+          {
+            "i": 6,
+            "k": "validation_batch",
+            "e": "batch"
+          }
+        ],
+        "line": 163
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._update_live_timestep_outputs",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.logging.training_plots.save_timestep_distribution_plot",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "save_timestep_distribution_plot",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "cfg"
+          },
+          {
+            "i": 1,
+            "e": "trainer.global_step"
+          },
+          {
+            "i": 2,
+            "e": "trainer._timestep_counts"
+          },
+          {
+            "i": 3,
+            "e": "trainer._plotter_settings"
+          }
+        ],
+        "line": 213
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._emit_step_tracking_logs",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.logging.metrics.generate_step_logs",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "generate_step_logs",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "cfg"
+          },
+          {
+            "i": 1,
+            "e": "current_global_step_loss"
+          },
+          {
+            "i": 2,
+            "e": "trainer._loss_recorder.average"
+          },
+          {
+            "i": 3,
+            "e": "trainer.lr_scheduler"
+          },
+          {
+            "i": 4,
+            "k": "lr_descriptions",
+            "e": "None if trainer.optimization_plan is not None else trainer.lr_descriptions"
+          },
+          {
+            "i": 5,
+            "k": "optimization_plan",
+            "e": "trainer.optimization_plan"
+          },
+          {
+            "i": 6,
+            "k": "timestep_runtime",
+            "e": "trainer.objective_runtime.timestep_runtime if trainer.objective_runtime is not None else None"
+          },
+          {
+            "i": 7,
+            "k": "optimizer",
+            "e": "trainer.optimizer"
+          }
+        ],
+        "line": 242
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop.EpochRunResult",
+      "type": "CALLS",
+      "confidence": 0.85,
+      "properties": {
+        "callee": "EpochRunResult",
+        "confidence": 0.85,
+        "strategy": "lsp_constructor",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "k": "completed",
+            "e": "batches_seen_in_epoch >= epoch_ctx.remaining_batches_in_epoch"
+          },
+          {
+            "i": 1,
+            "k": "stop_training",
+            "e": "False"
+          },
+          {
+            "i": 2,
+            "k": "interrupted_by_step_cap",
+            "e": "False"
+          },
+          {
+            "i": 3,
+            "k": "batches_seen",
+            "e": "batches_seen_in_epoch"
+          },
+          {
+            "i": 4,
+            "k": "expected_batches",
+            "e": "epoch_ctx.remaining_batches_in_epoch"
+          },
+          {
+            "i": 5,
+            "k": "tokens_path",
+            "e": "epoch_ctx.tokens_path"
+          }
+        ],
+        "line": 611
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_step_side_effects",
+      "type": "CALLS",
+      "confidence": 0.95,
+      "properties": {
+        "callee": "_run_step_side_effects",
+        "confidence": 0.95,
+        "strategy": "lsp_direct",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          },
+          {
+            "i": 1,
+            "k": "step",
+            "e": "step"
+          },
+          {
+            "i": 2,
+            "k": "batch",
+            "e": "batch"
+          },
+          {
+            "i": 3,
+            "k": "num_steps_in_epoch",
+            "e": "epoch_ctx.num_steps_in_epoch"
+          }
+        ],
+        "line": 562
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._update_live_timestep_outputs",
+      "type": "CALLS",
+      "confidence": 0.95,
+      "properties": {
+        "callee": "_update_live_timestep_outputs",
+        "confidence": 0.95,
+        "strategy": "lsp_direct",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          },
+          {
+            "i": 1,
+            "k": "timesteps",
+            "e": "batch_loss.timesteps"
+          }
+        ],
+        "line": 599
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._emit_step_tracking_logs",
+      "type": "CALLS",
+      "confidence": 0.95,
+      "properties": {
+        "callee": "_emit_step_tracking_logs",
+        "confidence": 0.95,
+        "strategy": "lsp_direct",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          },
+          {
+            "i": 1,
+            "k": "timesteps",
+            "e": "batch_loss.timesteps"
+          },
+          {
+            "i": 2,
+            "k": "keys_scaled",
+            "e": "keys_scaled"
+          },
+          {
+            "i": 3,
+            "k": "mean_norm",
+            "e": "mean_norm"
+          },
+          {
+            "i": 4,
+            "k": "maximum_norm",
+            "e": "maximum_norm"
+          }
+        ],
+        "line": 587
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.losses.loss.EMARecorder",
+      "type": "CALLS",
+      "confidence": 0.38,
+      "properties": {
+        "callee": "EMARecorder",
+        "confidence": 0.38,
+        "strategy": "unique_name",
+        "candidates": 1,
+        "line": 580
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.trainer_utils.all_reduce_trainable",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "all_reduce_trainable",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "accelerator"
+          },
+          {
+            "i": 1,
+            "e": "trainer.trainable_model"
+          }
+        ],
+        "line": 535
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.trainer_utils.determine_grad_sync_context",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "determine_grad_sync_context",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "cfg.performance.precision"
+          },
+          {
+            "i": 1,
+            "e": "accelerator"
+          },
+          {
+            "i": 2,
+            "e": "None"
+          },
+          {
+            "i": 3,
+            "e": "trainer._grad_sync_handle"
+          },
+          {
+            "i": 4,
+            "e": "trainer.loss_modifier.accumulation_model"
+          }
+        ],
+        "line": 495
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.orchestration_helpers.get_resource_monitor",
+      "type": "CALLS",
+      "confidence": 0.97,
+      "properties": {
+        "callee": "get_resource_monitor",
+        "confidence": 0.97,
+        "strategy": "lsp_callable_alias",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 568
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "strategies.process_batch",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "batch"
+          },
+          {
+            "i": 1,
+            "e": "trainer.text_encoders"
+          },
+          {
+            "i": 2,
+            "e": "trainer.denoiser"
+          },
+          {
+            "i": 3,
+            "e": "trainer.trainable_model"
+          },
+          {
+            "i": 4,
+            "e": "trainer.vae"
+          },
+          {
+            "i": 5,
+            "e": "trainer.objective_runtime"
+          },
+          {
+            "i": 6,
+            "e": "trainer.vae_dtype"
+          },
+          {
+            "i": 7,
+            "e": "trainer.weight_dtype"
+          }
+        ],
+        "line": 506
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.modes.base.TrainingMode.on_step_start",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "trainer.mode.on_step_start",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 502
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.modes.base.TrainingMode.on_step_end",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "trainer.mode.on_step_end",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 548
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.modes.base.TrainingMode.get_trainable_params",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "trainer.mode.get_trainable_params",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer"
+          }
+        ],
+        "line": 537
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.objectives.base.ObjectiveRuntime.advance_to_step",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "trainer.objective_runtime.advance_to_step",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "trainer.global_step"
+          }
+        ],
+        "line": 478
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.training.phases.training_loop._run_epoch_steps",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.objectives.base.ObjectiveRuntime.update_from_batch",
+      "type": "CALLS",
+      "confidence": 0.9,
+      "properties": {
+        "callee": "trainer.objective_runtime.update_from_batch",
+        "confidence": 0.9,
+        "strategy": "lsp_method",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "batch_loss.timesteps"
+          },
+          {
+            "i": 1,
+            "e": "sampling_loss"
+          }
+        ],
+        "line": 524
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sdxl.diffusion.SdxlDiffusionTrainingStrategy.process_batch",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+      "type": "OVERRIDE",
+      "confidence": null,
+      "properties": {}
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sd3.diffusion.Sd3DiffusionTrainingStrategy.process_batch",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+      "type": "OVERRIDE",
+      "confidence": null,
+      "properties": {}
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.sd.diffusion.SdDiffusionTrainingStrategy.process_batch",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.strategies.base.contracts.DiffusionTrainingStrategy.process_batch",
+      "type": "OVERRIDE",
+      "confidence": null,
+      "properties": {}
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.objectives.base.ObjectiveRuntime.advance_to_step",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.timesteps.runtime.TimestepRuntime.advance_to_step",
+      "type": "CALLS",
+      "confidence": 0.85,
+      "properties": {
+        "callee": "self.timestep_runtime.advance_to_step",
+        "confidence": 0.85,
+        "strategy": "lsp_method_union",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "global_step"
+          }
+        ],
+        "line": 26
+      }
+    },
+    {
+      "source": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.objectives.base.ObjectiveRuntime.update_from_batch",
+      "target": "tmp-cbm-mcp-in-action-gm_c7z0e-sd-scripts.library.timesteps.runtime.TimestepRuntime.update_from_batch",
+      "type": "CALLS",
+      "confidence": 0.85,
+      "properties": {
+        "callee": "self.timestep_runtime.update_from_batch",
+        "confidence": 0.85,
+        "strategy": "lsp_method_union",
+        "candidates": 1,
+        "args": [
+          {
+            "i": 0,
+            "e": "timesteps"
+          },
+          {
+            "i": 1,
+            "e": "per_sample_loss"
+          }
+        ],
+        "line": 32
+      }
+    }
+  ]
+}
