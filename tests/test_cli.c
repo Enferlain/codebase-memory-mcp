@@ -3033,7 +3033,11 @@ TEST(cli_update_agent_configs_finish_before_guard_release) {
     ASSERT_EQ(_NSGetExecutablePath(native_fixture_path, &native_fixture_size), 0);
     const char *native_fixture = native_fixture_path;
 #else
-    const char *native_fixture = "/bin/true";
+    /* Nix may provide /bin/true as an argv[0]-dependent multicall binary.
+     * Allow a standalone native fixture while retaining every staging check. */
+    const char *native_fixture = getenv("CBM_TEST_NATIVE_FIXTURE");
+    if (!native_fixture || !native_fixture[0])
+        native_fixture = "/bin/true";
 #endif
     FILE *native_file = fopen(native_fixture, "rb");
     ASSERT_NOT_NULL(native_file);
@@ -3177,7 +3181,11 @@ TEST(cli_update_names_the_failing_staging_step_and_os_error) {
 #else
     const char *asset_name = "codebase-memory-mcp-linux-amd64-portable.tar.gz";
 #endif
-    const char *native_fixture = "/bin/true";
+    /* Nix may provide /bin/true as an argv[0]-dependent multicall binary.
+     * Allow a standalone native fixture while retaining every staging check. */
+    const char *native_fixture = getenv("CBM_TEST_NATIVE_FIXTURE");
+    if (!native_fixture || !native_fixture[0])
+        native_fixture = "/bin/true";
 #endif
     FILE *native_file = fopen(native_fixture, "rb");
     ASSERT_NOT_NULL(native_file);
