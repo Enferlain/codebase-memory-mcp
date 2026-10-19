@@ -24847,13 +24847,12 @@ TEST(tool_trace_dispatch_topology_pages_filter_and_budget) {
         ASSERT_GT(ids[i], 0);
     }
     for (int i = 0; i < 3; i++) {
-        cbm_edge_t edge = {
-            .project = "dispatch",
-            .source_id = ids[i == 0 ? 0 : i + 1],
-            .target_id = ids[1],
-            .type = i == 0 ? "CALLS" : "OVERRIDE",
-            .properties_json =
-                "{\"dispatch\":\"python_mro_sibling\",\"assembly\":\"dispatch.Final\"}"};
+        cbm_edge_t edge = {.project = "dispatch",
+                           .source_id = ids[i == 0 ? 0 : i + 1],
+                           .target_id = ids[1],
+                           .type = i == 0 ? "CALLS" : "OVERRIDE",
+                           .properties_json = "{\"dispatch\":\"python_mro_sibling\",\"assembly\":"
+                                              "\"dispatch.Final\",\"confidence\":0.73}"};
         ASSERT_GT(cbm_store_insert_edge(st, &edge), 0);
     }
     ASSERT_EQ(cbm_store_generation_advance(st), CBM_STORE_OK);
@@ -24870,6 +24869,7 @@ TEST(tool_trace_dispatch_topology_pages_filter_and_budget) {
     ASSERT_EQ(yyjson_get_int(yyjson_obj_get(root, "callees_total")), 2);
     ASSERT_EQ(yyjson_arr_size(yyjson_obj_get(root, "callees_edges")), 2);
     ASSERT_NULL(strstr(text, "test_impl"));
+    ASSERT_NOT_NULL(strstr(text, "\"confidence\":0.73"));
     ASSERT_NOT_NULL(strstr(text, "python_mro_sibling"));
     const char *next = yyjson_get_str(yyjson_obj_get(root, "next_cursor"));
     ASSERT_NOT_NULL(next);
