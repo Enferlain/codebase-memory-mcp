@@ -1586,7 +1586,10 @@ int cbm_pipeline_build_fresh_semantic_manifest(cbm_pipeline_t *p, const char *pr
  *      (pass_ansible.c). An external Chart is keyed by its publisher URL.
  *      An index built before holds none of them, so it rebuilds once on
  *      upgrade. */
-enum { CBM_SEMANTIC_INDEX_VERSION = 9 };
+/* Fork semantic identity: guarded imports, local bindings and ordered Python
+ * assembly edges must rebuild unchanged pre-patch indexes. A separate range
+ * also avoids colliding with upstream's next semantic version. */
+enum { CBM_SEMANTIC_INDEX_VERSION = 1000009 };
 
 typedef struct {
     cbm_gbuf_t *gbuf;
