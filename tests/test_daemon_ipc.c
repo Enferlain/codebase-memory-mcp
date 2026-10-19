@@ -3620,11 +3620,16 @@ TEST(daemon_ipc_posix_record_publication_windows_recover_from_crash) {
         cbm_daemon_ipc_posix_publication_stage_t stage;
         bool marker;
         bool linked;
+        bool renumber;
     } cases[] = {
-        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_TEMP_SYNCED, false, false},
-        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_RECORD_LINKED, false, true},
-        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_TEMP_SYNCED, true, false},
-        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_RECORD_LINKED, true, true},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_TEMP_SYNCED, false, false, false},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_RECORD_LINKED, false, true, false},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_TEMP_SYNCED, true, false, false},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_RECORD_LINKED, true, true, false},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_TEMP_SYNCED, false, false, true},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_PENDING_RECORD_LINKED, false, true, true},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_TEMP_SYNCED, true, false, true},
+        {CBM_DAEMON_IPC_POSIX_PUBLICATION_MARKER_RECORD_LINKED, true, true, true},
     };
     bool case_ok[sizeof(cases) / sizeof(cases[0])] = {0};
 
@@ -3705,6 +3710,20 @@ TEST(daemon_ipc_posix_record_publication_windows_recover_from_crash) {
                 ? lstat(pending_path, &pending_status) == 0 && S_ISREG(pending_status.st_mode) &&
                       pending_status.st_nlink == 1
                 : lstat(identity_path, &marker_status) != 0 && errno == ENOENT;
+
+        if (cases[index].renumber && temp_found && preceding_record_shape) {
+            const char *records[] = {temp_path, cases[index].marker ? pending_path : NULL};
+            for (size_t record = 0; record < 2 && records[record]; record++) {
+                int fd = open(records[record], O_RDWR | O_CLOEXEC | O_NOFOLLOW);
+                ASSERT_GT(fd, -1);
+                unsigned char device_byte;
+                ASSERT_EQ(pread(fd, &device_byte, 1, 8), 1);
+                device_byte ^= 1;
+                ASSERT_EQ(pwrite(fd, &device_byte, 1, 8), 1);
+                ASSERT_EQ(fsync(fd), 0);
+                ASSERT_EQ(close(fd), 0);
+            }
+        }
 
         int startup_result =
             crashed ? cbm_daemon_ipc_startup_lock_try_acquire(endpoint, &startup) : -1;
