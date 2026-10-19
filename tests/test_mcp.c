@@ -15361,8 +15361,8 @@ static int doccand_rows(const char *cache) {
         sqlite3_finalize(st);
         st = NULL;
         n = 0;
-        if (has_table && sqlite3_prepare_v2(db, "SELECT count(*) FROM doc_link_candidates", -1,
-                                            &st, NULL) == SQLITE_OK) {
+        if (has_table && sqlite3_prepare_v2(db, "SELECT count(*) FROM doc_link_candidates", -1, &st,
+                                            NULL) == SQLITE_OK) {
             n = sqlite3_step(st) == SQLITE_ROW ? sqlite3_column_int(st, 0) : -1;
             sqlite3_finalize(st);
         }
@@ -24635,8 +24635,8 @@ static bool scan_fixture_list(const scan_fixture_t *fx, const char *extra) {
 /* Run the scan; returns the records it wrote (caller frees), CRs kept. */
 static char *scan_fixture_run(const scan_fixture_t *fx, const char *pattern, bool use_regex,
                               size_t output_limit, int *cause) {
-    *cause = cbm_mcp_search_scan_for_test(NULL, fx->list, pattern, use_regex, fx->out,
-                                          output_limit, UINT64_MAX);
+    *cause = cbm_mcp_search_scan_for_test(NULL, fx->list, pattern, use_regex, fx->out, output_limit,
+                                          UINT64_MAX);
     FILE *fp = cbm_fopen(fx->out, "rb");
     if (!fp) {
         return NULL;
@@ -24825,7 +24825,127 @@ TEST(search_code_scan_in_process_limits_and_failures) {
 #undef SCAN_FS
 #undef SCAN_RS
 
+TEST(tool_trace_dispatch_topology_pages_filter_and_budget) {
+    cbm_mcp_server_t *srv = cbm_mcp_server_new(NULL);
+    ASSERT_NOT_NULL(srv);
+    cbm_store_t *st = cbm_mcp_server_store(srv);
+    cbm_mcp_server_set_project(srv, "dispatch");
+    cbm_store_upsert_project(st, "dispatch", "/tmp/dispatch");
+    const char *names[] = {"caller", "contract", "implementation", "test_impl"};
+    int64_t ids[4];
+    for (int i = 0; i < 4; i++) {
+        char qn[96];
+        snprintf(qn, sizeof(qn), "dispatch.%s", names[i]);
+        cbm_node_t node = {.project = "dispatch",
+                           .label = i ? "Method" : "Function",
+                           .name = names[i],
+                           .qualified_name = qn,
+                           .file_path = i == 3 ? "tests/test_impl.py" : "main.py",
+                           .start_line = i + 1,
+                           .end_line = i + 1};
+        ids[i] = cbm_store_upsert_node(st, &node);
+        ASSERT_GT(ids[i], 0);
+    }
+    for (int i = 0; i < 3; i++) {
+        cbm_edge_t edge = {
+            .project = "dispatch",
+            .source_id = ids[i == 0 ? 0 : i + 1],
+            .target_id = ids[1],
+            .type = i == 0 ? "CALLS" : "OVERRIDE",
+            .properties_json =
+                "{\"dispatch\":\"python_mro_sibling\",\"assembly\":\"dispatch.Final\"}"};
+        ASSERT_GT(cbm_store_insert_edge(st, &edge), 0);
+    }
+    ASSERT_EQ(cbm_store_generation_advance(st), CBM_STORE_OK);
+    char *response = cbm_mcp_handle_tool(
+        srv, "trace_path",
+        "{\"project\":\"dispatch\",\"function_name\":\"caller\",\"direction\":\"outbound\","
+        "\"edge_types\":[\"CALLS\",\"OVERRIDE\"],\"depth\":2,\"limit\":1,\"topology\":true,"
+        "\"format\":\"json\"}");
+    char *text = response ? extract_text_content(response) : NULL;
+    free(response);
+    ASSERT_NOT_NULL(text);
+    yyjson_doc *doc = yyjson_read(text, strlen(text), 0);
+    yyjson_val *root = doc ? yyjson_doc_get_root(doc) : NULL;
+    ASSERT_EQ(yyjson_get_int(yyjson_obj_get(root, "callees_total")), 2);
+    ASSERT_EQ(yyjson_arr_size(yyjson_obj_get(root, "callees_edges")), 2);
+    ASSERT_NULL(strstr(text, "test_impl"));
+    ASSERT_NOT_NULL(strstr(text, "python_mro_sibling"));
+    const char *next = yyjson_get_str(yyjson_obj_get(root, "next_cursor"));
+    ASSERT_NOT_NULL(next);
+    char cursor[256];
+    snprintf(cursor, sizeof(cursor), "%s", next);
+    yyjson_doc_free(doc);
+    free(text);
+    char args[1024];
+    snprintf(args, sizeof(args),
+             "{\"project\":\"dispatch\",\"function_name\":\"caller\",\"direction\":\"outbound\","
+             "\"edge_types\":[\"CALLS\",\"OVERRIDE\"],\"depth\":2,\"limit\":1,\"topology\":true,"
+             "\"format\":\"json\",\"cursor\":\"%s\"}",
+             cursor);
+    response = cbm_mcp_handle_tool(srv, "trace_path", args);
+    text = response ? extract_text_content(response) : NULL;
+    free(response);
+    ASSERT_NOT_NULL(text);
+    doc = yyjson_read(text, strlen(text), 0);
+    root = doc ? yyjson_doc_get_root(doc) : NULL;
+    ASSERT_EQ(yyjson_arr_size(yyjson_obj_get(root, "callees_edges")), 1);
+    ASSERT_NULL(yyjson_obj_get(root, "next_cursor"));
+    yyjson_doc_free(doc);
+    free(text);
+    /* Changing the topology option cannot reuse a cursor minted with it. */
+    snprintf(args, sizeof(args),
+             "{\"project\":\"dispatch\",\"function_name\":\"caller\",\"direction\":\"outbound\","
+             "\"edge_types\":[\"CALLS\",\"OVERRIDE\"],\"depth\":2,\"limit\":1,\"topology\":false,"
+             "\"format\":\"json\",\"cursor\":\"%s\"}",
+             cursor);
+    response = cbm_mcp_handle_tool(srv, "trace_path", args);
+    ASSERT_NOT_NULL(response);
+    ASSERT_NOT_NULL(strstr(response, "\"isError\":true"));
+    free(response);
+    response = cbm_mcp_handle_tool(
+        srv, "trace_path",
+        "{\"project\":\"dispatch\",\"function_name\":\"implementation\",\"direction\":\"inbound\","
+        "\"edge_types\":[\"CALLS\",\"OVERRIDE\"],\"depth\":2,\"topology\":true}");
+    text = response ? extract_text_content(response) : NULL;
+    free(response);
+    ASSERT_NOT_NULL(text);
+    /* Bidirectional OVERRIDE makes a two-edge cycle back to the root;
+     * the existing shortest-walk contract records that root at positive hop. */
+    ASSERT_NOT_NULL(strstr(text, "callers_total: 3"));
+    ASSERT_NOT_NULL(strstr(text, "caller"));
+    ASSERT_NOT_NULL(strstr(text, "callers_edges"));
+    ASSERT_NULL(strstr(text, "test_impl"));
+    free(text);
+    char huge[20000];
+    memset(huge, 'x', sizeof(huge));
+    memcpy(huge, "{\"note\":\"", 9);
+    memcpy(huge + sizeof(huge) - 3, "\"}", 3);
+    cbm_edge_t large = {.project = "dispatch",
+                        .source_id = ids[2],
+                        .target_id = ids[1],
+                        .type = "OVERRIDE",
+                        .properties_json = huge};
+    ASSERT_GT(cbm_store_insert_edge(st, &large), 0);
+    response = cbm_mcp_handle_tool(
+        srv, "trace_path",
+        "{\"project\":\"dispatch\",\"function_name\":\"caller\",\"direction\":\"outbound\","
+        "\"edge_types\":[\"CALLS\",\"OVERRIDE\"],\"depth\":2,\"topology\":true,"
+        "\"format\":\"json\",\"max_output_tokens\":256}");
+    text = response ? extract_text_content(response) : NULL;
+    free(response);
+    ASSERT_NOT_NULL(text);
+    ASSERT_LTE(strlen(text), 1024);
+    ASSERT_NOT_NULL(strstr(text, "\"callees_total\":2"));
+    ASSERT_NOT_NULL(strstr(text, "\"optional_fields_omitted\":true"));
+    ASSERT_NOT_NULL(strstr(text, "\"omitted_optional_fields\":[\"topology\"]"));
+    free(text);
+    cbm_mcp_server_free(srv);
+    PASS();
+}
+
 SUITE(mcp) {
+    RUN_TEST(tool_trace_dispatch_topology_pages_filter_and_budget);
     RUN_TEST(index_repository_async_and_status_refused_without_daemon_issue2144);
     RUN_TEST(index_repository_schema_documents_async_polling_issue2144);
     RUN_TEST(tool_result_add_notice_keeps_payload_shape_issue2144);

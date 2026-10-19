@@ -74,6 +74,11 @@ cbm_graph_mem_types_t cbm_graph_mem_type_mask(const cbm_graph_mem_t *g, const ch
 bool cbm_graph_mem_bfs(const cbm_graph_mem_t *g, int64_t start, bool inbound,
                        cbm_graph_mem_types_t mask, int max_depth, cbm_graph_mem_hop_t **out,
                        int *count);
+/* Same shortest-walk semantics, additionally traversing selected reverse_mask
+ * types against the requested direction. reverse_mask is intersected with mask. */
+bool cbm_graph_mem_bfs_dispatch(const cbm_graph_mem_t *g, int64_t start, bool inbound,
+                                cbm_graph_mem_types_t mask, cbm_graph_mem_types_t reverse_mask,
+                                int max_depth, cbm_graph_mem_hop_t **out, int *count);
 void cbm_graph_mem_hops_free(cbm_graph_mem_hop_t *hops);
 
 /* Number of edges with a type in `mask` ending at (inbound) or leaving

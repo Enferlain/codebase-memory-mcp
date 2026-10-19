@@ -742,9 +742,9 @@ static bool gm_expand_level(gm_walk_t *w, const gm_list_t *frontier, gm_list_t *
     return true;
 }
 
-bool cbm_graph_mem_bfs(const cbm_graph_mem_t *g, int64_t start, bool inbound,
-                       cbm_graph_mem_types_t mask, int max_depth, cbm_graph_mem_hop_t **out,
-                       int *count) {
+bool cbm_graph_mem_bfs_dispatch(const cbm_graph_mem_t *g, int64_t start, bool inbound,
+                                cbm_graph_mem_types_t mask, cbm_graph_mem_types_t reverse_mask,
+                                int max_depth, cbm_graph_mem_hop_t **out, int *count) {
     *out = NULL;
     *count = 0;
     if (!g || max_depth < 1 || mask == 0 || start < 0 || start >= (int64_t)g->n_ids) {
@@ -763,7 +763,18 @@ bool cbm_graph_mem_bfs(const cbm_graph_mem_t *g, int64_t start, bool inbound,
     for (int hop = 1; ok && hop <= max_depth && frontier.count > 0; hop++) {
         size_t level_begin = w.out.count;
         next.count = 0;
+        w.off = inbound ? g->in_off : g->out_off;
+        w.nbr = inbound ? g->in_nbr : g->out_nbr;
+        w.type = inbound ? g->in_type : g->out_type;
+        w.mask = mask;
         ok = gm_expand_level(&w, &frontier, &next, hop);
+        if (ok && (reverse_mask & mask) != 0) {
+            w.off = inbound ? g->out_off : g->in_off;
+            w.nbr = inbound ? g->out_nbr : g->in_nbr;
+            w.type = inbound ? g->out_type : g->in_type;
+            w.mask = reverse_mask & mask;
+            ok = gm_expand_level(&w, &frontier, &next, hop);
+        }
         if (ok && w.out.count - level_begin > 1) {
             qsort(w.out.rows + level_begin, w.out.count - level_begin, sizeof(cbm_graph_mem_hop_t),
                   gm_hop_id_cmp);
@@ -782,6 +793,12 @@ bool cbm_graph_mem_bfs(const cbm_graph_mem_t *g, int64_t start, bool inbound,
     *out = w.out.rows;
     *count = (int)w.out.count;
     return true;
+}
+
+bool cbm_graph_mem_bfs(const cbm_graph_mem_t *g, int64_t start, bool inbound,
+                       cbm_graph_mem_types_t mask, int max_depth, cbm_graph_mem_hop_t **out,
+                       int *count) {
+    return cbm_graph_mem_bfs_dispatch(g, start, inbound, mask, 0, max_depth, out, count);
 }
 
 void cbm_graph_mem_hops_free(cbm_graph_mem_hop_t *hops) {

@@ -725,7 +725,58 @@ TEST(graph_mem_next_request_evicts_expired_layers) {
     PASS();
 }
 
+TEST(graph_mem_dispatch_matches_sql_in_both_directions) {
+    gmt_fixture_t f;
+    ASSERT_TRUE(gmt_fixture_build(&f));
+    cbm_store_t *w = cbm_store_open_path(f.db);
+    ASSERT_NOT_NULL(w);
+    gmt_edge(w, f.ids[35], f.ids[36], "CALLS", "{}");
+    gmt_edge(w, f.ids[37], f.ids[36], "OVERRIDE", "{}");
+    ASSERT_EQ(cbm_store_generation_advance(w), CBM_STORE_OK);
+    ASSERT_EQ(cbm_store_prepare_for_publish(w), CBM_STORE_OK);
+    cbm_store_close(w);
+    cbm_store_t *sql = gmt_open_sql_reference(&f);
+    size_t saved = gmt_budget_pin(gmt_budget_roomy());
+    cbm_store_t *mem = cbm_store_open_path_query(f.db);
+    uint64_t before = cbm_graph_mem_build_count();
+    gmt_typeset_t types = {{"CALLS", "OVERRIDE"}, 2};
+    bool same = sql && mem;
+    const char *directions[] = {"outbound_override_bidir", "inbound_override_bidir"};
+    for (int d = 0; same && d < 2; d++) {
+        int64_t start = d ? f.ids[37] : f.ids[35];
+        for (int depth = 1; depth <= 3; depth++) {
+            same &= gmt_bfs_same(sql, mem, start, directions[d], &types, depth, 100, 100);
+            same &= gmt_bfs_same(sql, mem, start, directions[d], &types, depth, 1, 1);
+        }
+        cbm_traverse_result_t result = {0};
+        cbm_store_bfs(mem, start, directions[d], types.types, 2, 2, 100, &result);
+        bool reached = false;
+        for (int i = 0; i < result.visited_count; i++)
+            reached |= result.visited[i].node.id == (d ? f.ids[35] : f.ids[37]) &&
+                       result.visited[i].hop == 2;
+        same &= reached;
+        cbm_store_traverse_free(&result);
+    }
+    /* An OVERRIDE-only query cannot cross the CALLS edge. */
+    cbm_traverse_result_t only = {0};
+    const char *override_only[] = {"OVERRIDE"};
+    if (mem) {
+        cbm_store_bfs(mem, f.ids[35], directions[0], override_only, 1, 3, 100, &only);
+        same &= only.visited_count == 0;
+        cbm_store_traverse_free(&only);
+    }
+    bool built = cbm_graph_mem_build_count() > before;
+    cbm_store_close(sql);
+    cbm_store_close(mem);
+    cbm_mem_set_budget_for_tests(saved);
+    gmt_fixture_free(&f);
+    ASSERT_TRUE(same);
+    ASSERT_TRUE(built);
+    PASS();
+}
+
 SUITE(graph_mem) {
+    RUN_TEST(graph_mem_dispatch_matches_sql_in_both_directions);
     RUN_TEST(graph_mem_bfs_matches_sql_on_every_shape);
     RUN_TEST(graph_mem_degree_search_matches_sql);
     RUN_TEST(graph_mem_generation_change_invalidates);

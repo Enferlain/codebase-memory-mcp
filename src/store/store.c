@@ -7660,6 +7660,7 @@ static int bfs_cte_row_limit_for_depth(int max_results, int max_depth) {
 typedef struct {
     int64_t start_id;
     bool inbound;
+    bool override_bidir;
     const char *types_clause;
     const char **edge_types;
     int edge_type_count;
@@ -7695,6 +7696,15 @@ static int bfs_visit_sql(cbm_store_t *s, const bfs_query_t *q, bfs_rows_t *rows,
     char sql[CBM_SZ_4K];
     const char *join_cond = q->inbound ? "e.target_id = bfs.node_id" : "e.source_id = bfs.node_id";
     const char *next_id = q->inbound ? "e.source_id" : "e.target_id";
+    if (q->override_bidir) {
+        join_cond = q->inbound ? "(e.target_id = bfs.node_id OR (e.type = 'OVERRIDE' AND "
+                                 "e.source_id = bfs.node_id))"
+                               : "(e.source_id = bfs.node_id OR (e.type = 'OVERRIDE' AND "
+                                 "e.target_id = bfs.node_id))";
+        next_id = q->inbound
+                      ? "CASE WHEN e.target_id = bfs.node_id THEN e.source_id ELSE e.target_id END"
+                      : "CASE WHEN e.source_id = bfs.node_id THEN e.target_id ELSE e.source_id END";
+    }
     if (q->trail) {
         *cte_row_limit = bfs_cte_row_limit_for_depth(q->max_results, q->max_depth);
         snprintf(sql, sizeof(sql),
@@ -7796,7 +7806,11 @@ static int bfs_visit_mem(cbm_store_t *s, const cbm_graph_mem_t *gm, const bfs_qu
                                                          typed ? q->edge_type_count : SKIP_ONE);
     cbm_graph_mem_hop_t *hops = NULL;
     int hop_count = 0;
-    if (!cbm_graph_mem_bfs(gm, q->start_id, q->inbound, mask, q->max_depth, &hops, &hop_count)) {
+    static const char *const override_type[] = {"OVERRIDE"};
+    cbm_graph_mem_types_t reverse_mask =
+        q->override_bidir ? cbm_graph_mem_type_mask(gm, override_type, 1) : 0;
+    if (!cbm_graph_mem_bfs_dispatch(gm, q->start_id, q->inbound, mask, reverse_mask, q->max_depth,
+                                    &hops, &hop_count)) {
         store_set_error(s, "bfs: adjacency walk out of memory");
         return CBM_STORE_ERR;
     }
@@ -7844,7 +7858,10 @@ static int store_bfs(cbm_store_t *s, int64_t start_id, const char *direction,
 
     bfs_query_t q = {
         .start_id = start_id,
-        .inbound = (direction != NULL) && (strcmp(direction, "inbound") == 0),
+        .inbound = direction && (strcmp(direction, "inbound") == 0 ||
+                                 strcmp(direction, "inbound_override_bidir") == 0),
+        .override_bidir = direction && (strcmp(direction, "inbound_override_bidir") == 0 ||
+                                        strcmp(direction, "outbound_override_bidir") == 0),
         .types_clause = types_clause,
         .edge_types = edge_types,
         .edge_type_count = edge_type_count,
